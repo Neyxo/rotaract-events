@@ -1,0 +1,61 @@
+/* The idle clicker's own styles. A file of its own, unlike everything else (app.css), so that it loads with the game
+   (components/Clicker.tsx) and nothing of it is in the app's first load. */
+.clicker .ob-in > :not(.obhead, .nav) {
+  text-align: center;
+}
+.clicker .n {
+  margin: 4px 0 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text);
+}
+.clicker .wheel {
+  display: block;
+  margin: 12px auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  touch-action: manipulation;
+  transition: transform 0.1s;
+}
+.clicker .wheel:active {
+  transform: scale(0.93);
+}
+.clicker .wheel img {
+  display: block;
+  width: 150px;
+  height: 150px;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.clicker .shop {
+  display: grid;
+  gap: 6px;
+}
+.clicker .shop button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--h-btn);
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: left;
+}
+.clicker .shop [aria-disabled="true"] {
+  opacity: 0.45;
+}
+.clicker .shop span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+  white-space: nowrap;
+}

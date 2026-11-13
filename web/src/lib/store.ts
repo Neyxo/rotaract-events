@@ -16,6 +16,8 @@ export interface StoreKeys {
   "rac.guideSeen": boolean;
   /** the subscribe card on Home was opened once, so it stays away */
   "rac.subSeen": boolean;
+  /** the idle clicker (components/Clicker): hours in hand, hours ever earned, how many of each helper, when it last counted */
+  "rac.clicker": { h: number; all: number; own: number[]; at: number };
   /** developer mode switch; rac.dev* preview flags only count while it is on */
   "rac.dev": boolean;
   "rac.devUnlocked": boolean;

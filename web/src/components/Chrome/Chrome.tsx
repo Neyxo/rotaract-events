@@ -9,6 +9,7 @@ import { store } from "../../lib/store";
 import { Icon, type IconName } from "../Icon";
 import { useResize, useStored } from "../../hooks";
 import { canGoBack } from "../../router";
+import { Oath } from "../Clicker/Oath";
 
 /** what the top bar and tabs mark as current */
 export type Active = "home" | "discover" | "calendar" | "about" | "app" | "settings" | "dev" | null;
@@ -57,6 +58,7 @@ export function TopBar({ active, back = false, extra = null }: { active: Active;
           <Hbtn name="settings" to={href("settings")} label={t("settings")} on={active === "settings"} />
         </div>
       </div>
+      <Oath />
     </header>
   );
 }
