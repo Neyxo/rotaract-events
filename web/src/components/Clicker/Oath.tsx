@@ -1,12 +1,14 @@
 // Easter egg: the Rütli oath. Three fingers held on the screen for a second (as the three Confederates raised theirs), or 1291 typed
-// on a keyboard, open the idle clicker (components/Clicker), which is only fetched then. Rendered once, by the top bar.
+// on a keyboard, open the idle clicker (components/Clicker), which is only fetched then. So does the window event OATH, which the
+// developer screen sends. Rendered once, by the top bar.
 import { useEffect, useState, type ComponentType } from "react";
 
+export const OATH = "rac:oath";
 export function Oath() {
   const [Game, setGame] = useState<ComponentType<{ onClose: () => void }> | null>(null);
   useEffect(() => {
-    let timer = 0,
-      typed = "";
+    let timer = 0;
+    let typed = "";
     const open = () =>
       void import("./Clicker")
         .then((m) => setGame(() => m.default))
@@ -25,10 +27,12 @@ export function Oath() {
     const types = ["touchstart", "touchend", "touchcancel"] as const;
     types.forEach((k) => addEventListener(k, touch, { passive: true }));
     addEventListener("keydown", key);
+    addEventListener(OATH, open);
     return () => {
       clearTimeout(timer);
       types.forEach((k) => removeEventListener(k, touch));
       removeEventListener("keydown", key);
+      removeEventListener(OATH, open);
     };
   }, []);
   return Game ? <Game onClose={() => setGame(null)} /> : null;

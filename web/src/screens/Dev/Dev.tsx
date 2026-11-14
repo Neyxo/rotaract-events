@@ -25,6 +25,7 @@ import {
 import { playFestive } from "../../components/Festive/Festive";
 import Sorting from "../../components/Sorting/Sorting";
 import Bingo from "../../components/Bingo/Bingo";
+import { OATH } from "../../components/Clicker/Oath";
 import { version } from "../../../../package.json";
 
 /** status.json as written by the feed run; on a fetch error only clubs and failures are known */
@@ -649,6 +650,7 @@ function Preview() {
           {hat && <Sorting onClose={() => setHat(false)} />}
           <Btn label="Event bingo" onClick={() => setBingo(true)} />
           {bingo && <Bingo onClose={() => setBingo(false)} />}
+          <Btn label="Idle clicker" onClick={() => dispatchEvent(new Event(OATH))} />
         </div>
       </Row>
       <Row label="Year in review">

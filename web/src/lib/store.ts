@@ -16,8 +16,59 @@ export interface StoreKeys {
   "rac.guideSeen": boolean;
   /** the subscribe card on Home was opened once, so it stays away */
   "rac.subSeen": boolean;
-  /** the idle clicker (components/Clicker): hours in hand, hours ever earned, how many of each helper, when it last counted */
-  "rac.clicker": { h: number; all: number; own: number[]; at: number };
+  /** the idle clicker (components/Clicker): hours, francs and people helped this Rotary year, when it was last saved, how the
+   * wheel may be spun (0 tap, 1 swipe, 2 hold), the level of each family wheel, the project slots (null: empty; else the plan
+   * (cause, format, audience, size, budget), what it was judged (stars, weakest part, the budget item that wanted more), its
+   * level, its officer, t seconds into its run or -1 idle), every plan tried so far with its stars, and the pins kept from the
+   * years handed over. The members: how many (mem, a fraction while one is joining), how many of them are tired, trained (pro)
+   * or at the RYLA camp (not in mem) and for how many seconds more, and how many moved on to Rotary. The guest speaker's talk
+   * in effect (boost, -1 none) and its seconds left. The Foundation: donations on their way back ([francs, seconds left]),
+   * all ever given, the Paul Harris pins awarded to each family wheel; the stake on another club's project and the last one's
+   * result in francs. What a handover keeps: the levels of the tree, the culture chosen for this year (-1 none), the names of
+   * the clubs chartered, the best year's people helped, the years handed over, the banners won. v tells an older save apart, which is dropped. */
+  "rac.clicker": {
+    v: 5;
+    h: number;
+    f: number;
+    p: number;
+    at: number;
+    spin: number;
+    fam: number[];
+    proj: (null | {
+      c: number;
+      fm: number;
+      a: number;
+      z: number;
+      b: number[];
+      st: number;
+      weak: number;
+      want: number;
+      lv: number;
+      auto: boolean;
+      t: number;
+    })[];
+    book: string[];
+    pins: number;
+    mem: number;
+    tired: number;
+    pro: number;
+    camp: number;
+    campT: number;
+    alum: number;
+    boost: number;
+    boostT: number;
+    grants: number[][];
+    given: number;
+    phf: number[];
+    stake: null | { club: string; k: number; amt: number; win: boolean; t: number };
+    res: number;
+    tree: number[];
+    cult: number;
+    clubs: string[];
+    best: number;
+    yrs: number;
+    ban: number[];
+  };
   /** developer mode switch; rac.dev* preview flags only count while it is on */
   "rac.dev": boolean;
   "rac.devUnlocked": boolean;

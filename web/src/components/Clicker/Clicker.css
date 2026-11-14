@@ -1,61 +1,451 @@
-/* The idle clicker's own styles. A file of its own, unlike everything else (app.css), so that it loads with the game
-   (components/Clicker.tsx) and nothing of it is in the app's first load. */
-.clicker .ob-in > :not(.obhead, .nav) {
+/* The idle clicker's own styles. A file of its own that loads with the game (Clicker.tsx), so nothing of it is in the app's
+   first load. */
+.clicker .ob-in {
+  gap: 10px;
+}
+.clicker p {
+  margin: 0;
+}
+
+/* hours, francs, people helped: the last is the goal and is the one in colour */
+.clicker .stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.clicker .stats p {
+  padding: 8px 4px;
+  border-radius: 14px;
+  background: var(--surface-2);
   text-align: center;
 }
-.clicker .n {
-  margin: 4px 0 0;
-  font-size: 2.6rem;
+.clicker .stats b {
+  display: block;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  line-height: 1;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
   color: var(--text);
 }
+.clicker .stats span {
+  font-size: 0.7rem;
+}
+.clicker .stats .goal {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-2));
+}
+.clicker .stats .goal b {
+  color: var(--accent);
+}
+
+/* the title now, how far it is to the next, the next */
+.clicker .rank {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+}
+.clicker .rank span {
+  color: var(--muted);
+}
+.clicker progress {
+  flex: 1;
+  height: 8px;
+  appearance: none;
+  border: 0;
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.clicker progress::-webkit-progress-bar {
+  background: var(--surface-2);
+}
+.clicker progress::-webkit-progress-value {
+  background: var(--accent);
+  border-radius: 99px;
+}
+.clicker progress::-moz-progress-bar {
+  background: var(--accent);
+  border-radius: 99px;
+}
+
+/* the wheels: ours in the middle on its glow (stronger the faster it turns), the family's meshed around it, the bell over them */
+.clicker .stage {
+  position: relative;
+  flex: none;
+  width: min(100%, 340px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.clicker .stage::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 34%, transparent), transparent);
+  opacity: calc(0.45 + var(--w) * 0.55);
+  scale: calc(1 + var(--w) * 0.25);
+  transition:
+    opacity 0.3s,
+    scale 0.3s;
+}
 .clicker .wheel {
-  display: block;
-  margin: 12px auto;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 46.3%;
+  height: 46.3%;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: none;
-  touch-action: manipulation;
-  transition: transform 0.1s;
-}
-.clicker .wheel:active {
-  transform: scale(0.93);
+  touch-action: none;
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
 }
 .clicker .wheel img {
   display: block;
-  width: 150px;
-  height: 150px;
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
-.clicker .shop {
+.clicker .wheel img,
+.clicker .cog {
+  transition: rotate 0.1s linear;
+}
+.clicker .cog,
+.clicker .cog-i {
+  position: absolute;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+.clicker .cog {
+  aspect-ratio: 1;
+}
+.clicker .cog circle {
+  fill: var(--surface);
+}
+.clicker .cog-i {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  font-size: 1.1rem;
+}
+.clicker .bell {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow:
+    var(--shadow),
+    0 0 0 2px var(--accent);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.clicker .note {
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* rows: a thing to buy (it fills from the left as the francs near its price) or a project (it fills as its run goes on) */
+.clicker .rows {
   display: grid;
   gap: 6px;
 }
-.clicker .shop button {
-  display: flex;
-  justify-content: space-between;
+.clicker h3 {
+  margin: 6px 0 0;
+}
+.clicker .row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto 1.6em;
   align-items: center;
   gap: 10px;
-  min-height: var(--h-btn);
-  padding: 6px 14px;
+  width: 100%;
+  padding: 7px 12px 7px 8px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 16%, var(--surface-2)) var(--p),
+    var(--surface-2) var(--p)
+  );
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+}
+.clicker .row[aria-disabled="false"] {
+  border-color: var(--accent);
+}
+.clicker [aria-disabled="false"]:active {
+  transform: scale(0.98);
+}
+.clicker .row[aria-disabled="true"] > :not(i, strong) {
+  opacity: 0.6;
+}
+.clicker .row i {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--surface);
+  font-style: normal;
+  font-size: 1.35rem;
+}
+.clicker .row b,
+.clicker .row small {
+  display: block;
+}
+.clicker .row b {
+  font-size: 0.9rem;
+}
+.clicker .row small {
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+.clicker .row em {
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: var(--surface);
+  font-style: normal;
+  font-size: 0.8rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.clicker .row strong {
+  text-align: right;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+/* a project: its row, and under it the two things francs do to it */
+.clicker .proj {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 6px;
+}
+.clicker .proj .row {
+  grid-column: 1 / -1;
+}
+.clicker .proj > button:not(.row) {
+  min-height: var(--h-chip);
+  border: 1px solid var(--line);
+  border-radius: var(--r-chip);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.clicker .proj > [aria-disabled="true"] {
+  color: var(--muted);
+}
+.clicker .proj > [aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--surface-2);
+  color: var(--accent);
+}
+/* too fast for a bar: stripes that run */
+.clicker .flow {
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--accent) 22%, var(--surface-2)) 0 12px,
+    color-mix(in srgb, var(--accent) 10%, var(--surface-2)) 12px 24px
+  );
+  background-size: 200% 100%;
+}
+.clicker .year {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  text-align: center;
+}
+.clicker .pins {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--text);
+}
+.clicker .btn[aria-disabled="true"] {
+  opacity: 0.45;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .clicker .flow {
+    animation: clk-flow 1.2s linear infinite;
+  }
+  .clicker .bell {
+    animation: clk-bell 0.9s ease-in-out infinite;
+  }
+}
+@keyframes clk-flow {
+  to {
+    background-position: -34px 0;
+  }
+}
+@keyframes clk-bell {
+  0%,
+  100% {
+    transform: rotate(-14deg);
+  }
+  50% {
+    transform: rotate(14deg) scale(1.08);
+  }
+}
+.clicker .row.flow > * {
+  opacity: 1;
+}
+.clicker .row.empty {
+  grid-template-columns: 40px 1fr;
+  border-style: dashed;
+  background: none;
+}
+/* under a project's bar: its stars and review, then the three things to do with it */
+.clicker .proj {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.clicker .proj p {
+  grid-column: 1 / -1;
+  font-size: 0.78rem;
+}
+.clicker .proj p span,
+.clicker .recipe span + span {
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+/* the designer: chips to pick from, a slider per budget item, the recipe book */
+.clicker .design {
+  display: grid;
+  gap: 6px;
+}
+.clicker .design h3 {
+  margin: 8px 0 6px;
+}
+.clicker .chips {
+  gap: 6px;
+}
+.clicker .chips button {
+  min-height: var(--h-chip);
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-chip);
   background: var(--surface-2);
   color: var(--text);
   font: inherit;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  text-align: left;
 }
-.clicker .shop [aria-disabled="true"] {
+.clicker .chips [aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.clicker .design label {
+  display: grid;
+  grid-template-columns: 8.5em 1fr 1.5em;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+}
+.clicker .design input {
+  accent-color: var(--accent);
+}
+.clicker .design label b {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.clicker .design .nav {
+  margin-top: 8px;
+  padding-top: 0;
+}
+.clicker .recipe {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+}
+/* the guest speaker: the talk in effect, and the three on offer */
+.clicker .boost {
+  padding: 4px 10px;
+  border-radius: 99px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+.clicker .talks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.clicker .talks p {
+  grid-column: 1 / -1;
+}
+.clicker .talks button {
+  min-height: var(--h-btn);
+  padding: 4px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-2));
+  color: var(--text);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+/* the club: members, tired, trained, moved on; then what each wheel of the family does */
+.clicker .stats.crew {
+  grid-template-columns: repeat(4, 1fr);
+}
+.clicker .rows > p:not(.note) {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+.clicker .rows > .btn {
+  justify-self: center;
+}
+/* a row without a picture or a count: a stake's odds, a branch of the tree */
+.clicker .row.odds {
+  grid-template-columns: 1fr auto;
+  padding-left: 14px;
+  background: var(--surface-2);
+}
+/* the club room's wall: every banner there is, the ones won in colour */
+.clicker .wall {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.clicker .wall span {
+  padding: 4px 9px;
+  border-radius: var(--r-chip);
+  background: var(--surface-2);
+  font-size: 0.76rem;
+  font-weight: 600;
   opacity: 0.45;
+  filter: grayscale(1);
 }
-.clicker .shop span {
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 400;
-  white-space: nowrap;
+.clicker .wall .won {
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface-2));
+  opacity: 1;
+  filter: none;
+}
+.clicker .rows > .skip {
+  justify-self: center;
+}
+.clicker .rows > .pins {
+  font-size: 2rem;
+  text-align: center;
 }
