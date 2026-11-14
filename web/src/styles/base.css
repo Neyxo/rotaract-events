@@ -66,7 +66,11 @@ html {
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
 }
+/* the full-bleed pieces (the compact head, section headings) are 100vw wide. Samsung Internet ignores html's overflow-x and widens the
+   page to fit anything that pokes out; wider page, wider vw, wider bleed: the page grows until it is several screens wide. clip on body
+   (not propagated to the viewport, unlike html's) keeps that overflow out of the page width, and unlike hidden it leaves sticky working. */
 body {
+  overflow-x: clip;
   margin: 0;
   background: var(--bg);
   color: var(--text);
