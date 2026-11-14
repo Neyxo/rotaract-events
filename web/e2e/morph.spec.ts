@@ -426,7 +426,13 @@ test.describe("club head", () => {
     page,
   }) => {
     await open(page, CLUB);
-    const bg = () => page.locator(CLUB.head).evaluate((el) => getComputedStyle(el).backgroundImage);
+    // the colour is the head's ::before: only that bleeds to the screen's edges, the head itself stays in the page's column
+    const bg = () => page.locator(CLUB.head).evaluate((el) => getComputedStyle(el, "::before").backgroundImage);
+    const bleed = () =>
+      page.locator(CLUB.head).evaluate((el) => {
+        const [r, b] = [el.getBoundingClientRect(), getComputedStyle(el, "::before")];
+        return { left: r.left + parseFloat(b.left), right: r.right - parseFloat(b.right) };
+      });
     const c0 = (await crest(page))!;
     const s0 = await snap(page, CLUB.head);
     expect(Math.round(c0.width)).toBe(56);
@@ -442,10 +448,11 @@ test.describe("club head", () => {
     await expect.poll(async () => Math.round((await crest(page))!.width)).toBe(30);
     const s = await snap(page, CLUB.head);
     const c = (await crest(page))!;
-    expect(
-      near(s.head.left, 0) && near(s.head.right, s.vw),
-      `bar spans ${s.head.left}..${s.head.right} of ${s.vw}`,
-    ).toBe(true);
+    const b = await bleed();
+    expect(near(b.left, 0) && near(b.right, s.vw), `colour spans ${b.left}..${b.right} of ${s.vw}`).toBe(true);
+    // the crest and the button stay in the column, whatever the browser makes of 100vw
+    expect(c.x).toBeGreaterThanOrEqual(s.head.left);
+    expect(s.go.left + s.go.w).toBeLessThanOrEqual(s.head.right);
     expect(c.y).toBeGreaterThanOrEqual(s.head.top);
     expect(c.y + c.height).toBeLessThanOrEqual(s.head.bottom);
     expect(s.h1Left).toBeGreaterThanOrEqual(c.x + c.width); // the name starts after the crest

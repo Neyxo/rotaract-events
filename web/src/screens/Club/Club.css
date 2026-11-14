@@ -5,9 +5,20 @@
   position: sticky;
   display: flow-root;
   height: 64px;
-  margin: 0 calc(-16px - var(--m) * (50vw - 50% - 16px));
+  margin: 0 -16px;
   padding: 0 18px;
   color: var(--on-c);
+}
+/* the colour, bled to the screen's edges once compact. Only this background is as wide as 100vw: where the browser's vw is wider than
+   the page (Samsung Internet), a head that wide had its crest, name and button at its two ends, off the screen */
+.clubpage .cstick::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--m) * (50% - 50vw));
+  right: calc(var(--m) * (50% - 50vw));
   background: linear-gradient(
     90deg,
     color-mix(in srgb, var(--c) calc(var(--m) * 100%), transparent),
