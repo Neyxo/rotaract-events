@@ -106,7 +106,7 @@ test.describe("first visit", () => {
     await expect(ctx).toHaveText("On your phone, in the Google Calendar app");
     await expect(ob.locator(".sfstep")).toContainText("Turn on Sync.");
     await ob.getByRole("button", { name: "Done", exact: true }).click();
-    await expect(h2).toHaveText("Done!");
+    await expect(h2).toHaveText("Check your calendar");
     await expect(ob.getByRole("button", { name: "Not now" })).toHaveCount(0);
     await ob.getByRole("button", { name: "Done", exact: true }).click();
     await expect(ob).toBeHidden();

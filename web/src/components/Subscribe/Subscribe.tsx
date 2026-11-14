@@ -5,6 +5,7 @@ import { useState, type ReactNode } from "react";
 import { t, tx } from "../../i18n";
 import { IOS, PHONE } from "../../lib/geo";
 import { clubVars } from "../../lib/color";
+import { fmt, isPast } from "../../lib/dates";
 import { href } from "../../lib/route";
 import type { Club } from "../../lib/types";
 import type { AppData } from "../../lib/data";
@@ -507,6 +508,19 @@ interface FlowAt {
 }
 const FLOW_START: FlowAt = { feed: null, others: false, way: null, via: null, i: 0, finished: false };
 
+/** the flow's end: no "it worked", the app can't see the calendar. It names the next event to look for instead, so a skipped step shows. */
+function DoneText({ feed }: { feed: Feed | null }) {
+  const S = tx("sf");
+  const next = useData().data.events.find((e) => !isPast(e) && (!feed?.c || e.clubs.includes(feed.c.id)));
+  return (
+    <p className="sft">
+      {next
+        ? S.done_t.replace("{date}", fmt.full.format(new Date(next.start))).replace("{title}", next.title)
+        : S.done_none}
+    </p>
+  );
+}
+
 /** The flow's state, for whatever frames it (a popup, the welcome steps): the title, the content, where Back goes (if anywhere),
  *  the main button (Next / Done; none while a tap on a row moves on), and whether it has reached its end.
  *  start: the calendar it is about, which skips the choice. */
@@ -545,7 +559,7 @@ export function useSubFlow(feeds: Feed[], { start, pickTitle }: { start?: Feed; 
       body: (
         <div className="sfstep">
           <Vis kind="done" />
-          <p className="sft">{S.done_t}</p>
+          <DoneText feed={feed} />
           <div className="ways">{row("again", <Icon name="calendar" />, S.another, null, again)}</div>
           <a className="meta sfhelp" href={href("subscribe")}>
             {S.trouble}

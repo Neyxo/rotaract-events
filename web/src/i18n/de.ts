@@ -529,8 +529,11 @@ const de: Messages = {
     sync_btn: "Sync-Einstellungen öffnen",
     sync_note: "In der Google-Kalender-App auf dem iPhone erscheint er von selbst.",
     show: "Zeig mir wie",
-    done: "Fertig!",
-    done_t: "Er ist in deinem Kalender und aktualisiert sich von selbst.",
+    done: "Kalender prüfen",
+    done_t:
+      "Du solltest jetzt abonniert sein. Schau zur Kontrolle am {date} in deinen Kalender: «{title}» sollte dort stehen.",
+    done_none:
+      "Du solltest jetzt abonniert sein. Neue Anlässe erscheinen in deinem Kalender, sobald sie angekündigt sind.",
     another: "Weiteren Kalender hinzufügen",
     trouble: "Klappt etwas nicht?",
     ui_add: "Kalender hinzufügen",

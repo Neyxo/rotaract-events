@@ -277,7 +277,10 @@ describe("adding a calendar", () => {
     expect(nav()).toEqual([["btn", t("done")]]);
     btn(t("done"));
     expect(title()).toBe(S.done);
-    dlg().getByText(S.done_t);
+    // it names the next event to look for in the calendar, not a success it cannot see
+    expect(q(".sft")?.textContent).toMatch(
+      /^You should now be subscribed. To check, open your calendar on .+: “.+” should be there.$/,
+    );
     // nothing to go on to
     expect([vis(), q(".stepper"), q(".nav")]).toEqual(["", null, null]);
     expect(dlg().getByRole("link", { name: S.trouble }).getAttribute("href")).toBe("#/subscribe");

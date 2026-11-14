@@ -533,8 +533,11 @@ const fr: Messages = {
     sync_btn: "Ouvrir les réglages de synchronisation",
     sync_note: "Dans l'app Google Agenda sur iPhone, il apparaît tout seul.",
     show: "Montrez-moi comment",
-    done: "C'est fait !",
-    done_t: "Il est dans votre calendrier et se met à jour tout seul.",
+    done: "Vérifiez votre calendrier",
+    done_t:
+      "Vous devriez maintenant être abonné·e. Pour vérifier, ouvrez votre calendrier au {date} : « {title} » devrait y figurer.",
+    done_none:
+      "Vous devriez maintenant être abonné·e. Les nouveaux événements apparaîtront dans votre calendrier dès leur annonce.",
     another: "Ajouter un autre calendrier",
     trouble: "Quelque chose ne marche pas ?",
     ui_add: "Ajouter un agenda",
