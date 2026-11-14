@@ -103,6 +103,7 @@ const it: Messages = {
   register: "Iscriviti",
   add_cal: "Aggiungi al calendario",
   share_event: "Condividi",
+  story_hint: "Link copiato: aggiungilo alla storia con l'adesivo Link",
   prev_month: "Mese precedente",
   next_month: "Mese successivo",
   today: "Oggi",

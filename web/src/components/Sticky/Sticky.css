@@ -20,8 +20,10 @@
   top: calc(var(--bt, 120px) * (1 - var(--m)) + 15px * var(--m));
   height: calc(var(--h-btn) - 6px * var(--m));
   padding: 0 calc(16px - 7px * var(--m));
+  min-width: calc(var(--gw, 0px) * (1 - var(--m)));
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: calc(6px * (1 - var(--m)));
   border-radius: 99px;
   font-size: 0.88rem;

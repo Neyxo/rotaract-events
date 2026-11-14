@@ -73,9 +73,12 @@ export function useMorphHead(ref: RefObject<HTMLElement | null>): void {
     parent.style.setProperty("--bt", bt + "px");
     const go = node.querySelector<HTMLElement>(".go");
     const ph = parent.querySelector<HTMLElement>(".ph");
+    // the placeholder starts as big as the button; where its row lets it grow (the event's), the button at rest follows (--gw)
+    const fit = () => ph && parent.style.setProperty("--gw", ph.offsetWidth + "px");
     if (go && ph) {
       ph.style.width = go.offsetWidth + "px";
       ph.style.height = go.offsetHeight + "px";
+      fit();
     }
     const root = document.documentElement;
     const top = bar.offsetHeight;
@@ -95,10 +98,12 @@ export function useMorphHead(ref: RefObject<HTMLElement | null>): void {
     };
     addEventListener("scroll", tick, { passive: true });
     addEventListener("resize", tick);
+    addEventListener("resize", fit);
     tick();
     return () => {
       removeEventListener("scroll", tick);
       removeEventListener("resize", tick);
+      removeEventListener("resize", fit);
       root.style.removeProperty("--stick");
     };
   }, [ref]);

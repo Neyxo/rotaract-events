@@ -120,6 +120,23 @@ export async function share(data: { title: string; text?: string; url: string })
   await copy(data.url);
   return true;
 }
+/** A picture for a story (Instagram, or wherever the share sheet leads). Stories take no link from a website: it is copied, for the
+ *  link sticker. Where files can't be shared (desktop browsers), the picture is downloaded instead. */
+export async function shareStory(picture: Promise<File>, url: string): Promise<void> {
+  // first, while the click still counts as a user gesture; the toast too, since the share sheet leaves the page
+  await navigator.clipboard.writeText(url).catch(() => {});
+  toast(t("story_hint"));
+  const file = await picture;
+  if (navigator.canShare?.({ files: [file] })) {
+    try {
+      return await navigator.share({ files: [file] });
+    } catch (err) {
+      if ((err as Error).name === "AbortError") return; // dismissed; anything else (gesture expired): download
+    }
+  }
+  // ponytail: the object URL is never revoked (revoking at once cancels the download in Safari); one picture per click
+  Object.assign(document.createElement("a"), { href: URL.createObjectURL(file), download: file.name }).click();
+}
 /** to the clipboard, and say so */
 export async function copy(text: string): Promise<void> {
   await navigator.clipboard.writeText(text);
@@ -168,12 +185,14 @@ export const IcsDl = ({ to, onDone }: { to: string; onDone: () => void }) => (
 );
 
 /** A calendar file for one event (.ics): a one-time copy, not a subscription. A tap first says so and how to add it, then downloads. */
-export function IcsLink({ href: to, children }: { href: string; children: ReactNode }) {
+export function IcsLink({ href: to, label, children }: { href: string; label?: string; children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <a
         href={to}
+        aria-label={label}
+        title={label}
         onClick={(ev) => {
           ev.preventDefault();
           setOpen(true);

@@ -1,5 +1,6 @@
 // The event screen: a frosted card on the lead club's colour wash, with a head that sticks and compacts as you
 // scroll, the facts, the description, then up to three more events of the same clubs.
+import { useState } from "react";
 import type { ScreenProps } from "../../App";
 import { t } from "../../i18n";
 import { club, eventById } from "../../lib/data";
@@ -8,7 +9,8 @@ import { dayN, fmt, isPast, metaLine, relDay, whenLong } from "../../lib/dates";
 import { mapsUrl } from "../../lib/geo";
 import { href } from "../../lib/route";
 import { shareUrl } from "../../lib/share";
-import type { Event as Ev } from "../../lib/types";
+import { storyImage } from "../../lib/story";
+import type { Club as ClubT, Event as Ev } from "../../lib/types";
 import {
   ClubChip,
   DatePane,
@@ -19,7 +21,10 @@ import {
   IcsLink,
   StarButton,
   Status,
+  copy,
+  Popup,
   share,
+  shareStory,
   GoPlace,
   MorphHead,
   Sh,
@@ -40,13 +45,57 @@ function goLabel(e: Ev): string {
   return onPolaris(e) ? t("open_polaris") : t("details");
 }
 
-// e/<id>.html: a small page with the event's link preview that forwards into the app
-const shareEvent = (e: Ev) =>
-  share({
-    title: e.title,
-    text: `${e.title} · ${fmt.full.format(new Date(e.start))}${e.location ? " · " + e.location : ""}`,
-    url: shareUrl({ event: e.id }),
-  });
+/** Where to share the event: on a phone a story picture or LinkedIn; the system's share sheet (where there is one), or the copied link.
+ *  The link is e/<id>.html: a small page with the event's link preview that forwards into the app. */
+function SharePopup({ e, lead, onClose }: { e: Ev; lead: ClubT; onClose: () => void }) {
+  const url = shareUrl({ event: e.id });
+  const text = `${e.title} · ${fmt.full.format(new Date(e.start))}${e.location ? " · " + e.location : ""}`;
+  const phone = window.matchMedia?.("(pointer: coarse)").matches;
+  const then = (go: Promise<unknown>) => {
+    void go;
+    onClose();
+  };
+  return (
+    <Popup title={t("share")} onClose={onClose}>
+      <div className="choice sharepop">
+        {/* phones (touch screens) only: a story is posted from the Instagram app; a desktop shares by the link */}
+        {phone ? (
+          <>
+            <button
+              className="btn big alt"
+              type="button"
+              onClick={() => then(shareStory(storyImage(e, lead, url), url))}
+            >
+              <Icon name="instagram" />
+              Instagram Story
+            </button>
+            {/* LinkedIn reads the preview (title, picture) from the share page itself */}
+            <a
+              className="btn big alt"
+              href={"https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(url)}
+              target="_blank"
+              rel="noopener"
+              onClick={onClose}
+            >
+              <Icon name="linkedin" />
+              LinkedIn
+            </a>
+          </>
+        ) : null}
+        {"share" in navigator ? (
+          <button className="btn big alt" type="button" onClick={() => then(share({ title: e.title, text, url }))}>
+            <Icon name="share" />
+            {t("share_send")}
+          </button>
+        ) : null}
+        <button className="btn big alt" type="button" onClick={() => then(copy(url))}>
+          <Icon name="ext" />
+          {t("copy_link")}
+        </button>
+      </div>
+    </Popup>
+  );
+}
 
 function deadline(e: Ev): string {
   const n = dayN(e.deadline);
@@ -118,6 +167,8 @@ function Facts({ e }: { e: Ev }) {
 function Detail({ e }: { e: Ev }) {
   const D = useData();
   const polaris = onPolaris(e);
+  const lead = club(D, e.clubs[0] ?? "");
+  const [sharing, setSharing] = useState(false);
   const more = D.data.events
     .filter((x) => x.id !== e.id && !isPast(x) && x.clubs.some((c) => e.clubs.includes(c)))
     .slice(0, 3);
@@ -128,23 +179,23 @@ function Detail({ e }: { e: Ev }) {
         <Head e={e} />
         <div className="links">
           <GoPlace />
-          {/* members-only: Polaris' calendar file needs a login; international events aren't on Polaris at all */}
-          {e.members || !polaris ? null : (
-            <IcsLink href={e.url.replace("/agenda/show/", "/agenda/ical/")}>
-              <Icon name="calendar" />
-              {t("add_cal")}
-            </IcsLink>
-          )}
-          <button type="button" className="linkbtn" onClick={() => void shareEvent(e)}>
+          <button type="button" className="linkbtn" onClick={() => setSharing(true)}>
             <Icon name="share" />
             {t("share_event")}
           </button>
+          {/* members-only: Polaris' calendar file needs a login; international events aren't on Polaris at all */}
+          {e.members || !polaris ? null : (
+            <IcsLink href={e.url.replace("/agenda/show/", "/agenda/ical/")} label={t("add_cal")}>
+              <Icon name="download" />
+            </IcsLink>
+          )}
         </div>
         <Facts e={e} />
         {e.description || polaris ? <p className="desc">{e.description || t("no_desc")}</p> : null}
         {e.members ? <p className="desc">{t("members_note")}</p> : null}
         {e.layer === "rotary" ? <p className="desc">{t("rotary_note")}</p> : null}
       </article>
+      {sharing && <SharePopup e={e} lead={lead} onClose={() => setSharing(false)} />}
       {polaris ? null : <HelpLinks keys={["intl"]} />}
       <Sh>{t("more_events")}</Sh>
       {more.map((x, i) => (

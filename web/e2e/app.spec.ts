@@ -252,6 +252,7 @@ test.describe("member", () => {
     await expect(star).toHaveAttribute("aria-pressed", "true");
     expect(await store(page, "rac.saved")).toEqual([EVENT]);
     await page.getByRole("button", { name: "Share" }).click();
+    await page.getByRole("button", { name: "Copy link" }).click();
     await expect(page.locator("#toast")).toHaveText("Link copied");
     expect(await copied(page)).toBe(new URL(`e/${EVENT}.html`, page.url()).href);
   });

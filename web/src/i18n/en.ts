@@ -108,6 +108,7 @@ const en = {
   register: "Register",
   add_cal: "Add to calendar",
   share_event: "Share",
+  story_hint: "Link copied: add it to your story with the link sticker",
   prev_month: "Previous month",
   next_month: "Next month",
   today: "Today",

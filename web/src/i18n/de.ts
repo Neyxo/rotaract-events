@@ -104,6 +104,7 @@ const de: Messages = {
   register: "Anmelden",
   add_cal: "In Kalender",
   share_event: "Teilen",
+  story_hint: "Link kopiert: Füge ihn mit dem Link-Sticker in deine Story ein",
   prev_month: "Vorheriger Monat",
   next_month: "Nächster Monat",
   today: "Heute",

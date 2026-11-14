@@ -128,14 +128,28 @@
   vertical-align: -2px;
   margin-right: 4px;
 }
-/* the event's three buttons stay on one line down to small phones */
+/* the event's three buttons stay on one line down to small phones and fill it: the primary one most, the calendar icon not at all */
 .evdetail .links > a,
 .evdetail .links > button {
   padding: 0 12px;
   white-space: nowrap;
 }
+.evdetail .links > .ph {
+  flex: 2 0 auto;
+}
+.evdetail .links > button {
+  flex: 1 1 auto;
+}
 @media (max-width: 359px) {
   .evdetail .links {
     flex-wrap: wrap;
   }
+}
+/* the share popup: one full-width button per way to share */
+.sharepop .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
 }

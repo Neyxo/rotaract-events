@@ -112,12 +112,15 @@ describe("event screen", () => {
     expect(screen.getByRole("status").textContent).toBe(t("saved"));
   });
 
-  it("share: the e/<id>.html page, by the share sheet or copied", async () => {
+  it("share: a popup; the e/<id>.html page, by the share sheet or copied", async () => {
     const share = vi.fn(async () => {});
     Object.defineProperty(navigator, "share", { value: share, configurable: true });
     const { unmount } = at("219091");
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: t("share_event") }));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: t("share_send"), hidden: true }));
     });
     expect(share).toHaveBeenCalledWith(expect.objectContaining({ url: new URL("e/219091.html", location.href).href }));
     unmount();
@@ -127,6 +130,9 @@ describe("event screen", () => {
     at("219091");
     await act(async () => {
       fireEvent.click(screen.getByRole("button", { name: t("share_event") }));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: t("copy_link"), hidden: true }));
     });
     expect(writeText).toHaveBeenCalledWith(new URL("e/219091.html", location.href).href);
     expect(screen.getByRole("status").textContent).toBe(t("copied"));

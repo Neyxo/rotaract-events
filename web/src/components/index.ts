@@ -14,6 +14,7 @@ export {
   Warn,
   feedUrls,
   share,
+  shareStory,
   copy,
   LangSelect,
   type HelpKey,

@@ -104,6 +104,7 @@ const fr: Messages = {
   register: "S'inscrire",
   add_cal: "Ajouter au calendrier",
   share_event: "Partager",
+  story_hint: "Lien copié : ajoute-le à ta story avec le sticker Lien",
   prev_month: "Mois précédent",
   next_month: "Mois suivant",
   today: "Aujourd'hui",
