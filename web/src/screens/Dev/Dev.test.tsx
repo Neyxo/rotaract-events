@@ -6,7 +6,7 @@ import { loadData } from "../../lib/data";
 import { parseHash } from "../../lib/route";
 import type { Status } from "../../lib/types";
 import { Toast } from "../../components";
-import Dev, { nextRun, runHealth } from "./Dev";
+import Dev, { browserName, cardState, nextRun, runHealth } from "./Dev";
 
 const STATUS: Status = {
   generated: "20261111T005856Z",
@@ -147,19 +147,61 @@ describe("runHealth", () => {
   });
 });
 
+describe("cardState", () => {
+  const at = (ageHours: number, runs: ReturnType<typeof run>[] | null = RUNS, failures = 0) =>
+    cardState({ runs, failures, ageHours });
+  it("green when the last run worked, whatever older runs did; yellow only while a run is going; red for a failed last run, failures or old data", () => {
+    expect(at(8)).toMatchObject({ all: "ok", app: "ok", data: "ok", running: null }); // an older run failed: the strip shows it
+    expect(at(8, null)).toMatchObject({ all: "ok", app: "ok", data: "ok" }); // a local build
+    const going = run(null, "2026-11-11T09:58:00Z", 3);
+    expect(at(8, [going, ...RUNS])).toMatchObject({ all: "warn", app: "warn", data: "ok", running: going });
+    expect(at(8, [run("failure", "2026-11-11T09:00:00Z"), ...RUNS])).toMatchObject({
+      all: "bad",
+      app: "bad",
+      data: "bad",
+    });
+    expect(at(8, [run("cancelled", "2026-11-11T09:00:00Z"), ...RUNS]).all).toBe("ok"); // replaced by a newer push
+    expect(at(31)).toMatchObject({ all: "bad", app: "ok", data: "bad" }); // the app's banner shows from 30 h
+    expect(at(8, RUNS, 1)).toMatchObject({ all: "bad", app: "ok", data: "bad" });
+  });
+});
+
+describe("browserName", () => {
+  it("names the browser and its version, Samsung's and Edge's before the Chrome they also claim", () => {
+    const android = "Mozilla/5.0 (Linux; Android 14; SM-S911B) AppleWebKit/537.36 (KHTML, like Gecko)";
+    expect(browserName(`${android} SamsungBrowser/27.0 Chrome/125.0.0.0 Mobile Safari/537.36`)).toBe(
+      "Samsung Internet 27.0",
+    );
+    expect(browserName(`${android} Chrome/131.0.6778.39 Mobile Safari/537.36`)).toBe("Chrome 131.0.6778.39");
+    expect(browserName(`${android} Chrome/131.0.0.0 Mobile Safari/537.36 EdgA/131.0.2903.70`)).toBe(
+      "Edge 131.0.2903.70",
+    );
+    expect(
+      browserName("Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) Version/18.1 Mobile/15E148 Safari/604.1"),
+    ).toBe("Safari 18.1");
+    expect(browserName("curl/8")).toBe("unknown");
+  });
+});
+
 describe("developer screen", () => {
   it("overview: overall state, the runs as dots, the build's age and a card per page", async () => {
     status = { ...STATUS, run: "https://github.com/x/runs/1" };
     const m = await page();
-    expect(m.getByText("Working, have a look").className).toBe("devhealth warn"); // an older run failed, built 8 h ago
+    // an older run failed: only the strip and its line say so, the card stays green
+    expect(document.querySelector(".devhealth")!.className).toBe("devhealth ok");
+    m.getByText("All good");
+    m.getByText("Last update");
     expect(document.querySelectorAll(".devstrip i").length).toBe(2);
     expect(m.getByRole("link", { name: "Run history" }).getAttribute("href")).toBe("#/dev/runs");
-    // the app (built when the tests started, so its age is not pinned here) apart from the data it shows
-    expect(
-      m.getByText(/^App · version \d+\.\d+\.\d+ · updated .+, \d+ (min|h) ago · (local build|commit [0-9a-f]{7})$/)
-        .className,
-    ).toBe("devstate ok");
-    expect(m.getByText("Data · read 11 Nov, 01:58, 8 h ago · by a local run").className).toBe("devstate warn");
+    // the app (built when the tests started, so its age is not pinned here) apart from the data it shows, each age in its own place
+    const [app, data] = [...document.querySelectorAll<HTMLElement>(".devlight")];
+    expect(app!.className).toBe("devlight ok");
+    expect(app!.querySelector("span")!.textContent).toMatch(/^version \d+\.\d+\.\d+$/);
+    expect(app!.querySelector("time")!.textContent).toMatch(/^\d+ (min|h) ago$/);
+    expect(app!.querySelector("small")!.textContent).toMatch(/ · (local build|commit [0-9a-f]{7})$/);
+    expect(data!.className).toBe("devlight ok"); // 8 h old: a night's run that starts late is fine
+    expect(data!.querySelector("time")!.textContent).toBe("8 h ago");
+    expect(data!.querySelector("small")!.textContent).toBe("11 Nov, 01:58 · local run");
     m.getByText(/^Next nightly run about /);
     m.getByText("✓ No failures in the last run");
     expect(
@@ -172,6 +214,7 @@ describe("developer screen", () => {
       "#/dev/commits",
       "#/dev/build",
       "#/dev/links",
+      "#/dev/dark",
       "#/dev/preview",
       "#/dev/device",
       "#/dev/checks",
@@ -190,11 +233,18 @@ describe("developer screen", () => {
     };
     const m = await page();
     expect(document.querySelector(".devstrip")).toBeNull(); // a local build: no runs asked from GitHub
-    expect(m.getByText("Something is broken").className).toBe("devhealth bad");
+    m.getByText("Something is broken");
+    expect(document.querySelector(".devhealth")!.className).toBe("devhealth bad");
+    expect([...document.querySelectorAll(".devlight")].map((l) => l.className)).toEqual([
+      "devlight ok",
+      "devlight bad",
+    ]);
     m.getByText("bern: 500");
     expect(m.queryByText(/No failures/)).toBeNull();
     expect(m.getByText("luzern: 2 agenda list item(s) without a readable date").className).toBe("devstate warn");
-    m.getByText(/^Data · read .+ · by the run of commit abc1234$/);
+    expect(document.querySelectorAll<HTMLElement>(".devlight small")[1]!.textContent).toMatch(
+      / · run of commit abc1234$/,
+    );
   });
 
   it("runs and commits pages, the run that built this page marked", async () => {
@@ -209,6 +259,28 @@ describe("developer screen", () => {
     expect(m.getByRole("link", { name: "abc1234 Fix the map" }).getAttribute("href")).toBe(
       "https://github.com/x/commit/abc1234",
     );
+  });
+
+  it("dark mode check: what the page is told, the samples, and a declaration that is stored for the next load", async () => {
+    document.documentElement.dataset.theme = "light";
+    const m = await page("dark");
+    m.getByRole("heading", { level: 1, name: "Dark mode check" });
+    const report = Object.fromEntries(
+      [...document.querySelectorAll(".devdark div")].map((d) => [
+        d.querySelector("dt")!.textContent,
+        d.querySelector("dd")!.textContent,
+      ]),
+    );
+    expect(report).toMatchObject({
+      "Theme in use": "light",
+      "Theme chosen in Settings": "none",
+      "Forced darkening found at start": "no",
+    });
+    expect(document.querySelectorAll(".devsamples li").length).toBe(7);
+    fireEvent.change(m.getByRole("combobox", { name: "Declare a colour scheme" }), { target: { value: "dark" } });
+    expect([localStorage.getItem("rac.devScheme"), localStorage.getItem("rac.dev")]).toEqual(['"dark"', "true"]);
+    localStorage.removeItem("rac.devScheme");
+    localStorage.removeItem("rac.dev");
   });
 
   it("build page: the run's steps, counts and links", async () => {

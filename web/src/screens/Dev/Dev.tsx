@@ -35,7 +35,7 @@ interface Device {
   cached: number;
   keys: string[];
 }
-type PreviewKey = Extract<StoreKey, "rac.devGuest" | "rac.devNew" | "rac.devStale">;
+type PreviewKey = Extract<StoreKey, "rac.devGuest" | "rac.devNew" | "rac.devStale" | "rac.devSchemeRule">;
 
 const REPO = __REPO__;
 const ALL_RUNS = `${REPO}/actions/workflows/feeds.yml`;
@@ -286,12 +286,33 @@ const runClass = (state: string, ended: boolean): Level => {
   if (state === "success") return "ok";
   return ended ? "bad" : "warn";
 };
-/** how old the data is, in hours: fine within a night's run, late after that, stale past 30 hours (the app's banner) */
-const levelOfAge = (hours: number): Level => {
-  if (hours < 8) return "ok";
-  return hours < 30 ? "warn" : "bad";
-};
-const HEALTH_TEXT: Record<Level, string> = { ok: "All good", warn: "Working, have a look", bad: "Something is broken" };
+/** how old the data is, in hours: fine until the app shows its banner (30 h); a nightly run that starts late is no problem */
+const levelOfAge = (hours: number): Level => (hours < 30 ? "ok" : "bad");
+
+/** The card's three lights. Only the newest finished run counts (older failures show in the strip of dots alone), and yellow
+ *  means one thing: a run is going right now. The app is what the last run built; the data is also red when it is too old or a
+ *  club could not be read. */
+export function cardState({
+  runs,
+  failures,
+  ageHours,
+}: {
+  runs: GhRunRow[] | null;
+  failures: number;
+  ageHours: number;
+}): { all: Level; app: Level; data: Level; running: GhRunRow | null } {
+  const running = runs?.find((r) => r.status !== "completed") ?? null;
+  const last = runs?.find(
+    (r) => r.status === "completed" && r.conclusion !== "cancelled" && r.conclusion !== "skipped",
+  );
+  const failed = !!last && last.conclusion !== "success";
+  let app: Level = "ok";
+  if (failed) app = "bad";
+  else if (running) app = "warn";
+  const data = worst(levelOfAge(ageHours), failures || failed ? "bad" : "ok");
+  return { all: worst(app, data), app, data, running };
+}
+const HEALTH_TEXT: Record<Level, string> = { ok: "All good", warn: "Updating", bad: "Something is broken" };
 
 /** the runs' history in one line: green when every finished run worked, yellow when an older one failed, red when the last one did.
  *  Cancelled runs (a newer push replaced them) don't count. */
@@ -385,17 +406,20 @@ function Commits() {
 }
 
 /** how old this build's data is: when the clubs were last read, not when the app was built */
-function useAge(): { gen: Date; age: number; level: Level } {
+function useAge(): { gen: Date; age: number } {
   const { data } = useData();
   const gen = new Date(data.generated);
-  const age = (Date.now() - gen.getTime()) / 36e5;
-  return { gen, age, level: levelOfAge(age) };
+  return { gen, age: (Date.now() - gen.getTime()) / 36e5 };
 }
-/** "11 Nov, 01:58, 8 h ago"; minutes under an hour, so a deploy shows right away. Never negative (a pretend date in the past). */
-function stampAgo(d: Date): string {
+/** "8 h ago"; minutes under an hour, so a deploy shows right away; days past two. Never negative (a pretend date in the past). */
+function ago(d: Date): string {
   const min = Math.max(0, Math.round((Date.now() - d.getTime()) / 6e4));
-  return `${fmt.stamp.format(d)}, ${min < 60 ? min + " min" : Math.round(min / 60) + " h"} ago`;
+  if (min < 60) return `${min} min ago`;
+  const h = Math.round(min / 60);
+  return h < 48 ? `${h} h ago` : `${Math.round(h / 24)} days ago`;
 }
+/** "11 Nov, 01:58, 8 h ago" */
+const stampAgo = (d: Date) => `${fmt.stamp.format(d)}, ${ago(d)}`;
 // the app itself: built on every push; the data only when the clubs are read (nightly, or a push of the scraper or the club list)
 const APP_BUILT = new Date(__APP_BUILT__);
 const appCommit = __APP_COMMIT__ ? `commit ${__APP_COMMIT__}` : "local build";
@@ -433,29 +457,76 @@ function RunsState({
   );
 }
 
+/** one line of the card: light, name, what it is (one line, cut short when long), its age right-aligned where the eye finds it, and
+ *  the details small below */
+function Light({
+  level,
+  name,
+  what,
+  age,
+  sub,
+}: {
+  level: Level;
+  name: string;
+  what: string;
+  age: string;
+  sub: string;
+}) {
+  return (
+    <div className={cx("devlight", level)}>
+      <i />
+      <b>{name}</b>
+      <span>{what}</span>
+      <time>{age}</time>
+      <small>{sub}</small>
+    </div>
+  );
+}
+
 function Health({ st }: { st: Stat }) {
   const fromGh = !!st.run?.startsWith("https://github.com/"); // a local build has no runs of its own: no request
   const r = useGh<{ workflow_runs: GhRunRow[] }>(fromGh ? RUNS : null);
-  const { gen, level: ageLevel } = useAge();
+  const { gen, age } = useAge();
+  const n = useData().data.events.length;
   const warnings = st.warnings ?? [];
   const runs = r && r !== "error" ? r.workflow_runs : null;
   const h = runs ? runHealth(runs) : null;
-  const all = worst(ageLevel, h?.level ?? "ok", st.failures.length ? "bad" : "ok", warnings.length ? "warn" : "ok");
+  const c = cardState({ runs, failures: st.failures.length, ageHours: age });
+  // what changed last, app or data: after a push, the one line to look for
+  const latest = APP_BUILT > gen ? APP_BUILT : gen;
   return (
-    <section className="glass">
-      <p className={cx("devhealth", all)}>
+    <section className="glass devcard">
+      <div className={cx("devhealth", c.all)}>
         <i />
-        {HEALTH_TEXT[all]}
-      </p>
-      {/* an old app is no problem, old data is */}
-      <p className="devstate ok">
-        <i />
-        {`App · version ${version} · updated ${stampAgo(APP_BUILT)} · ${appCommit}`}
-      </p>
-      <p className={cx("devstate", ageLevel)}>
-        <i />
-        {`Data · read ${stampAgo(gen)}` + (st.commit ? ` · by the run of commit ${st.commit}` : " · by a local run")}
-      </p>
+        <b>{HEALTH_TEXT[c.all]}</b>
+        <span className="devlast">
+          <small>Last update</small>
+          <time>{ago(latest)}</time>
+        </span>
+      </div>
+      {c.running ? (
+        <p className="meta devrunning">
+          <a href={c.running.html_url} target="_blank" rel="noopener">
+            {`A run started ${ago(new Date(c.running.created_at))} (${c.running.event === "schedule" ? "nightly" : c.running.event}, ${c.running.head_sha.slice(0, 7)})`}
+          </a>
+        </p>
+      ) : null}
+      <div className="devlights">
+        <Light
+          level={c.app}
+          name="App"
+          what={`version ${version}`}
+          age={ago(APP_BUILT)}
+          sub={`${fmt.stamp.format(APP_BUILT)} · ${appCommit}`}
+        />
+        <Light
+          level={c.data}
+          name="Data"
+          what={`${n} events`}
+          age={ago(gen)}
+          sub={`${fmt.stamp.format(gen)} · ${st.commit ? `run of commit ${st.commit}` : "local run"}`}
+        />
+      </div>
       <RunsState runs={runs} health={h} fromGh={fromGh} failed={r === "error"} />
       {st.failures.length ? (
         <pre className="devfail">{st.failures.join("\n")}</pre>
@@ -516,7 +587,7 @@ function Build({ st, own, up, rot }: { st: Stat; own: Event[]; up: Event[]; rot:
 /** an Off / On control for a preview switch; reads the key itself, not devFlag(), so it shows what is stored */
 /** Sets a preview switch and reloads. The switches only count while developer mode is on (lib/dev), and this screen also opens
  *  without it (#/dev typed in, or after an app reset): turning one on turns developer mode on, or it would silently do nothing. */
-function preview<K extends PreviewKey | "rac.devDate">(k: K, v: StoreKeys[K]): void {
+function preview<K extends PreviewKey | "rac.devDate" | "rac.devScheme">(k: K, v: StoreKeys[K]): void {
   store.set(k, v);
   if (v) store.set("rac.dev", true);
   reload();
@@ -843,12 +914,172 @@ function LinkLab() {
   );
 }
 
+// what the dark mode check can declare instead of the app's own "only light" / "only dark"; index.html applies it at load
+const SCHEMES: [string, string][] = [
+  ["", "The app's own (only light / only dark)"],
+  ["light dark", "light dark"],
+  ["dark", "dark"],
+  ["only dark", "only dark"],
+  ["light", "light"],
+  ["normal", "Nothing at all"],
+];
+/** the browser and its version, from the user agent; the order matters (Samsung's and Edge's also say Chrome, Chrome's says Safari) */
+export function browserName(ua: string): string {
+  for (const [re, name] of [
+    [/SamsungBrowser\/([\d.]+)/, "Samsung Internet"],
+    [/EdgA?\/([\d.]+)/, "Edge"],
+    [/Firefox\/([\d.]+)/, "Firefox"],
+    [/CriOS\/([\d.]+)/, "Chrome (iOS)"],
+    [/Chrome\/([\d.]+)/, "Chrome"],
+    [/Version\/([\d.]+).*Safari/, "Safari"],
+  ] as const) {
+    const m = re.exec(ua);
+    if (m) return `${name} ${m[1]}`;
+  }
+  return "unknown";
+}
+/** the colour the browser gives the system colour "canvas" under a scheme: dark under "light" means it darkens pages by force */
+function canvasUnder(scheme: string): string {
+  const p = document.body.appendChild(document.createElement("div"));
+  p.style.cssText = `display:none;background-color:canvas;color-scheme:${scheme}`;
+  const c = getComputedStyle(p).backgroundColor;
+  p.remove();
+  return c;
+}
+const media = (q: string) => matchMedia(q).matches;
+/** what a page can learn about dark mode in this browser, as label and value */
+function darkReport(): [string, string][] {
+  const html = document.documentElement;
+  const dev = store.get("rac.dev", false);
+  let reports = "no preference";
+  if (media("(prefers-color-scheme: dark)")) reports = "dark";
+  else if (media("(prefers-color-scheme: light)")) reports = "light";
+  return [
+    ["Browser", browserName(navigator.userAgent)],
+    ["Reports to the page", reports],
+    ["Forced darkening found at start", "forcedDark" in html.dataset ? "yes" : "no"],
+    ...(["light", "dark", "normal"] as const).map((k): [string, string] => [`"canvas" under ${k}`, canvasUnder(k)]),
+    ["Theme in use", html.dataset.theme ?? "?"],
+    ["Theme chosen in Settings", store.get("rac.theme", "none")],
+    [
+      "Declared in the page (meta)",
+      document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')?.content ?? "nothing",
+    ],
+    ["Declared in the styles", getComputedStyle(html).colorScheme],
+    ["prefers-color-scheme rule added", dev && store.get("rac.devSchemeRule", false) ? "yes" : "no"],
+    [
+      "Forced colours / more contrast",
+      `${media("(forced-colors: active)") ? "on" : "off"} / ${media("(prefers-contrast: more)") ? "on" : "off"}`,
+    ],
+  ];
+}
+// what the samples should look like: whatever the browser paints differently, it changed
+const SAMPLES: [label: string, look: ReactNode][] = [
+  ["white", <i key="w" style={{ background: "#fff" }} />],
+  ["black", <i key="b" style={{ background: "#000" }} />],
+  ["cranberry", <i key="c" style={{ background: "#d41367" }} />],
+  ["dark theme's card", <i key="d" style={{ background: "#211e28" }} />],
+  [
+    "black text on white",
+    <i key="t" style={{ background: "#fff", color: "#000" }}>
+      Aa
+    </i>,
+  ],
+  [
+    "logo on white",
+    <i key="l" style={{ background: "#fff" }}>
+      <img src="rotaract.svg" alt="" />
+    </i>,
+  ],
+  [
+    "crest on white",
+    <i key="r" style={{ background: "#fff" }}>
+      <img src="crests/luzern.svg" alt="" />
+    </i>,
+  ],
+];
+
+/** Why does a browser that darkens websites (Samsung Internet's "dark sites") still darken the app? What it tells a page, what it
+ *  paints over known colours, and switches that declare dark mode support in other ways. Each switch reloads: browsers decide at load. */
+function DarkCheck() {
+  const rows = darkReport();
+  const dev = store.get("rac.dev", false);
+  const scheme = dev ? store.get("rac.devScheme", "") : "";
+  const chosen = store.get("rac.theme", "");
+  const theme = (v: "light" | "dark" | "") => {
+    if (v) store.set("rac.theme", v);
+    else store.remove("rac.theme");
+    reload();
+  };
+  const report = () =>
+    navigator.clipboard
+      .writeText([...rows.map(([k, v]) => `${k}: ${v}`), `User agent: ${navigator.userAgent}`].join("\n"))
+      .then(() => toast("Report copied"));
+  return (
+    <>
+      <p className="meta">
+        Open this with the browser's dark mode for websites on and off, in the app's light and dark theme. Note which
+        samples look different from their label, then try the declarations below.
+      </p>
+      <dl className="devdark">
+        {rows.map(([k, v]) => (
+          <div key={k}>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+      <h3>Painted</h3>
+      <ul className="devsamples">
+        {SAMPLES.map(([label, look]) => (
+          <li key={label}>
+            {look}
+            <span>{label}</span>
+          </li>
+        ))}
+      </ul>
+      <h3>Try</h3>
+      <Row label="App theme">
+        <div className="seg">
+          {(["light", "dark", ""] as const).map((v) => (
+            <button key={v || "auto"} type="button" aria-pressed={chosen === v} onClick={() => theme(v)}>
+              {v ? v[0]!.toUpperCase() + v.slice(1) : "Not chosen"}
+            </button>
+          ))}
+        </div>
+      </Row>
+      <Row label="Declare">
+        <select
+          className="lang"
+          value={scheme}
+          aria-label="Declare a colour scheme"
+          onChange={(ev) => preview("rac.devScheme", ev.target.value)}
+        >
+          {SCHEMES.map(([v, label]) => (
+            <option key={v || "app"} value={v}>
+              {label}
+            </option>
+          ))}
+        </select>
+      </Row>
+      <Row label="Add a prefers-color-scheme rule">
+        <Switch k="rac.devSchemeRule" />
+      </Row>
+      <div className="links">
+        <Btn label="Copy report" onClick={() => void report()} />
+      </div>
+      <p className="meta devua">{navigator.userAgent}</p>
+    </>
+  );
+}
+
 // the pages under #/dev/<id>: title, one line for the overview's card, icon
 const PAGES = {
   runs: ["Runs", "Every build of the last weeks, green or not", "refresh"],
   commits: ["Commits", "What changed in the app, and when", "book"],
   build: ["This build", "Its run's steps, layers, counts and files", "info"],
   links: ["Link lab", "Which calendar link stays in the browser on a phone", "ext"],
+  dark: ["Dark mode check", "What this browser tells a page and paints in dark mode", "moon"],
   preview: ["Preview on this device", "Guest view, new marks, a pretend date", "phone"],
   device: ["This device", "Service worker, cache and stored settings", "laptop"],
   checks: ["Content checks", "What clubs could fix on Polaris", "alert"],
@@ -878,6 +1109,7 @@ export default function Dev({ route }: ScreenProps) {
           commits: () => <Commits />,
           build: () => <Build st={st} own={own} up={up} rot={rot.events} />,
           links: () => <LinkLab />,
+          dark: () => <DarkCheck />,
           preview: () => <Preview />,
           device: () => <DeviceInfo dev={dev} />,
           checks: () => (

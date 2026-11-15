@@ -454,8 +454,9 @@ test.describe("member", () => {
     await expect(page.locator("body")).toHaveAttribute("data-page", "dev");
     await expect(page.locator("main")).toContainText("e2e fixture warning: layout of one club changed");
     // the app and its data, each with its own age
-    await expect(page.locator("main .devstate", { hasText: /^App · version \d\S* · updated .+ ago · / })).toBeVisible();
-    await expect(page.locator("main .devstate", { hasText: /^Data · read .+ ago · / })).toBeVisible();
+    await expect(page.locator("main .devlight", { hasText: /^App\s*version \d\S*.+ ago/ })).toBeVisible();
+    await expect(page.locator("main .devlight", { hasText: /^Data\s*\d+ events.+ ago/ })).toBeVisible();
+    await expect(page.locator("main .devlast time")).toHaveText(/ ago$/);
     // every feed, with its Subscribe button
     await page.locator("main a[href='#/dev/feeds']").click();
     await expect(page.locator("main .feeds .feed").first()).toContainText(

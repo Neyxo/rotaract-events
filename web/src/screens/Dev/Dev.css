@@ -165,26 +165,106 @@
   color: var(--muted);
 }
 /* Developer overview: one overall state, the runs as dots, a back link on the pages under it */
+/* the overview card: the state and the last update on one line, then a line each for the app and its data. Every age sits
+   right-aligned in the same column, so after a push the eye goes straight to it. */
 .devhealth {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 10px;
-  font-size: 1.2rem;
-  font-weight: 700;
+  margin: 0 0 12px;
 }
-.devhealth i {
+.devhealth > b {
+  flex: 1 1 auto;
+  font-size: 1.2rem;
+}
+.devhealth i,
+.devlight i {
+  flex: 0 0 auto;
   width: 16px;
   height: 16px;
   border-radius: 50%;
   background: #009739;
-  flex: 0 0 auto;
 }
-.devhealth.warn i {
+.devhealth.warn i,
+.devlight.warn i {
   background: #e8a317;
 }
-.devhealth.bad i {
+.devhealth.bad i,
+.devlight.bad i {
   background: var(--danger);
+}
+.devlast {
+  display: grid;
+  justify-items: end;
+  line-height: 1.15;
+}
+.devlast small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.devlast time {
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* the lines under the lights (the runs' history, warnings) are the small print of the card */
+.devcard .devstate {
+  align-items: baseline;
+  font-size: 0.9rem;
+}
+.devcard .devstate i {
+  transform: translateY(1px);
+}
+.devrunning {
+  margin: -6px 0 10px;
+}
+.devlights {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 12px;
+  border-top: 1px solid var(--line);
+}
+.devlight {
+  display: grid;
+  grid-template-columns: 16px 3.2em minmax(0, 1fr) auto;
+  grid-template-areas: "dot name what age" ". . sub sub";
+  column-gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.devlight i {
+  grid-area: dot;
+  width: 10px;
+  height: 10px;
+  justify-self: center;
+}
+.devlight b {
+  grid-area: name;
+}
+.devlight span,
+.devlight small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.devlight span {
+  grid-area: what;
+}
+.devlight time {
+  grid-area: age;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.devlight small {
+  grid-area: sub;
+  color: var(--muted);
+  font-size: 0.8rem;
 }
 .devstrip {
   display: flex;
@@ -212,4 +292,53 @@
 }
 .dev > .more {
   margin-bottom: 8px;
+}
+/* the dark mode check: the report as label and value, the painted samples as squares with what they should be */
+.devdark {
+  margin: 0 0 12px;
+}
+.devdark div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+.devdark dt {
+  color: var(--muted);
+}
+.devdark dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.devsamples {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+.devsamples li {
+  display: grid;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.devsamples i {
+  display: grid;
+  place-items: center;
+  height: 56px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.devsamples img {
+  max-width: 80%;
+  max-height: 40px;
 }

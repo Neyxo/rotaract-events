@@ -36,8 +36,15 @@
   } catch (e) {}
   if (t !== "dark" && t !== "light") t = forced ? "dark" : "light";
   d.dataset.theme = t;
+  if (forced) d.dataset.forcedDark = "";
+  // the developer screen's dark mode check tries other declarations here, at load, where a browser decides (#/dev/dark)
+  var o = "", rule = false;
+  try { if (JSON.parse(localStorage.getItem("rac.dev"))) { o = JSON.parse(localStorage.getItem("rac.devScheme")) || ""; rule = JSON.parse(localStorage.getItem("rac.devSchemeRule")) === true; } } catch (e) {}
+  if (o) d.style.colorScheme = o;
+  if (rule) document.head.appendChild(document.createElement("style")).textContent = "@media (prefers-color-scheme: dark) { :root { --dev-scheme-rule: 1; } }";
+  if (o === "normal") return;
   var m = document.head.appendChild(document.createElement("meta"));
-  m.name = "color-scheme"; m.content = "only " + t;
+  m.name = "color-scheme"; m.content = o || "only " + t;
 })();</script>
 <script type="module" src="./src/main.tsx"></script>
 </head>

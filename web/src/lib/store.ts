@@ -24,6 +24,10 @@ export interface StoreKeys {
   "rac.devStale": boolean;
   /** "2026-12-24" or "" */
   "rac.devDate": string;
+  /** the dark mode check: a color-scheme to declare instead of the app's ("" the app's own, "normal" none at all), and whether to
+   *  add a prefers-color-scheme rule; read by index.html at load */
+  "rac.devScheme": string;
+  "rac.devSchemeRule": boolean;
 }
 export type StoreKey = keyof StoreKeys;
 
