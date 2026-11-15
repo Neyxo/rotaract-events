@@ -96,6 +96,8 @@ const en = {
   members_note:
     "This event is for members only. The full details and the registration are on Polaris after you log in.",
   all_day: "all day",
+  // a time on its own line (the story picture)
+  at_time: "{t}",
   cancelled: "Cancelled",
   save: "Save event",
   saved: "Saved ★",
@@ -161,6 +163,8 @@ const en = {
   done: "Done",
   ob_sub: "Add events to your calendar?",
   ob_inst: "Get the app",
+  ob_inst_t: "Rotaract Events is an app: one tap from your home screen, and it works offline.",
+  ob_open: "Open the app",
   ob_web: "No thanks, use the website",
   ob_web_back: "Continue on the website",
   ob_inst_done: "All done ✓",
@@ -501,6 +505,8 @@ const en = {
     on_pc: "On a computer",
     on_pc_s: "Send yourself the link",
     phone_q: "Which phone do you have?",
+    not_yet:
+      "Not on your phone yet: the calendar is now in your Google account, on the web. The next steps switch it on in your phone's calendar.",
     a_open: "Open Apple Calendar",
     a_confirm: 'Tap "Subscribe", then "Add".',
     g_open: "Open Google Calendar",

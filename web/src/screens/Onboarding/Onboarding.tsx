@@ -1,12 +1,12 @@
 // The welcome steps: the onboarding dialog Home opens on the first visit, from ?welcome and from "Get started".
-// In the browser it first offers the app (step -1); installed, it stops there: the welcome goes on in the app.
+// In the browser it first shows how to install the app (step -1); installed, it stops there: the welcome goes on in the app.
 // A member: welcome, clubs, good to know, calendar. A guest: welcome, three slides, clubs near.
 import { useRef, useState, type ReactNode, type RefObject } from "react";
 import { t, tx } from "../../i18n";
 import { club, getData, isRac, myClubs, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { BRAND, cx, vars } from "../../lib/color";
 import { guessClubs } from "../../lib/geo";
-import { appUrl, chromeUrl, install, isInstalled } from "../../lib/install";
+import { appUrl, chromeUrl, install, isInstalled, openAppUrl } from "../../lib/install";
 import { guessOS } from "../../lib/geo";
 import type { Pillar } from "../../lib/pillars";
 import { store } from "../../lib/store";
@@ -66,65 +66,63 @@ function ObNav({
 }
 
 const HOW = { ios: "g_ios", android: "g_android", desktop: "g_desktop" } as const;
-/** The app first: one big button, and a faint way past it. With the browser's prompt the button installs, in whatever browser
- *  this is; without one (iPhone, Firefox, DuckDuckGo, inside another app) it shows this system's three steps, with the way to
- *  the browser they name: a link to Chrome on Android, and the address to copy. Installed, the website's part is over. */
+/** The app first, and how to get it at once, nothing to tap before: with the browser's prompt one big button that installs, in
+ *  whatever browser this is; without one (iPhone, Firefox, DuckDuckGo, inside another app) this system's three steps, with the
+ *  way to the browser they name: a link to Chrome on Android, and the address to copy. Below, a faint way past it. Installed, the
+ *  website's part is over: a button that opens the app where a page can (Android), and the way back here small enough to miss. */
 function InstallStep({ title, onWeb }: { title: (text: string) => ReactNode; onWeb: () => void }) {
   const prompt = useInstallPrompt();
-  const [how, setHow] = useState(false);
-  const web = (k: "ob_web" | "ob_web_back") => (
-    <button className="skip web" type="button" onClick={onWeb}>
-      {t(k)}
-    </button>
-  );
-  if (isInstalled())
+  if (isInstalled()) {
+    const open = openAppUrl();
     return (
       <>
         {title(t("ob_inst_done"))}
         <p>{t("ob_inst_done_t")}</p>
-        {web("ob_web_back")}
+        {open && (
+          <a className="btn big" href={open}>
+            {t("ob_open")}
+          </a>
+        )}
+        <button className="skip web faint" type="button" onClick={onWeb}>
+          {t("ob_web_back")}
+        </button>
       </>
     );
-  if (how)
-    return (
-      <>
-        {title(t("inst_btn"))}
-        <ol className="qsteps">
-          {tx(HOW[guessOS()]).map((s, i) => (
-            <li key={i}>{s}</li>
-          ))}
-        </ol>
-        <div className="links">
-          {chromeUrl() && (
-            <a className="linkbtn primary" href={chromeUrl()!}>
-              <Icon name="ext" />
-              {t("inst_chrome")}
-            </a>
-          )}
-          <button className="linkbtn" type="button" onClick={() => void copy(appUrl())}>
-            {t("copy_link")}
-          </button>
-        </div>
-        <p>{t("ob_inst_then")}</p>
-        {web("ob_web")}
-      </>
-    );
+  }
   return (
     <>
       {title(t("ob_inst"))}
-      <div className="choice">
-        <button
-          className="btn big"
-          type="button"
-          onClick={() => {
-            if (prompt) void install();
-            else setHow(true);
-          }}
-        >
-          {t("inst_btn")}
-        </button>
-        {web("ob_web")}
-      </div>
+      <p>{t("ob_inst_t")}</p>
+      {prompt ? (
+        <div className="choice">
+          <button className="btn big" type="button" onClick={() => void install()}>
+            {t("inst_btn")}
+          </button>
+        </div>
+      ) : (
+        <>
+          <ol className="qsteps">
+            {tx(HOW[guessOS()]).map((s, i) => (
+              <li key={i}>{s}</li>
+            ))}
+          </ol>
+          <div className="links">
+            {chromeUrl() && (
+              <a className="linkbtn primary" href={chromeUrl()!}>
+                <Icon name="ext" />
+                {t("inst_chrome")}
+              </a>
+            )}
+            <button className="linkbtn" type="button" onClick={() => void copy(appUrl())}>
+              {t("copy_link")}
+            </button>
+          </div>
+          <p>{t("ob_inst_then")}</p>
+        </>
+      )}
+      <button className="skip web" type="button" onClick={onWeb}>
+        {t("ob_web")}
+      </button>
     </>
   );
 }

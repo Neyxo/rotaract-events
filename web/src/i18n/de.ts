@@ -92,6 +92,7 @@ const de: Messages = {
   members_note:
     "Dieser Anlass ist nur für Mitglieder. Alle Details und die Anmeldung gibt es auf Polaris nach dem Login.",
   all_day: "ganztags",
+  at_time: "{t} Uhr",
   cancelled: "Abgesagt",
   save: "Anlass merken",
   saved: "Gemerkt ★",
@@ -157,6 +158,8 @@ const de: Messages = {
   done: "Fertig",
   ob_sub: "Anlässe in deinen Kalender?",
   ob_inst: "Hol dir die App",
+  ob_inst_t: "Rotaract Events ist eine App: ein Tipp auf dem Homescreen, und sie funktioniert auch offline.",
+  ob_open: "App öffnen",
   ob_web: "Nein danke, Website nutzen",
   ob_web_back: "Weiter auf der Website",
   ob_inst_done: "Alles erledigt ✓",
@@ -507,6 +510,8 @@ const de: Messages = {
     on_pc: "Am Computer",
     on_pc_s: "Link an dich schicken",
     phone_q: "Welches Handy hast du?",
+    not_yet:
+      "Noch nicht auf dem Handy: Der Kalender ist jetzt in deinem Google-Konto, im Web. Die nächsten Schritte schalten ihn im Kalender auf dem Handy ein.",
     a_open: "Öffne Apple Kalender",
     a_confirm: "Tippe auf «Abonnieren», dann auf «Hinzufügen».",
     g_open: "Öffne Google Kalender",

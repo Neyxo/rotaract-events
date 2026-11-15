@@ -20,6 +20,13 @@ export const chromeUrl = (): string | null =>
   /Android/.test(navigator.userAgent)
     ? `intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end`
     : null;
+/** on Android, a link that opens the installed app from the browser tab it was just installed from: a tapped link to the app's own
+ *  address stays in the tab, an intent is handed to whatever app claims the address, which the installed one does. null elsewhere:
+ *  a computer opens the app's window by itself, an iPhone has no way in but the home screen */
+export const openAppUrl = (): string | null =>
+  /Android/.test(navigator.userAgent)
+    ? `intent://${location.host}${location.pathname.replace(/[^/]*$/, "")}#Intent;scheme=https;end`
+    : null;
 /** the app's address, without index.html or the route: what to share, or to paste into another browser */
 export const appUrl = (): string => location.origin + location.pathname.replace(/[^/]*$/, "");
 

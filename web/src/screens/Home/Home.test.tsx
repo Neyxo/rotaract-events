@@ -278,7 +278,7 @@ describe("welcome steps", () => {
         .getAllByRole("button")
         .map((b) => [b.className, b.textContent]),
     ).toEqual([
-      ["btn big", t("inst_btn")],
+      ["linkbtn", t("copy_link")],
       ["skip web", t("ob_web")],
     ]);
     click(t("ob_web"));
@@ -296,7 +296,7 @@ describe("welcome steps", () => {
     expect(dlg().open).toBe(false);
   });
 
-  it("Install app: the browser's prompt when it has one, else this system's three steps and the way on to the website", async () => {
+  it("Install app: the browser's prompt when it has one, else this system's three steps at once, and the way on to the website", async () => {
     const prompt = vi.fn(async () => {});
     act(() => {
       window.dispatchEvent(
@@ -311,10 +311,9 @@ describe("welcome steps", () => {
       click(t("inst_btn"));
     });
     expect(prompt).toHaveBeenCalledTimes(1);
-    // declined: a prompt works once, so the button now explains
+    // declined: a prompt works once, so the steps take the button's place
     expect(title().textContent).toBe(t("ob_inst"));
-    click(t("inst_btn"));
-    expect(title().textContent).toBe(t("inst_btn"));
+    expect(inDlg().queryByRole("button", { name: t("inst_btn") })).toBeNull();
     expect([...dlg().querySelectorAll("ol.qsteps li")].map((li) => li.textContent)).toEqual(tx("g_desktop"));
     inDlg().getByText(t("ob_inst_then"));
     // no link to Chrome on a computer; the address to paste into the browser the steps name
@@ -504,7 +503,7 @@ describe("welcome steps", () => {
       inDlg()
         .getAllByRole("button")
         .map((b) => [b.className, b.textContent]),
-    ).toEqual([["skip web", t("ob_web_back")]]);
+    ).toEqual([["skip web faint", t("ob_web_back")]]);
     click(t("ob_web_back"));
     expect(title().textContent).toBe(t("ob_welcome"));
   });

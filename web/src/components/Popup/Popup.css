@@ -221,6 +221,13 @@ dialog.ob.full {
   font-weight: 600;
   padding: 10px 12px 10px 0;
 }
+/* installed: the way back to the website is there for who looks for it, no more */
+.ob .skip.faint {
+  display: block;
+  margin-top: 28px;
+  font-size: 0.75rem;
+  font-weight: 400;
+}
 .ob .feeds {
   gap: 8px;
 }

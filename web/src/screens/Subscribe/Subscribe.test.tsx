@@ -257,6 +257,7 @@ describe("adding a calendar", () => {
     expect(nav()).toEqual([["btn", t("next")]]);
     btn(t("next"));
     expect(step()).toEqual([of(3, 7), undefined, S.phone_q]);
+    expect(q(".alertline")!.textContent).toBe(S.not_yet);
     expect(dlg().getByRole("button", { name: "Android" }).getAttribute("aria-pressed")).toBe("true");
     btn(t("next"));
     expect(step()).toEqual([of(4, 7), S.ctx_phone, S.sync_a[0]]);
@@ -345,12 +346,12 @@ describe("adding a calendar", () => {
     expect(title()).toBe(S.how);
     expect(rows().map((r) => r.textContent)).toEqual([S.on_phone + S.on_phone_s, S.on_pc + S.on_pc_s]);
     pick(S.on_phone);
-    expect(step()).toEqual([of(1, 6), undefined, undefined]);
+    expect(step()).toEqual([of(1, 7), undefined, undefined]);
     // not the plain link, which the Google Calendar app would take: the helper page, in a new tab
     const open = dlg().getByRole("link", { name: S.g_open });
     expect([open.getAttribute("href"), open.getAttribute("target")]).toEqual([go(gcal), "_blank"]);
     tap(open);
-    expect(step()).toEqual([of(2, 6), S.ctx_browser, S.g_confirm]);
+    expect(step()).toEqual([of(2, 7), S.ctx_browser, S.g_confirm]);
     // the quiet second way: the plain link, copied, and on
     btn(t("back"));
     expect(q(".sfmore")!.textContent).toBe(S.copy_alt);
@@ -359,15 +360,18 @@ describe("adding a calendar", () => {
     });
     expect(writeText).toHaveBeenCalledWith(gcal);
     expect(screen.getByRole("status").textContent).toBe(t("copied"));
-    expect(step()).toEqual([of(2, 6), S.ctx_browser, S.g_confirm]);
+    expect(step()).toEqual([of(2, 7), S.ctx_browser, S.g_confirm]);
     expect(vis()).toContain(S.ui_add);
     dlg().getByText(S.g_desktop); // the phone's Google page may hide the button
     // an Android phone: no question, its four steps
     btn(t("next"));
-    expect(step()).toEqual([of(3, 6), S.ctx_phone, S.sync_a[0]]);
+    // a stop of its own: in the Google account now, not on the phone yet
+    expect([step(), q(".alertline")!.textContent]).toEqual([[of(3, 7), undefined, undefined], S.not_yet]);
+    btn(t("next"));
+    expect(step()).toEqual([of(4, 7), S.ctx_phone, S.sync_a[0]]);
     expect(dlg().queryByRole("button", { name: "iPhone" })).toBeNull();
     // Back: the steps, then how, then the ways
-    for (let i = 0; i < 3; i++) btn(t("back"));
+    for (let i = 0; i < 4; i++) btn(t("back"));
     expect(title()).toBe(S.how);
     btn(t("back"));
     expect(title()).toBe(t("way_pick"));
@@ -379,16 +383,19 @@ describe("adding a calendar", () => {
     add();
     pick(t("way_google"));
     pick(S.on_phone);
-    expect(step()).toEqual([of(1, 5), undefined, undefined]);
+    expect(step()).toEqual([of(1, 6), undefined, undefined]);
     expect(dlg().getByRole("link", { name: S.g_open }).getAttribute("href")).toBe(go(gcal));
     await act(async () => {
       btn(S.copy_alt);
     });
     expect(writeText).toHaveBeenCalledWith(gcal);
     expect(screen.getByRole("status").textContent).toBe(t("copied"));
-    expect(step()).toEqual([of(2, 5), S.ctx_browser, S.g_confirm]);
+    expect(step()).toEqual([of(2, 6), S.ctx_browser, S.g_confirm]);
     btn(t("next"));
-    expect(step()).toEqual([of(3, 5), undefined, S.sync_i[0]]);
+    // a stop of its own: in the Google account now, not on the phone yet
+    expect([step(), q(".alertline")!.textContent]).toEqual([[of(3, 6), undefined, undefined], S.not_yet]);
+    btn(t("next"));
+    expect(step()).toEqual([of(4, 6), undefined, S.sync_i[0]]);
     dlg().getByRole("link", { name: S.sync_btn });
   });
 
@@ -398,16 +405,19 @@ describe("adding a calendar", () => {
     add();
     pick(t("way_google"));
     pick(S.on_pc);
-    expect(step()).toEqual([of(1, 6), undefined, undefined]);
+    expect(step()).toEqual([of(1, 7), undefined, undefined]);
     await act(async () => {
       btn(t("sp_g_send"));
     });
     expect(writeText).toHaveBeenCalledWith(gcal);
-    expect(step()).toEqual([of(2, 6), S.ctx_pc, S.pc]);
+    expect(step()).toEqual([of(2, 7), S.ctx_pc, S.pc]);
     btn(t("next"));
-    expect(step()).toEqual([of(3, 6), S.ctx_pc, S.g_confirm]);
+    expect(step()).toEqual([of(3, 7), S.ctx_pc, S.g_confirm]);
     btn(t("next"));
-    expect(step()).toEqual([of(4, 6), undefined, S.sync_i[0]]);
+    // a stop of its own: in the Google account now, not on the phone yet
+    expect([step(), q(".alertline")!.textContent]).toEqual([[of(4, 7), undefined, undefined], S.not_yet]);
+    btn(t("next"));
+    expect(step()).toEqual([of(5, 7), undefined, S.sync_i[0]]);
     dlg().getByRole("link", { name: S.sync_btn });
   });
 

@@ -92,6 +92,7 @@ const fr: Messages = {
   members_note:
     "Cet événement est réservé aux membres. Tous les détails et l'inscription se trouvent sur Polaris après connexion.",
   all_day: "toute la journée",
+  at_time: "{t}",
   cancelled: "Annulé",
   save: "Enregistrer l'événement",
   saved: "Enregistré ★",
@@ -157,6 +158,8 @@ const fr: Messages = {
   done: "Terminé",
   ob_sub: "Ajouter les événements à votre calendrier ?",
   ob_inst: "Obtenir l'app",
+  ob_inst_t: "Rotaract Events est une app : à un clic sur l'écran d'accueil, et elle fonctionne hors ligne.",
+  ob_open: "Ouvrir l'app",
   ob_web: "Non merci, utiliser le site web",
   ob_web_back: "Continuer sur le site web",
   ob_inst_done: "C'est fait ✓",
@@ -511,6 +514,8 @@ const fr: Messages = {
     on_pc: "Sur un ordinateur",
     on_pc_s: "Vous envoyer le lien",
     phone_q: "Quel téléphone avez-vous ?",
+    not_yet:
+      "Pas encore sur votre téléphone : le calendrier est maintenant dans votre compte Google, sur le web. Les étapes suivantes l'activent dans le calendrier de votre téléphone.",
     a_open: "Ouvrez Calendrier Apple",
     a_confirm: "Touchez « S'abonner », puis « Ajouter ».",
     g_open: "Ouvrez Google Agenda",

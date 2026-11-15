@@ -419,7 +419,21 @@ function webSteps(
     return [
       { action: open(url, openLabel) },
       sure,
-      ...(way === "google" ? [{ text: S.phone_q, choice: <OsPick os={os} onPick={setOs} /> }] : []),
+      // Google only: the calendar is in the account now, which looks like the end. A stop of its own says it isn't, before the phone's steps
+      ...(way === "google"
+        ? [
+            {
+              text: S.not_yet,
+              warn: true,
+              choice: (
+                <>
+                  <p className="sft">{S.phone_q}</p>
+                  <OsPick os={os} onPick={setOs} />
+                </>
+              ),
+            },
+          ]
+        : []),
       ...after(os),
     ];
   const first: Step[] =
@@ -429,7 +443,12 @@ function webSteps(
           { text: way === "google" ? S.pc : S.o_pc, ctx: "pc", vis: <Vis kind="send" /> },
         ]
       : [{ action: open(goUrl(url), openLabel), alt: copyBtn(url, S.copy_alt, "sfmore") }];
-  return [...first, sure, ...after(IOS ? "ios" : "android")];
+  return [
+    ...first,
+    sure,
+    ...(way === "google" ? [{ text: S.not_yet, warn: true }] : []),
+    ...after(IOS ? "ios" : "android"),
+  ];
 }
 
 /** a dot of the stepper: a step already done, the one being shown, or one still to come */

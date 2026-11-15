@@ -7,14 +7,13 @@ const store = (page: import("@playwright/test").Page, k: string) =>
   page.evaluate((k) => JSON.parse(localStorage.getItem(k) ?? "null"), k);
 
 test.describe("first visit", () => {
-  test("the welcome opens by itself and offers the app first; without an install prompt the button shows the steps", async ({
+  test("the welcome opens by itself and offers the app first; without an install prompt it shows the steps at once", async ({
     page,
   }) => {
     await page.goto("./");
     const ob = page.locator("dialog#ob");
     await expect(ob).toBeVisible();
     await expect(ob.locator("h2")).toHaveText("Get the app");
-    await ob.getByRole("button", { name: "Install app" }).click();
     await expect(ob.locator("ol.qsteps li").first()).toBeVisible();
     // the faint way past it
     await ob.getByRole("button", { name: "No thanks, use the website" }).click();
@@ -59,14 +58,15 @@ test.describe("first visit", () => {
     await ob.locator(".way", { hasText: "Google Calendar" }).click();
     const n = ob.locator("ol.stepper");
     const ctx = ob.locator("p.sfctx");
-    // a phone: the link in Chrome, confirm, the four sync steps; a desktop: open, confirm, which phone, the sync steps
-    const of = isMobile ? 6 : 7;
+    // a phone: the link in Chrome, confirm, "not on your phone yet", the four sync steps; a desktop: open, confirm, the same warning
+    // with which phone, the sync steps
+    const of = 7;
     let at = 1;
     if (isMobile) {
       // the Google Calendar app can't subscribe: through this phone's browser, or a computer
       await expect(h2).toHaveText("How do you want to add it?");
       await ob.locator(".way", { hasText: "On this phone" }).click();
-      await expect(n).toHaveAccessibleName("Step 1 of 6");
+      await expect(n).toHaveAccessibleName("Step 1 of 7");
       // a tapped calendar.google.com link goes to the app: this one opens the helper page, which opens it in this browser
       const open = ob.locator(".sfstep a.linkbtn");
       await expect(open).toHaveText("Open Google Calendar");
@@ -76,7 +76,7 @@ test.describe("first visit", () => {
       );
       await expect(open).toHaveAttribute("target", "_blank");
       await ob.getByRole("button", { name: "Didn't open? Copy the link and paste it in your browser" }).click(); // done: on to the next step by itself
-      await expect(n).toHaveAccessibleName("Step 2 of 6");
+      await expect(n).toHaveAccessibleName("Step 2 of 7");
       expect(await copied(page)).toMatch(/^https:\/\/calendar\.google\.com\/calendar\/r\?cid=webcal.*bern\.ics$/);
       at = 2;
     } else {
@@ -101,6 +101,7 @@ test.describe("first visit", () => {
     while (at < of) {
       await ob.getByRole("button", { name: "Next" }).click();
       await expect(n).toHaveAccessibleName(`Step ${++at} of ${of}`);
+      if (at === of - 4) await expect(ob.locator(".alertline")).toContainText("Not on your phone yet");
       if (at === of - 3) await expect(ctx).toHaveText("On your phone");
     }
     await expect(ctx).toHaveText("On your phone, in the Google Calendar app");
