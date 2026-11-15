@@ -66,6 +66,16 @@ html {
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
 }
+/* the page itself scrolls, under the top bar and the tabs that float on it, so its scroll indicator runs over both. On a touch
+   screen it is only a hint that flashes while scrolling: none there. A mouse keeps the scrollbar it can drag. */
+@media (pointer: coarse) {
+  html {
+    scrollbar-width: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
+  }
+}
 /* the full-bleed pieces (the compact head, section headings) are 100vw wide. Samsung Internet ignores html's overflow-x and widens the
    page to fit anything that pokes out; wider page, wider vw, wider bleed: the page grows until it is several screens wide. clip on body
    (not propagated to the viewport, unlike html's) keeps that overflow out of the page width, and unlike hidden it leaves sticky working. */
