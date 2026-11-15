@@ -339,6 +339,50 @@ def ig_download(url, path):
     return True
 
 
+PIC_TYPES = ((b"\xff\xd8\xff", "jpg"), (b"\x89PNG\r\n", "png"), (b"RIFF", "webp"))
+
+
+def full_picture(url):
+    """The larger copy of a Polaris picture: the list's thumbnail (.../media/cache/<filter>/[rc/<dir>/]<file>) is 435 px wide,
+    the same file in the event page's cache about 940."""
+    u = urllib.parse.urlsplit(url)
+    name = u.path.rsplit("/", 1)[-1]
+    return f"{u.scheme}://{u.netloc}/media/cache/cloudtec_block_image_full/{name}" if "/media/cache/" in u.path and name else url
+
+
+def get_picture(url):
+    """One picture's bytes, or None if it is not https, too big, empty or unreachable."""
+    if not url.startswith("https://"):
+        return None
+    time.sleep(0.4)
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": USER_AGENT}), timeout=30) as r:
+            body = r.read(IG_MAX_BYTES + 1)
+    except OSError:
+        return None
+    return body if body and len(body) <= IG_MAX_BYTES else None
+
+
+def mirror_pictures(events, out, now):
+    """Copies of the upcoming events' pictures on the site itself: pic/<id>.<ext>, named in the event as "pic". The clubs' sites
+    send no CORS headers, and a story picture (a canvas) with their picture on it can't be exported. The larger copy first, the
+    thumbnail if there is none. The type comes from the bytes: some addresses end in a bare dot. Never worth failing the run."""
+    shutil.rmtree(out / "pic", ignore_errors=True)
+    stamp = now.isoformat(timespec="minutes")
+    for e in events:
+        if not e["image"] or e["cancelled"] or e["end"] < stamp or not re.fullmatch(r"[\w-]+", e["id"]):
+            continue
+        try:
+            body = get_picture(full_picture(e["image"])) or get_picture(e["image"])
+            ext = next((x for magic, x in PIC_TYPES if body and body.startswith(magic)), None)
+            if ext:
+                (out / "pic").mkdir(exist_ok=True)
+                (out / "pic" / f"{e['id']}.{ext}").write_bytes(body)
+                e["pic"] = f"pic/{e['id']}.{ext}"
+        except Exception as err:
+            print(f"{e['id']} picture: {err}")
+
+
 def fetch_instagram(clubs, out, token, user_id, fetch=ig_get, download=ig_download, report=None):
     """{club id: latest Instagram posts} for the clubs with an `instagram` link, pictures saved under out/ig/<club>/.
     report["instagram"] gets what the developer page shows: the layer's state, why it is off, and per club a post count or the error.
@@ -890,6 +934,7 @@ def main():
     if not brake:
         for path, value in ((news_path, news), (projects_path, projects), (names_path, names), (cache_path, cache)):
             path.write_text(json.dumps(value, indent=1, ensure_ascii=False, sort_keys=True) + "\n")
+    mirror_pictures(site["events"], out, now)
     (out / "events.json").write_text(json.dumps(site, ensure_ascii=False, separators=(",", ":")))
     if not any(not e["cancelled"] and e["end"] >= now.isoformat(timespec="minutes") for e in site["events"]):
         report["warnings"].append("the site would publish no upcoming events at all")

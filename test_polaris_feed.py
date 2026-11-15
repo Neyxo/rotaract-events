@@ -462,6 +462,25 @@ with tempfile.TemporaryDirectory() as tmp:
 assert site_data(clubs, histories, NOW, cache)["clubs"][0]["instagram"] == [], "no Instagram posts by default"
 assert site_data(clubs, histories, NOW, cache, None, None, ig)["clubs"][0]["instagram"] == ig["luzern"]
 
+# --- event pictures copied onto the site: the larger copy first, the type from the bytes, upcoming events only
+from polaris_feed import full_picture, mirror_pictures
+assert full_picture("https://x.ch/media/cache/grid/rc/Ab1/6a.jpg?v=1.5") == "https://x.ch/media/cache/cloudtec_block_image_full/6a.jpg"
+assert full_picture("https://x.ch/de/media/cache/resolve/grid/rc/Ab1/6a.PNG?filters%5Ba%5D=0") == "https://x.ch/media/cache/cloudtec_block_image_full/6a.PNG"
+assert full_picture("https://x.ch/media/cache/event_grid/6a.") == "https://x.ch/media/cache/cloudtec_block_image_full/6a." and full_picture("https://x.ch/p.jpg") == "https://x.ch/p.jpg"
+pics = {"https://x.ch/media/cache/cloudtec_block_image_full/a.jpg": b"\xff\xd8\xff big", "https://x.ch/media/cache/g/b.": b"\x89PNG\r\n small", "https://x.ch/media/cache/g/c.jpg": b"<html>"}
+pe = lambda i, image, end="2026-12-01T20:00", cancelled=False: {"id": i, "image": image, "end": end, "cancelled": cancelled}
+mirrored = [pe("1", "https://x.ch/media/cache/g/rc/d/a.jpg?v=1"), pe("2", "https://x.ch/media/cache/g/b."), pe("3", "https://x.ch/media/cache/g/c.jpg"), pe("4", ""),
+            pe("5", "https://x.ch/media/cache/g/a.jpg", end="2020-01-01T10:00"), pe("6", "https://x.ch/media/cache/g/a.jpg", cancelled=True), pe("../7", "https://x.ch/media/cache/g/a.jpg")]
+keep_get, polaris_feed.get_picture = polaris_feed.get_picture, lambda url: pics.get(url)
+with tempfile.TemporaryDirectory() as tmp:
+    (Path(tmp) / "pic").mkdir()
+    (Path(tmp) / "pic" / "old.jpg").write_bytes(b"x")
+    mirror_pictures(mirrored, Path(tmp), NOW)
+    assert [e.get("pic") for e in mirrored] == ["pic/1.jpg", "pic/2.png", None, None, None, None, None], mirrored
+    assert sorted(f.name for f in (Path(tmp) / "pic").iterdir()) == ["1.jpg", "2.png"], "last run's copies go; not a picture, past, cancelled, odd id: none"
+    assert (Path(tmp) / "pic" / "1.jpg").read_bytes() == b"\xff\xd8\xff big" and (Path(tmp) / "pic" / "2.png").read_bytes() == b"\x89PNG\r\n small"
+polaris_feed.get_picture = keep_get
+
 # --- the run-wide brake: more than max(5, 30%) of all upcoming events cancelled in one run
 up = lambda n, status="active": {f"e{k}": {"status": status, "vevent": event(f"e{k}", "20261201T190000"), "sequence": 0, "modified": "T"} for k in range(n)}
 cut = lambda h, n: {i: {**r, "status": "cancelled"} if k < n else r for k, (i, r) in enumerate(h.items())}

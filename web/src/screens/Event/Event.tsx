@@ -1,6 +1,6 @@
 // The event screen: a frosted card on the lead club's colour wash, with a head that sticks and compacts as you
 // scroll, the facts, the description, then up to three more events of the same clubs.
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ScreenProps } from "../../App";
 import { t } from "../../i18n";
 import { club, eventById } from "../../lib/data";
@@ -9,7 +9,6 @@ import { dayN, fmt, isPast, metaLine, relDay, whenLong } from "../../lib/dates";
 import { mapsUrl } from "../../lib/geo";
 import { href } from "../../lib/route";
 import { shareUrl } from "../../lib/share";
-import { storyImage } from "../../lib/story";
 import type { Club as ClubT, Event as Ev } from "../../lib/types";
 import {
   ClubChip,
@@ -45,27 +44,82 @@ function goLabel(e: Ev): string {
   return onPolaris(e) ? t("open_polaris") : t("details");
 }
 
+type Story = typeof import("../../lib/story");
+/** The story pictures of the event to choose from: thumbnails, drawn one after another so the popup is there at once. A tap draws
+ *  that one at full size and shares it. The drawing code is loaded here, not with the app. */
+function StoryPicker({ e, lead, onPick }: { e: Ev; lead: ClubT; onPick: (picture: Promise<File>) => void }) {
+  const [story, setStory] = useState<Story | null>(null);
+  const [drawn, setDrawn] = useState(0);
+  const tiles = useRef<(HTMLCanvasElement | null)[]>([]);
+  useEffect(() => {
+    void import("../../lib/story").then(setStory);
+  }, []);
+  // once the tiles are there (this runs after they are rendered)
+  useEffect(() => {
+    if (!story) return;
+    let gone = false;
+    void (async () => {
+      for (const [i, v] of story.storyVariants(e).entries()) {
+        const canvas = tiles.current[i];
+        if (gone || !canvas) return;
+        await story.storyThumb(canvas, e, lead, v.id).catch(() => {}); // a design that fails stays a blank tile
+        setDrawn(i + 1);
+        await new Promise((r) => setTimeout(r)); // a breath in between: the tile shows, a tap is answered
+      }
+    })();
+    return () => {
+      gone = true;
+    };
+  }, [story, e, lead]);
+  return (
+    <div className="storygrid" aria-busy={!story}>
+      {story?.storyVariants(e).map((v, i) => (
+        <button
+          key={v.id}
+          type="button"
+          className={i < drawn ? "storytile" : "storytile wait"}
+          aria-label={v.name}
+          title={v.name}
+          onClick={() => onPick(story.storyImage(e, lead, v.id))}
+        >
+          <canvas
+            width={270}
+            height={480}
+            ref={(c) => {
+              tiles.current[i] = c;
+            }}
+          />
+        </button>
+      ))}
+    </div>
+  );
+}
+
 /** Where to share the event: on a phone a story picture or LinkedIn; the system's share sheet (where there is one), or the copied link.
  *  The link is e/<id>.html: a small page with the event's link preview that forwards into the app. */
 function SharePopup({ e, lead, onClose }: { e: Ev; lead: ClubT; onClose: () => void }) {
   const url = shareUrl({ event: e.id });
   const text = `${e.title} · ${fmt.full.format(new Date(e.start))}${e.location ? " · " + e.location : ""}`;
   const phone = window.matchMedia?.("(pointer: coarse)").matches;
+  const [picking, setPicking] = useState(false);
   const then = (go: Promise<unknown>) => {
     void go;
     onClose();
   };
+  if (picking)
+    return (
+      <Popup title="Instagram Story" onClose={onClose} back={() => setPicking(false)}>
+        {/* shareStory inside the tap: it copies the link while the tap still counts, then waits for the picture */}
+        <StoryPicker e={e} lead={lead} onPick={(picture) => then(shareStory(picture, url))} />
+      </Popup>
+    );
   return (
     <Popup title={t("share")} onClose={onClose}>
       <div className="choice sharepop">
         {/* phones (touch screens) only: a story is posted from the Instagram app; a desktop shares by the link */}
         {phone ? (
           <>
-            <button
-              className="btn big alt"
-              type="button"
-              onClick={() => then(shareStory(storyImage(e, lead, url), url))}
-            >
+            <button className="btn big alt" type="button" onClick={() => setPicking(true)}>
               <Icon name="instagram" />
               Instagram Story
             </button>

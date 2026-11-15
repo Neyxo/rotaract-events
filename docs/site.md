@@ -52,6 +52,10 @@ A shared link opens a tiny page with its own preview (title, text, picture for W
 
 All three are the same page, `share.template.html`, filled in by either side.
 
+## Story pictures
+
+On a phone, Share offers a story picture (1080x1920, drawn on a canvas, `web/src/lib/story/`): ten designs to pick from, loaded only when the picker opens. A Rotary event gets the two Rotary designs. A picture on a canvas must come from the site itself, so `polaris_feed.py` copies the pictures of upcoming events to `pic/<id>.<ext>` (`pic` in `events.json`); without one, a design that shows a picture shows the swisstopo map of the place instead.
+
 ## Navigation
 
 One top bar (Rotaract, This app, Settings) and three bottom tabs (Home, Discover, Calendar) on every screen. On event and club screens the head sticks under the top bar and compacts as you scroll. Section headings stick in two levels on one frosted bar.

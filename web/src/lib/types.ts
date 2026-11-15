@@ -18,6 +18,8 @@ export interface Event {
   url: string;
   description: string;
   image: string;
+  /** a copy of the picture on this site (relative path), written by the feed for upcoming events: what a story picture may draw */
+  pic?: string;
   registration: string;
   /** registration deadline, same format as start; "" when none */
   deadline: string;
