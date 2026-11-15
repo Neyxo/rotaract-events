@@ -419,9 +419,9 @@
    "registration": "Anmeldung bis: 19.12.2026 17:30"
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
-  "status": "active",
+  "modified": "20261115T220746Z",
+  "sequence": 1,
+  "status": "cancelled",
   "vevent": [
    "UID:polaris-218732@rotary.ch",
    "SUMMARY:Hyatt Apéro",
@@ -439,9 +439,9 @@
    "registration": "Anmeldung bis: 12.12.2026 17:30"
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
-  "status": "active",
+  "modified": "20261115T220746Z",
+  "sequence": 1,
+  "status": "cancelled",
   "vevent": [
    "UID:polaris-218733@rotary.ch",
    "SUMMARY:Hyatt Apéro",
