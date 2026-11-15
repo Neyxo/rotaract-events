@@ -99,8 +99,10 @@ export const here = {
   },
 };
 
-/** applies at once (app.css keys on <html data-theme>) and is kept for the next start (index.html's inline script reads rac.theme) */
+/** applies at once (app.css keys on <html data-theme>) and is kept for the next start (index.html's inline script reads rac.theme; without one the app is light, or dark where the browser darkens websites by force) */
 export function setTheme(next: "light" | "dark"): void {
   store.set("rac.theme", next);
-  if (typeof document !== "undefined") document.documentElement.dataset.theme = next;
+  if (typeof document === "undefined") return;
+  document.documentElement.dataset.theme = next;
+  document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')?.setAttribute("content", "only " + next);
 }

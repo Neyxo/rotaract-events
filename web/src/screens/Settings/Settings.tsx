@@ -122,7 +122,8 @@ export default function Settings(_props: ScreenProps) {
   const { pop, id: navId } = useNav();
   const [picker, setPicker] = useState<"home" | "also" | "reset" | null>(null);
   // anything but "dark" is light, as index.html's inline script reads it
-  const dark = useStored("rac.theme", "light") === "dark";
+  // nothing chosen yet: the theme index.html started with
+  const dark = useStored("rac.theme", document.documentElement.dataset.theme === "dark" ? "dark" : "light") === "dark";
   const rotary = useStored("rac.rotary", false);
   const unlocked = useStored("rac.devUnlocked", false);
   const dev = useStored("rac.dev", false);

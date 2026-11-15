@@ -21,7 +21,24 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<script>try { document.documentElement.dataset.theme = JSON.parse(localStorage.getItem("rac.theme")) === "dark" ? "dark" : "light"; } catch { document.documentElement.dataset.theme = "light"; }</script>
+<!-- The app is light unless dark is chosen in Settings: a system in dark mode alone doesn't change it. A browser that darkens
+     websites by force ("darken websites" in Chrome, "dark sites" in Samsung Internet) gets the app's own dark theme instead of its
+     guesswork: Chrome shows it by painting the "canvas" colour dark on an element that asks for a light scheme. Then the page
+     says "only <theme>", which keeps the forced darkening off, so a dark theme isn't darkened a second time. -->
+<script>(function () {
+  var d = document.documentElement, t, forced = false;
+  try { t = JSON.parse(localStorage.getItem("rac.theme")); } catch (e) {}
+  try {
+    var probe = d.appendChild(document.createElement("div"));
+    probe.style.cssText = "display:none;background-color:canvas;color-scheme:light";
+    forced = getComputedStyle(probe).backgroundColor !== "rgb(255, 255, 255)";
+    probe.remove();
+  } catch (e) {}
+  if (t !== "dark" && t !== "light") t = forced ? "dark" : "light";
+  d.dataset.theme = t;
+  var m = document.head.appendChild(document.createElement("meta"));
+  m.name = "color-scheme"; m.content = "only " + t;
+})();</script>
 <script type="module" src="./src/main.tsx"></script>
 </head>
 <body data-page="home">

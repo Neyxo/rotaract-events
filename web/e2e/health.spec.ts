@@ -174,3 +174,23 @@ test.describe("installed app", () => {
     await expect(page.locator("dialog#ob[open]")).toHaveCount(0);
   });
 });
+
+test.describe("a system in dark mode", () => {
+  test.use({ colorScheme: "dark" });
+  test("the app stays light and tells the browser not to darken it; dark chosen in Settings is kept", async ({
+    page,
+  }) => {
+    const theme = () =>
+      page.evaluate(() => [
+        document.documentElement.dataset.theme,
+        document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]')!.content,
+        getComputedStyle(document.documentElement).colorScheme.split(" ").sort().reverse().join(" "), // Chromium says "light only"
+      ]);
+    await page.goto("#/settings");
+    expect(await theme()).toEqual(["light", "only light", "only light"]);
+    await page.getByRole("button", { name: "Dark" }).click();
+    expect(await theme()).toEqual(["dark", "only dark", "only dark"]);
+    await page.reload();
+    expect(await theme()).toEqual(["dark", "only dark", "only dark"]);
+  });
+});
