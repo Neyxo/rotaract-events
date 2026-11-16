@@ -20,11 +20,14 @@ export const chromeUrl = (): string | null =>
   /Android/.test(navigator.userAgent)
     ? `intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end`
     : null;
+/** Samsung Internet: it darkens websites by itself, without telling the page, and its installed apps inherit that */
+export const samsung = (): boolean => /SamsungBrowser\//.test(navigator.userAgent);
 /** on Android, a link that opens the installed app from the browser tab it was just installed from: a tapped link to the app's own
  *  address stays in the tab, an intent is handed to whatever app claims the address, which the installed one does. null elsewhere:
- *  a computer opens the app's window by itself, an iPhone has no way in but the home screen */
+ *  a computer opens the app's window by itself, an iPhone has no way in but the home screen, and an app installed by Samsung
+ *  Internet claims no address (unlike Chrome's), so the intent comes back to the same browser and only reloads the website */
 export const openAppUrl = (): string | null =>
-  /Android/.test(navigator.userAgent)
+  /Android/.test(navigator.userAgent) && !samsung()
     ? `intent://${location.host}${location.pathname.replace(/[^/]*$/, "")}#Intent;scheme=https;end`
     : null;
 /** the app's address, without index.html or the route: what to share, or to paste into another browser */

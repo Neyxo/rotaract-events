@@ -211,6 +211,8 @@ const it: Messages = {
     "Il tuo club principale e i club che segui formano la vista «I miei club». Cercare e filtrare non la cambia mai.",
   theme_light: "Chiaro",
   theme_dark: "Scuro",
+  theme_samsung:
+    "Samsung Internet scurisce da sé i siti, anche l’app installata, sopra il tema scelto qui. Per il Chiaro e lo Scuro dell’app: in Samsung Internet, Menu → Impostazioni → Labs → attivare «Usa il tema scuro del sito».",
   change: "Modifica",
   ob_main: "Il tuo club principale",
   ob_also: "Interessato anche a",

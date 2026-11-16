@@ -216,6 +216,8 @@ const en = {
     'Your main club and the clubs you also follow make up the "My clubs" view. Searching and filtering never changes this.',
   theme_light: "Light",
   theme_dark: "Dark",
+  theme_samsung:
+    "Samsung Internet darkens websites by itself, the installed app too, over the theme chosen here. For the app’s own Light and Dark: in Samsung Internet, Menu → Settings → Labs → turn on “Use website dark theme”.",
   change: "Change",
   ob_main: "Your main club",
   ob_also: "Also interested in",
