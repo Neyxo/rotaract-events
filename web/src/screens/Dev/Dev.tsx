@@ -1043,6 +1043,10 @@ function InlineLogo() {
 }
 /** the white logo turned into a picture (PNG) here: photos are left alone, maybe this one too */
 function PngLogo() {
+  return <AsPicture src="rotaract.svg" bg={DARK_BG} filter="brightness(0) invert(1)" />;
+}
+/** a drawing (SVG) turned into a picture (PNG) here, on a background: whether forced darkening leaves pictures alone */
+function AsPicture({ src: from, bg, filter = "none" }: { src: string; bg: string; filter?: string }) {
   const [src, setSrc] = useState("");
   useEffect(() => {
     const img = new Image();
@@ -1052,13 +1056,13 @@ function PngLogo() {
       c.height = img.naturalHeight * 2 || 150;
       const g = c.getContext("2d");
       if (!g) return;
-      g.filter = "brightness(0) invert(1)";
+      g.filter = filter;
       g.drawImage(img, 0, 0, c.width, c.height);
       setSrc(c.toDataURL("image/png"));
     };
-    img.src = "rotaract.svg";
-  }, []);
-  return <i style={{ background: DARK_BG }}>{src && <img src={src} alt="" />}</i>;
+    img.src = from;
+  }, [from, filter]);
+  return <i style={{ background: bg }}>{src && <img src={src} alt="" />}</i>;
 }
 // what the samples should look like: whatever the browser paints differently, it changed
 const SAMPLES: [label: string, look: ReactNode][] = [
@@ -1084,6 +1088,8 @@ const SAMPLES: [label: string, look: ReactNode][] = [
       <img src="crests/luzern.svg" alt="" />
     </i>,
   ],
+  ["crest as picture", <AsPicture key="rp" src="crests/luzern.svg" bg="#fff" />],
+  ["crest on dark", <AsPicture key="rd" src="crests/luzern.svg" bg={DARK_BG} />],
   [
     "white logo, filter (in use)",
     <i key="lf" style={{ background: DARK_BG }}>

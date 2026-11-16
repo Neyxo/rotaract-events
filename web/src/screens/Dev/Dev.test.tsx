@@ -276,7 +276,7 @@ describe("developer screen", () => {
       "Theme chosen in Settings": "none",
       "Forced darkening found at start": "no",
     });
-    expect(document.querySelectorAll(".devsamples li").length).toBe(12);
+    expect(document.querySelectorAll(".devsamples li").length).toBe(14);
     fireEvent.change(m.getByRole("combobox", { name: "Declare a colour scheme" }), { target: { value: "dark" } });
     expect([localStorage.getItem("rac.devScheme"), localStorage.getItem("rac.dev")]).toEqual(['"dark"', "true"]);
     localStorage.removeItem("rac.devScheme");
