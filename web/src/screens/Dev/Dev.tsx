@@ -909,7 +909,51 @@ function LinkLab() {
           7 · Outlook: helper page (in use)
         </a>
       </div>
+      <OpenAppLab />
       <p className="meta devua">{navigator.userAgent}</p>
+    </>
+  );
+}
+
+/** Which link opens the installed app from a browser tab? Chrome hands the plain intent to the app, Samsung Internet keeps it and
+ *  reloads the website, even though Chrome lists the app Samsung installed. Ways it might hand it over instead; tap each in the browser
+ *  the app was installed from, with the app installed. lib/install.ts's openAppUrl() is A, and hidden in Samsung Internet. */
+function OpenAppLab() {
+  const root = location.host + location.pathname.replace(/[^/]*$/, "");
+  const site = "https://" + root;
+  const intent = (extra = "") => `intent://${root}#Intent;scheme=https;${extra}end`;
+  const view = "action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;";
+  return (
+    <>
+      <h3>Open the installed app</h3>
+      <p className="meta">
+        With the app installed, tap each and note what opens: the app (good), the website again, an app picker, or
+        nothing.
+      </p>
+      <div className="links">
+        <a className="linkbtn" href={intent()}>
+          A · Intent (in use, not in Samsung)
+        </a>
+        <a className="linkbtn" href={intent(view)}>
+          B · Intent, action and category named
+        </a>
+        <a className="linkbtn" href={intent(view + "launchFlags=0x10000000;")}>
+          C · Intent, as a new task
+        </a>
+        <a className="linkbtn" href={intent(`S.browser_fallback_url=${encodeURIComponent(site + "#/dev/links")};`)}>
+          D · Intent with a fallback address
+        </a>
+        <a className="linkbtn" href={site} target="_blank" rel="noopener">
+          E · Plain link, new tab
+        </a>
+        <Btn label="F · By script, window.open" onClick={() => void window.open(site, "_blank", "noopener")} />
+        <Btn
+          label="G · By script, intent"
+          onClick={() => {
+            location.href = intent(view);
+          }}
+        />
+      </div>
     </>
   );
 }
@@ -973,6 +1017,49 @@ function darkReport(): [string, string][] {
     ],
   ];
 }
+// the dark theme's top bar, behind the white logo samples: forced darkening turned the logo there black (Samsung Internet)
+const DARK_BG = "#17151c";
+/** the logo as a shape filled with a background colour: colours of boxes are darkened, maybe not this one */
+function MaskLogo() {
+  const m = 'url("rotaract.svg") center / contain no-repeat';
+  return (
+    <i style={{ background: DARK_BG }}>
+      <b style={{ width: "80%", height: 40, background: "#fff", mask: m, WebkitMask: m }} />
+    </i>
+  );
+}
+/** the logo's own drawing in the page, filled with the text colour: text colours are kept light, maybe this one too */
+function InlineLogo() {
+  const [svg, setSvg] = useState("");
+  useEffect(() => {
+    fetch("rotaract.svg")
+      .then((r) => r.text())
+      .then((x) =>
+        setSvg(x.replaceAll("#c10042", "currentColor").replace("<svg ", '<svg style="height:40px;max-width:80%" ')),
+      )
+      .catch(() => {});
+  }, []);
+  return <i style={{ background: DARK_BG, color: "#fff" }} dangerouslySetInnerHTML={{ __html: svg }} />;
+}
+/** the white logo turned into a picture (PNG) here: photos are left alone, maybe this one too */
+function PngLogo() {
+  const [src, setSrc] = useState("");
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = img.naturalWidth * 2 || 470;
+      c.height = img.naturalHeight * 2 || 150;
+      const g = c.getContext("2d");
+      if (!g) return;
+      g.filter = "brightness(0) invert(1)";
+      g.drawImage(img, 0, 0, c.width, c.height);
+      setSrc(c.toDataURL("image/png"));
+    };
+    img.src = "rotaract.svg";
+  }, []);
+  return <i style={{ background: DARK_BG }}>{src && <img src={src} alt="" />}</i>;
+}
 // what the samples should look like: whatever the browser paints differently, it changed
 const SAMPLES: [label: string, look: ReactNode][] = [
   ["white", <i key="w" style={{ background: "#fff" }} />],
@@ -995,6 +1082,21 @@ const SAMPLES: [label: string, look: ReactNode][] = [
     "crest on white",
     <i key="r" style={{ background: "#fff" }}>
       <img src="crests/luzern.svg" alt="" />
+    </i>,
+  ],
+  [
+    "white logo, filter (in use)",
+    <i key="lf" style={{ background: DARK_BG }}>
+      <img src="rotaract.svg" alt="" style={{ filter: "brightness(0) invert(1)" }} />
+    </i>,
+  ],
+  ["white logo, mask", <MaskLogo key="lm" />],
+  ["white logo, inline", <InlineLogo key="li" />],
+  ["white logo, picture", <PngLogo key="lp" />],
+  [
+    "logo on dark",
+    <i key="ld" style={{ background: DARK_BG }}>
+      <img src="rotaract.svg" alt="" />
     </i>,
   ],
 ];
