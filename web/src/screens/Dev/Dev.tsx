@@ -947,7 +947,46 @@ function LinkLab() {
           I · The same, back here without Chrome
         </a>
       </div>
+      <OpenApp />
       <p className="meta devua">{navigator.userAgent}</p>
+    </>
+  );
+}
+
+/** What opens the installed app: a link from another app does (Android hands it to the app that claims the address), a link inside
+ *  the browser to its own site doesn't (Chrome keeps same-site links in the tab; Samsung Internet keeps every web link unless its
+ *  "Open links in other apps" is on). An intent link without a browser named is the one way out of the tab in Chrome. */
+function OpenApp() {
+  const [apps, setApps] = useState<string>("checking…");
+  useEffect(() => {
+    const get = (navigator as { getInstalledRelatedApps?: () => Promise<{ platform: string; url?: string }[]> })
+      .getInstalledRelatedApps;
+    if (!get) setApps("this browser can't tell");
+    else
+      get
+        .call(navigator)
+        .then((a) => setApps(a.length ? a.map((x) => x.platform).join(", ") : "none found"))
+        .catch((e: unknown) => setApps("error: " + String(e)));
+  }, []);
+  const site = location.host + location.pathname.replace(/[^/]*$/, "");
+  const view = "action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;";
+  return (
+    <>
+      <h3>Open the installed app</h3>
+      <p className="meta">{`Installed app seen by this browser: ${apps}`}</p>
+      <p className="meta">
+        In Chrome: P is the "Open the app" link of the install step. Does it open the app, or offer a choice with the
+        apps? In Samsung Internet: first turn on Menu → Settings → Useful features → "Open links in other apps", then
+        tap P and Q.
+      </p>
+      <div className="links">
+        <a className="linkbtn" href={`intent://${site}#Intent;scheme=https;end`}>
+          P · Open the app (no browser named)
+        </a>
+        <a className="linkbtn" href={`intent://${site}#Intent;scheme=https;${view}end`}>
+          Q · The same, action and category named
+        </a>
+      </div>
     </>
   );
 }

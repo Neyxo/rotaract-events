@@ -11,6 +11,7 @@
   ],
   "scope": "./",
   "display": "standalone",
+  "related_applications": [{ "platform": "webapp", "url": "https://neyxo.github.io/rotaract-events/manifest.webmanifest" }],
   "background_color": "#f5f4f7",
   "theme_color": "#d41367",
   "lang": "en",
