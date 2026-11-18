@@ -121,6 +121,7 @@ const en = {
   inst_btn: "Install app",
   inst_chrome: "Open in Chrome",
   inst_in_chrome: "Install in Chrome",
+  inst_other_h: "Install on another device",
   inst_here: "Install here in Samsung Internet",
   inst_here_steps: "Or here in Samsung Internet:",
   inst_chrome_why:
@@ -226,7 +227,7 @@ const en = {
   theme_light: "Light",
   theme_dark: "Dark",
   theme_samsung:
-    "Samsung Internet darkens this app by itself, over the theme chosen here, so Light and Dark can look wrong. To see them as intended: in Samsung Internet, Menu → Settings → Web page view and scrolling → Dark mode → turn off “Force dark mode for web content”. Other websites then keep their own colours.",
+    "With Samsung Internet's dark mode for websites on, this app looks wrong in both themes, Dark most of all. For its own colours, turn that dark mode off.",
   change: "Change",
   ob_main: "Your main club",
   ob_also: "Also interested in",

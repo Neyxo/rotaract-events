@@ -116,6 +116,7 @@ const fr: Messages = {
   inst_btn: "Installer l'app",
   inst_chrome: "Ouvrir dans Chrome",
   inst_in_chrome: "Installer dans Chrome",
+  inst_other_h: "Installer sur un autre appareil",
   inst_here: "Installer ici dans Samsung Internet",
   inst_here_steps: "Ou ici dans Samsung Internet :",
   inst_chrome_why:
@@ -231,7 +232,7 @@ const fr: Messages = {
   theme_light: "Clair",
   theme_dark: "Sombre",
   theme_samsung:
-    "Samsung Internet assombrit lui-même cette app, par-dessus le thème choisi ici, et Clair comme Sombre peuvent mal s'afficher. Pour les voir comme prévu : dans Samsung Internet, Menu → Paramètres → Affichage et défilement des pages → Mode sombre → désactiver « Forcer le mode sombre pour le contenu web ». Les autres sites gardent alors leurs propres couleurs.",
+    "Avec le mode sombre pour les sites de Samsung Internet activé, cette app s'affiche mal dans les deux thèmes, surtout en Sombre. Pour ses propres couleurs, désactivez-le.",
   change: "Modifier",
   ob_main: "Votre club principal",
   ob_also: "Aussi intéressé par",

@@ -1,14 +1,22 @@
-// About this app: the calendar first, then what the app shows, what it can't, your data, questions. Static text, no events needed.
+// About this app: the calendar first, then what the app shows, what it can't, your data, questions, installing on other devices.
+// Static text, no events needed.
+import { useEffect } from "react";
 import type { ScreenProps } from "../../App";
 import { t, tx, type Pair } from "../../i18n";
 import { BRAND, BRAND3, vars } from "../../lib/color";
 import { Footer, HelpLinks, Icon, QaList, Sh, useWash, type IconName } from "../../components";
+import { useNav } from "../../router";
 
 const KNOW_IC: IconName[] = ["refresh", "ext", "offline", "belloff"];
 
 export default function Public(_props: ScreenProps) {
   useWash(BRAND.azure, BRAND.green, BRAND.cranberry);
   const qa: Pair[] = [[t("pub_why_h"), t("pub_why")], ...tx("app_qa")];
+  // #/public#inst (Settings' install row links here): to the install steps, after App has scrolled the new screen to the top
+  const { pop, id: navId } = useNav();
+  useEffect(() => {
+    if (!pop && location.hash.endsWith("#inst")) document.getElementById("inst")?.scrollIntoView({ block: "center" });
+  }, [pop, navId]);
   return (
     <main className="wrap fam">
       <h1>{t("app_h")}</h1>
@@ -56,6 +64,22 @@ export default function Public(_props: ScreenProps) {
       <section className="box glass">
         <div className="qa">
           <QaList items={qa} />
+        </div>
+      </section>
+      {/* the steps per system, for a device other than this one (Settings shows this one's) */}
+      <Sh lv1>{t("inst_other_h")}</Sh>
+      <section className="box glass" id="inst">
+        <div className="qa">
+          {(["ios", "android", "desktop"] as const).map((k) => (
+            <details key={k} name="inst">
+              <summary>{t(k)}</summary>
+              <ol className="steps">
+                {tx(`g_${k}`).map((s, i) => (
+                  <li key={i}>{s}</li>
+                ))}
+              </ol>
+            </details>
+          ))}
         </div>
       </section>
       <p className="fine">

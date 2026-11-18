@@ -47,10 +47,16 @@ describe("Public", () => {
 
   it("puts the why-scrape answer first in the questions, all in one accordion", () => {
     const { container } = show();
-    const qa = [...container.querySelectorAll("details")];
+    const qa = [...container.querySelectorAll<HTMLElement>("details[name=qa]")];
     expect(qa).toHaveLength(1 + tx("app_qa").length);
     within(qa[0]!).getByText(t("pub_why_h"));
     within(qa[0]!).getByText(t("pub_why"));
     expect(qa.every((d) => d.getAttribute("name") === "qa")).toBe(true);
+  });
+  it("lists the install steps of each system, for another device than this one", () => {
+    const { container } = show();
+    const inst = [...container.querySelectorAll("#inst details")];
+    expect(inst.map((d) => d.querySelector("summary")!.textContent)).toEqual([t("ios"), t("android"), t("desktop")]);
+    expect([...inst[0]!.querySelectorAll("li")].map((li) => li.textContent)).toEqual(tx("g_ios"));
   });
 });

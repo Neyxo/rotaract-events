@@ -116,6 +116,7 @@ const de: Messages = {
   inst_btn: "App installieren",
   inst_chrome: "In Chrome öffnen",
   inst_in_chrome: "In Chrome installieren",
+  inst_other_h: "Auf einem anderen Gerät installieren",
   inst_here: "Hier in Samsung Internet installieren",
   inst_here_steps: "Oder hier in Samsung Internet:",
   inst_chrome_why:
@@ -230,7 +231,7 @@ const de: Messages = {
   theme_light: "Hell",
   theme_dark: "Dunkel",
   theme_samsung:
-    "Samsung Internet dunkelt diese App von sich aus ab, über das hier gewählte Design hinweg, so dass Hell und Dunkel falsch aussehen können. Damit sie wie vorgesehen erscheinen: in Samsung Internet Menü → Einstellungen → Webseitenansicht und Scrollen → Dunkelmodus → «Dunkelmodus für Webinhalte erzwingen» ausschalten. Andere Websites behalten dann ihre eigenen Farben.",
+    "Ist der Dunkelmodus für Websites in Samsung Internet an, sieht diese App in beiden Designs falsch aus, vor allem in Dunkel. Für ihre eigenen Farben schalte ihn aus.",
   change: "Ändern",
   ob_main: "Dein Hauptclub",
   ob_also: "Auch interessiert an",

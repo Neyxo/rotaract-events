@@ -2,7 +2,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { fixture } from "../../test/fixture";
-import { t } from "../../i18n";
+import { t, tx } from "../../i18n";
 import { getData, loadData, setSettings } from "../../lib/data";
 import { parseHash } from "../../lib/route";
 import { store } from "../../lib/store";
@@ -154,19 +154,15 @@ describe("Settings", () => {
     ).toEqual(["DE", "FR", "IT", "EN"]);
   });
 
-  it("install steps: one tab per system, switching the steps", () => {
+  it("install steps: this device's alone, no switch between systems; the others' are a link away, on This app", () => {
     show();
-    const tabs = screen.getAllByRole("tab");
-    expect(tabs.map((b) => b.textContent)).toEqual(["iPhone / iPad", "Android", "Computer"]);
-    expect(tabs[2]!.getAttribute("aria-selected")).toBe("true"); // jsdom is no phone
-    const steps = () => screen.getAllByRole("listitem").map((li) => li.textContent);
-    const before = steps();
-    fireEvent.click(tabs[0]!);
-    expect(tabs[0]!.getAttribute("aria-selected")).toBe("true");
-    expect(steps()).not.toEqual(before);
+    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+    const steps = [...document.querySelectorAll("#installBody ol.steps li")].map((li) => li.textContent);
+    expect(steps).toEqual(tx("g_desktop")); // jsdom is no phone
+    expect(screen.getByRole("link", { name: t("inst_other_h") }).getAttribute("href")).toBe("#/public#inst");
   });
 
-  it("install on Android in a browser without a prompt (DuckDuckGo, Firefox): a link opens the app in Chrome, above the Android steps", () => {
+  it("install on Android in a browser without a prompt (DuckDuckGo, Firefox): a link opens the app in Chrome, above the Android steps alone", () => {
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
       "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/125.0.0.0 Mobile DuckDuckGo/5 Safari/537.36",
     );
@@ -175,7 +171,9 @@ describe("Settings", () => {
     expect(screen.getByRole("link", { name: "Open in Chrome" }).getAttribute("href")).toBe(
       "intent://localhost:3000/#Intent;scheme=https;package=com.android.chrome;end",
     );
-    expect(screen.getByRole("tab", { name: "Android" }).getAttribute("aria-selected")).toBe("true");
+    expect([...document.querySelectorAll("#installBody ol.steps li")].map((li) => li.textContent)).toEqual(
+      tx("g_android"),
+    );
     vi.restoreAllMocks();
   });
 
@@ -234,12 +232,12 @@ describe("Settings", () => {
     dispatchEvent(ev); // fires early, on whatever screen the app opened on
     expect(ev.defaultPrevented).toBe(true);
     show();
-    expect(screen.queryAllByRole("tab")).toHaveLength(0);
+    expect(document.querySelector("#installBody ol.steps")).toBeNull();
     await act(async () => {
       fireEvent.click(button("Install app"));
     });
     expect(ev.prompt).toHaveBeenCalledOnce();
-    expect(screen.getAllByRole("tab")).toHaveLength(3);
+    expect(document.querySelectorAll("#installBody ol.steps li").length).toBe(3);
   });
 
   it("install (after the one above: installed stays for the session): the prompt accepted, Settings says it is installing, then installed, instead of showing the steps", async () => {

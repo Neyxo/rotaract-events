@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { t, tx } from "../../i18n";
 import { setRotary, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { anyDevFlag } from "../../lib/dev";
-import { guessOS, type OS } from "../../lib/geo";
+import { guessOS } from "../../lib/geo";
 import { appUrl, chromeInstead, chromeUrl, howKey, install, samsung } from "../../lib/install";
 import { href } from "../../lib/route";
 import { resetAll, setTheme, store } from "../../lib/store";
@@ -58,12 +58,11 @@ function Cur({ ids }: { ids: string[] }) {
   );
 }
 
-/** installed: a note; Chrome's prompt available: one button; otherwise the steps per system, the reader's own first
- *  (on Android under a link that opens the app in Chrome) */
+/** installed: a note; the browser's prompt: one button (in Samsung Internet after installing in Chrome); otherwise this phone's
+ *  steps (on Android under a link that opens the app in Chrome), with a link to the other devices' steps on This app */
 function Install() {
   const prompt = useInstallPrompt();
   const state = useInstallState();
-  const [os, setOS] = useState<OS>(guessOS);
   if (state)
     return (
       <div id="installBody">
@@ -87,6 +86,7 @@ function Install() {
         {why}
       </div>
     );
+  // no install button in this browser: the way to one that has it, and this phone's own steps; other devices' are on This app
   const chrome = chromeUrl() ?? instead;
   return (
     <div id="installBody">
@@ -96,18 +96,14 @@ function Install() {
         </a>
       )}
       {why}
-      <div className="seg" role="tablist">
-        {(["ios", "android", "desktop"] as const).map((k) => (
-          <button key={k} type="button" role="tab" aria-selected={os === k} onClick={() => setOS(k)}>
-            {t(k)}
-          </button>
-        ))}
-      </div>
       <ol className="steps">
-        {tx(howKey(os)).map((s, i) => (
+        {tx(howKey(guessOS())).map((s, i) => (
           <li key={i}>{s}</li>
         ))}
       </ol>
+      <a className="meta" href={href("public") + "#inst"}>
+        {t("inst_other_h")}
+      </a>
     </div>
   );
 }

@@ -115,6 +115,7 @@ const it: Messages = {
   inst_btn: "Installa l'app",
   inst_chrome: "Apri in Chrome",
   inst_in_chrome: "Installa in Chrome",
+  inst_other_h: "Installare su un altro dispositivo",
   inst_here: "Installa qui in Samsung Internet",
   inst_here_steps: "Oppure qui in Samsung Internet:",
   inst_chrome_why:
@@ -225,7 +226,7 @@ const it: Messages = {
   theme_light: "Chiaro",
   theme_dark: "Scuro",
   theme_samsung:
-    "Samsung Internet scurisce da sé questa app, sopra il tema scelto qui, e Chiaro e Scuro possono apparire sbagliati. Per vederli come previsto: in Samsung Internet, Menu → Impostazioni → Visualizzazione e scorrimento pagine → Modalità scura → disattivare «Forza la modalità scura per i contenuti web». Gli altri siti mantengono poi i loro colori.",
+    "Con la modalità scura per i siti di Samsung Internet attiva, questa app appare sbagliata in entrambi i temi, soprattutto in Scuro. Per i suoi colori, disattivala.",
   change: "Modifica",
   ob_main: "Il tuo club principale",
   ob_also: "Interessato anche a",
