@@ -133,9 +133,12 @@ const isIcon = (s: Snap) => s.go.w <= 40 && s.label.w < 1;
 const near = (a: number, b: number, tol = 1.5) => Math.abs(a - b) <= tol;
 
 test.use({ storage: MEMBER });
+/** The thorough ones (the other heads, the scroll sweeps, the edge cases), written while the heads were rebuilt: they run with
+ *  "npm run e2e:full", not on every push. The rest checks the heads' main states. */
+const FULL = { tag: "@full" };
 
 for (const H of HEADS) {
-  test.describe(`${H.name} head`, () => {
+  test.describe(`${H.name} head`, H === EVENT || H === CLUB ? {} : FULL, () => {
     test("at rest: the title in full, the button a labelled pill below it, exactly on its placeholder", async ({
       page,
     }) => {
@@ -209,7 +212,7 @@ for (const H of HEADS) {
         .toBe(true);
     });
 
-    test("not scroll-bound: compact after 24px of sticking, back only under 8px", async ({ page }) => {
+    test("not scroll-bound: compact after 24px of sticking, back only under 8px", FULL, async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce" }); // no transition: the state right after the scroll is the final one
       await open(page, H);
       const at = await stickAt(page, H.head);
@@ -234,57 +237,63 @@ for (const H of HEADS) {
       expect(isPill(await snap(page, H.head))).toBe(true);
     });
 
-    test("every scroll position on the way down and back up: never under the bar, never covered, never off the side", async ({
-      page,
-    }) => {
-      test.slow(); // many scroll steps: three times the usual time limit, for a busy CI machine
-      await page.emulateMedia({ reducedMotion: "reduce" });
-      await open(page, H);
-      const at = await stickAt(page, H.head);
-      const end = at + 400;
-      const bad: string[] = [];
-      const ys = [
-        ...Array.from({ length: 41 }, (_, i) => Math.round((i * end) / 40)),
-        ...Array.from({ length: 41 }, (_, i) => Math.round(end - (i * end) / 40)),
-      ];
-      for (const y of ys) {
-        await scrollToY(page, y);
-        const s = await snap(page, H.head);
-        if (s.y !== y) continue; // the page is shorter than that
-        const say = (m: string) => bad.push(`at ${y}: ${m}`);
-        if (s.head.top < s.barBottom - 1.5 && s.head.bottom > s.barBottom)
-          say(`head top ${s.head.top} is under the bar (${s.barBottom})`);
-        if (y > at + 30 && s.head.bottom > s.barBottom + 32 && !near(s.head.top, s.barBottom))
-          say(`head not stuck: top ${s.head.top}`);
-        if (s.head.bottom > s.barBottom + 32 && !s.headOnTop) say("head covered");
-        if (!isPill(s) && !isIcon(s)) say(`button is neither pill nor icon: ${s.go.w}px`);
-        if (s.go.left < 0 || s.go.right > s.vw) say(`button off the side: ${s.go.left}..${s.go.right}`);
-        if (isIcon(s) && s.h1Right > s.go.left + 0.5) say("title runs under the button");
-      }
-      expect(bad).toEqual([]);
-    });
-
-    test("compact survives a resize: still under the bar, the button still at the right edge", async ({ page }) => {
-      await open(page, H);
-      const at = await stickAt(page, H.head);
-      const vp = page.viewportSize()!;
-      await scrollToY(page, at + 120);
-      await expect.poll(async () => isIcon(await snap(page, H.head))).toBe(true);
-      await page.setViewportSize({ width: vp.width + 180, height: vp.height - 80 });
-      await settle(page);
-      await expect
-        .poll(async () => {
+    test(
+      "every scroll position on the way down and back up: never under the bar, never covered, never off the side",
+      FULL,
+      async ({ page }) => {
+        test.slow(); // many scroll steps: three times the usual time limit, for a busy CI machine
+        await page.emulateMedia({ reducedMotion: "reduce" });
+        await open(page, H);
+        const at = await stickAt(page, H.head);
+        const end = at + 400;
+        const bad: string[] = [];
+        const ys = [
+          ...Array.from({ length: 41 }, (_, i) => Math.round((i * end) / 40)),
+          ...Array.from({ length: 41 }, (_, i) => Math.round(end - (i * end) / 40)),
+        ];
+        for (const y of ys) {
+          await scrollToY(page, y);
           const s = await snap(page, H.head);
-          return (
-            isIcon(s) &&
-            near(s.head.top, s.barBottom) &&
-            s.head.right - s.go.right >= 8 &&
-            s.head.right - s.go.right <= 24 &&
-            s.go.right <= s.vw
-          );
-        })
-        .toBe(true);
-    });
+          if (s.y !== y) continue; // the page is shorter than that
+          const say = (m: string) => bad.push(`at ${y}: ${m}`);
+          if (s.head.top < s.barBottom - 1.5 && s.head.bottom > s.barBottom)
+            say(`head top ${s.head.top} is under the bar (${s.barBottom})`);
+          if (y > at + 30 && s.head.bottom > s.barBottom + 32 && !near(s.head.top, s.barBottom))
+            say(`head not stuck: top ${s.head.top}`);
+          if (s.head.bottom > s.barBottom + 32 && !s.headOnTop) say("head covered");
+          if (!isPill(s) && !isIcon(s)) say(`button is neither pill nor icon: ${s.go.w}px`);
+          if (s.go.left < 0 || s.go.right > s.vw) say(`button off the side: ${s.go.left}..${s.go.right}`);
+          if (isIcon(s) && s.h1Right > s.go.left + 0.5) say("title runs under the button");
+        }
+        expect(bad).toEqual([]);
+      },
+    );
+
+    test(
+      "compact survives a resize: still under the bar, the button still at the right edge",
+      FULL,
+      async ({ page }) => {
+        await open(page, H);
+        const at = await stickAt(page, H.head);
+        const vp = page.viewportSize()!;
+        await scrollToY(page, at + 120);
+        await expect.poll(async () => isIcon(await snap(page, H.head))).toBe(true);
+        await page.setViewportSize({ width: vp.width + 180, height: vp.height - 80 });
+        await settle(page);
+        await expect
+          .poll(async () => {
+            const s = await snap(page, H.head);
+            return (
+              isIcon(s) &&
+              near(s.head.top, s.barBottom) &&
+              s.head.right - s.go.right >= 8 &&
+              s.head.right - s.go.right <= 24 &&
+              s.go.right <= s.vw
+            );
+          })
+          .toBe(true);
+      },
+    );
   });
 }
 
@@ -314,7 +323,7 @@ test.describe("event head", () => {
     await expect.poll(parts).toEqual(rest);
   });
 
-  test("the button keeps its link in both states", async ({ page }) => {
+  test("the button keeps its link in both states", FULL, async ({ page }) => {
     await open(page, EVENT);
     const goBtn = page.locator(`${EVENT.head} ${SEL.go}`);
     const url = JSON.parse(readFileSync(FIXTURE + "events.json", "utf8")).events.find(
@@ -356,67 +365,71 @@ test.describe("event head", () => {
       .toBe(true);
   });
 
-  test("the card's end takes the head away with it; the heading after it then sticks under the bar", async ({
-    page,
-  }) => {
-    await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.setViewportSize({ width: page.viewportSize()!.width, height: 420 }); // short, so the page is long enough to scroll the card away
-    await open(page, EVENT);
-    const sh = page.locator("main > h3.sh").first();
-    const shDocTop = await sh.evaluate((el) => el.getBoundingClientRect().top + scrollY);
-    const max = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
-    expect(max, "room to scroll the card away").toBeGreaterThan(shDocTop - 60);
-    // the card's last lines under the bar: the head is on its way out, above the heading and never over it
-    await scrollToY(page, shDocTop - 150);
-    let s = await snap(page, EVENT.head);
-    let b = (await sh.boundingBox())!;
-    expect(s.head.bottom).toBeLessThanOrEqual(b.y + 1);
-    expect(s.head.top).toBeLessThanOrEqual(s.barBottom + 1.5);
-    // the heading has passed the bar: it sticks there, the head is gone
-    await scrollToY(page, shDocTop - 37);
-    s = await snap(page, EVENT.head);
-    b = (await sh.boundingBox())!;
-    expect(near(b.y, s.barBottom), `heading at ${b.y}, bar ends at ${s.barBottom}`).toBe(true);
-    expect(s.head.bottom).toBeLessThanOrEqual(s.barBottom + 1);
-  });
+  test(
+    "the card's end takes the head away with it; the heading after it then sticks under the bar",
+    FULL,
+    async ({ page }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.setViewportSize({ width: page.viewportSize()!.width, height: 420 }); // short, so the page is long enough to scroll the card away
+      await open(page, EVENT);
+      const sh = page.locator("main > h3.sh").first();
+      const shDocTop = await sh.evaluate((el) => el.getBoundingClientRect().top + scrollY);
+      const max = await page.evaluate(() => document.documentElement.scrollHeight - innerHeight);
+      expect(max, "room to scroll the card away").toBeGreaterThan(shDocTop - 60);
+      // the card's last lines under the bar: the head is on its way out, above the heading and never over it
+      await scrollToY(page, shDocTop - 150);
+      let s = await snap(page, EVENT.head);
+      let b = (await sh.boundingBox())!;
+      expect(s.head.bottom).toBeLessThanOrEqual(b.y + 1);
+      expect(s.head.top).toBeLessThanOrEqual(s.barBottom + 1.5);
+      // the heading has passed the bar: it sticks there, the head is gone
+      await scrollToY(page, shDocTop - 37);
+      s = await snap(page, EVENT.head);
+      b = (await sh.boundingBox())!;
+      expect(near(b.y, s.barBottom), `heading at ${b.y}, bar ends at ${s.barBottom}`).toBe(true);
+      expect(s.head.bottom).toBeLessThanOrEqual(s.barBottom + 1);
+    },
+  );
 
-  test("another event from the list below starts at rest; back restores the scrolled, compact head", async ({
-    page,
-  }) => {
-    await open(page, EVENT);
-    const at = await stickAt(page, EVENT.head);
-    await scrollToY(page, at + 90);
-    await expect.poll(async () => isIcon(await snap(page, EVENT.head))).toBe(true);
-    const y = await page.evaluate(() => scrollY);
-    const next = page.locator("main > .event").first();
-    const title = await next.locator("h4").innerText();
-    await next.locator("a.open").evaluate((a: HTMLElement) => a.click());
-    await expect(page.locator(EVENT.head + " h1")).toHaveText(title);
-    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
-    await expect
-      .poll(async () => {
-        const s = await snap(page, EVENT.head);
-        return isPill(s) && near(s.go.top, s.ph.top) && near(s.go.left, s.ph.left);
-      }, "the new event's head is at rest, measured for its own title")
-      .toBe(true);
-    await page.goBack();
-    await expect(page.locator(EVENT.head + " h1")).toHaveText(EVENT.title);
-    await expect.poll(() => page.evaluate(() => scrollY)).toBe(y);
-    await expect
-      .poll(async () => {
-        const s = await snap(page, EVENT.head);
-        return isIcon(s) && near(s.head.top, s.barBottom);
-      }, "compact again, without a scroll")
-      .toBe(true);
-    // and the way up still ends at rest, on the placeholder
-    await scrollToY(page, 0);
-    await expect
-      .poll(async () => {
-        const s = await snap(page, EVENT.head);
-        return isPill(s) && near(s.go.top, s.ph.top);
-      })
-      .toBe(true);
-  });
+  test(
+    "another event from the list below starts at rest; back restores the scrolled, compact head",
+    FULL,
+    async ({ page }) => {
+      await open(page, EVENT);
+      const at = await stickAt(page, EVENT.head);
+      await scrollToY(page, at + 90);
+      await expect.poll(async () => isIcon(await snap(page, EVENT.head))).toBe(true);
+      const y = await page.evaluate(() => scrollY);
+      const next = page.locator("main > .event").first();
+      const title = await next.locator("h4").innerText();
+      await next.locator("a.open").evaluate((a: HTMLElement) => a.click());
+      await expect(page.locator(EVENT.head + " h1")).toHaveText(title);
+      await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+      await expect
+        .poll(async () => {
+          const s = await snap(page, EVENT.head);
+          return isPill(s) && near(s.go.top, s.ph.top) && near(s.go.left, s.ph.left);
+        }, "the new event's head is at rest, measured for its own title")
+        .toBe(true);
+      await page.goBack();
+      await expect(page.locator(EVENT.head + " h1")).toHaveText(EVENT.title);
+      await expect.poll(() => page.evaluate(() => scrollY)).toBe(y);
+      await expect
+        .poll(async () => {
+          const s = await snap(page, EVENT.head);
+          return isIcon(s) && near(s.head.top, s.barBottom);
+        }, "compact again, without a scroll")
+        .toBe(true);
+      // and the way up still ends at rest, on the placeholder
+      await scrollToY(page, 0);
+      await expect
+        .poll(async () => {
+          const s = await snap(page, EVENT.head);
+          return isPill(s) && near(s.go.top, s.ph.top);
+        })
+        .toBe(true);
+    },
+  );
 });
 
 test.describe("club head", () => {
@@ -463,7 +476,7 @@ test.describe("club head", () => {
     ).toBe(true);
   });
 
-  test("the icon button still opens the subscribe popup", async ({ page }) => {
+  test("the icon button still opens the subscribe popup", FULL, async ({ page }) => {
     await open(page, CLUB);
     await scrollToY(page, (await stickAt(page, CLUB.head)) + 120);
     await expect.poll(async () => isIcon(await snap(page, CLUB.head))).toBe(true);
@@ -510,7 +523,7 @@ test.describe("club head", () => {
       .toBe(0);
   });
 
-  test("the colour block drifts up a little faster than the page; not with reduced motion", async ({ page }) => {
+  test("the colour block drifts up a little faster than the page; not with reduced motion", FULL, async ({ page }) => {
     await open(page, CLUB);
     const ty = () => page.locator("main .chero").evaluate((el) => new DOMMatrix(getComputedStyle(el).transform).m42);
     expect(await ty()).toBe(0);
@@ -523,27 +536,29 @@ test.describe("club head", () => {
     expect(await ty()).toBe(0);
   });
 
-  test("club to club (the partner chip): the next club's head starts at rest, measured for its own name", async ({
-    page,
-  }) => {
-    await open(page, CLUB);
-    await scrollToY(page, (await stickAt(page, CLUB.head)) + 60);
-    await expect.poll(async () => isIcon(await snap(page, CLUB.head))).toBe(true);
-    await page.locator(".aboutc .with a.chip[href='#/club/sempachersee']").evaluate((a: HTMLElement) => a.click());
-    await expect(page.locator(CLUB.head + " h1")).toHaveText("Rotaract Sempachersee");
-    await expect
-      .poll(async () => {
-        const s = await snap(page, CLUB.head);
-        return (
-          s.y === 0 &&
-          isPill(s) &&
-          near(s.go.top, s.ph.top) &&
-          near(s.go.left, s.ph.left) &&
-          s.go.top >= s.contentBottom + 8
-        );
-      })
-      .toBe(true);
-  });
+  test(
+    "club to club (the partner chip): the next club's head starts at rest, measured for its own name",
+    FULL,
+    async ({ page }) => {
+      await open(page, CLUB);
+      await scrollToY(page, (await stickAt(page, CLUB.head)) + 60);
+      await expect.poll(async () => isIcon(await snap(page, CLUB.head))).toBe(true);
+      await page.locator(".aboutc .with a.chip[href='#/club/sempachersee']").evaluate((a: HTMLElement) => a.click());
+      await expect(page.locator(CLUB.head + " h1")).toHaveText("Rotaract Sempachersee");
+      await expect
+        .poll(async () => {
+          const s = await snap(page, CLUB.head);
+          return (
+            s.y === 0 &&
+            isPill(s) &&
+            near(s.go.top, s.ph.top) &&
+            near(s.go.left, s.ph.left) &&
+            s.go.top >= s.contentBottom + 8
+          );
+        })
+        .toBe(true);
+    },
+  );
 });
 
 test.describe("leaving a morphing screen", () => {
@@ -664,64 +679,68 @@ test.describe("about: the scroll morph", () => {
     expect(which(await settled(page))).toBe(-1);
   });
 
-  test("the words open in order on the way down and close in order on the way up, never two at once, no flicker at a boundary", async ({
-    page,
-  }) => {
-    test.slow(); // many scroll steps: three times the usual time limit, for a busy CI machine
-    const a0 = await openAbout(page);
-    // without the snap points (their own test below): they hold the page on a word, and this is about where one word hands over to the next
-    await page.addStyleTag({ content: "html { scroll-snap-type: none !important; }" });
-    // the state the screen is in is its class here: the panels' heights lag behind by their transition
-    const cur = () =>
-      page.evaluate(() => {
-        const on = [...document.querySelectorAll("main.about .words > *")]
-          .map((w, i) => (w.classList.contains("on") ? i : -1))
-          .filter((i) => i >= 0);
-        return on.length > 1 ? 99 : (on[0] ?? -1);
-      });
-    const seen: number[] = [];
-    const N = 60;
-    for (let i = 0; i <= N; i++) {
-      await scrollToY(page, at(a0, i / N));
-      seen.push(await cur());
-    }
-    const down = seen.filter((v, i) => v !== seen[i - 1]);
-    expect(down).toEqual([-1, 0, 1, 2]);
-    // each word gets about a third of the track
-    for (const w of [0, 1, 2]) expect(seen.filter((v) => v === w).length).toBeGreaterThan(N / 4);
-    const back: number[] = [];
-    for (let i = N; i >= 0; i--) {
-      await scrollToY(page, at(a0, i / N));
-      back.push(await cur());
-    }
-    expect(back.filter((v, i) => v !== back[i - 1])).toEqual([2, 1, 0, -1]);
-    // hysteresis: wiggling around a boundary doesn't flip it back and forth
-    const edge = seen.findIndex((v) => v === 1) / N;
-    await scrollToY(page, at(a0, edge));
-    expect(await cur()).toBe(1);
-    const wiggle: number[] = [];
-    for (const d of [-0.005, 0.005, -0.005, 0.005, -0.005]) {
-      await scrollToY(page, at(a0, edge + d));
-      wiggle.push(await cur());
-    }
-    expect(new Set(wiggle).size).toBe(1);
-  });
+  test(
+    "the words open in order on the way down and close in order on the way up, never two at once, no flicker at a boundary",
+    FULL,
+    async ({ page }) => {
+      test.slow(); // many scroll steps: three times the usual time limit, for a busy CI machine
+      const a0 = await openAbout(page);
+      // without the snap points (their own test below): they hold the page on a word, and this is about where one word hands over to the next
+      await page.addStyleTag({ content: "html { scroll-snap-type: none !important; }" });
+      // the state the screen is in is its class here: the panels' heights lag behind by their transition
+      const cur = () =>
+        page.evaluate(() => {
+          const on = [...document.querySelectorAll("main.about .words > *")]
+            .map((w, i) => (w.classList.contains("on") ? i : -1))
+            .filter((i) => i >= 0);
+          return on.length > 1 ? 99 : (on[0] ?? -1);
+        });
+      const seen: number[] = [];
+      const N = 60;
+      for (let i = 0; i <= N; i++) {
+        await scrollToY(page, at(a0, i / N));
+        seen.push(await cur());
+      }
+      const down = seen.filter((v, i) => v !== seen[i - 1]);
+      expect(down).toEqual([-1, 0, 1, 2]);
+      // each word gets about a third of the track
+      for (const w of [0, 1, 2]) expect(seen.filter((v) => v === w).length).toBeGreaterThan(N / 4);
+      const back: number[] = [];
+      for (let i = N; i >= 0; i--) {
+        await scrollToY(page, at(a0, i / N));
+        back.push(await cur());
+      }
+      expect(back.filter((v, i) => v !== back[i - 1])).toEqual([2, 1, 0, -1]);
+      // hysteresis: wiggling around a boundary doesn't flip it back and forth
+      const edge = seen.findIndex((v) => v === 1) / N;
+      await scrollToY(page, at(a0, edge));
+      expect(await cur()).toBe(1);
+      const wiggle: number[] = [];
+      for (const d of [-0.005, 0.005, -0.005, 0.005, -0.005]) {
+        await scrollToY(page, at(a0, edge + d));
+        wiggle.push(await cur());
+      }
+      expect(new Set(wiggle).size).toBe(1);
+    },
+  );
 
-  test("a scroll that ends near a word settles on the middle of its third; far past the track nothing pulls back", async ({
-    page,
-  }) => {
-    const a0 = await openAbout(page);
-    for (const i of [0, 1, 2]) {
-      await scrollToY(page, at(a0, MIDS[i]!) + 60);
-      const a = await settled(page);
-      expect(near(a.y, at(a0, MIDS[i]!), 2), `stopped at ${a.y}, ${WORDS[i]} is at ${at(a0, MIDS[i]!)}`).toBe(true);
-      expect(which(a)).toBe(i);
-    }
-    await scrollToY(page, at(a0, 1) + 700);
-    expect(near((await about(page)).y, at(a0, 1) + 700, 2)).toBe(true);
-  });
+  test(
+    "a scroll that ends near a word settles on the middle of its third; far past the track nothing pulls back",
+    FULL,
+    async ({ page }) => {
+      const a0 = await openAbout(page);
+      for (const i of [0, 1, 2]) {
+        await scrollToY(page, at(a0, MIDS[i]!) + 60);
+        const a = await settled(page);
+        expect(near(a.y, at(a0, MIDS[i]!), 2), `stopped at ${a.y}, ${WORDS[i]} is at ${at(a0, MIDS[i]!)}`).toBe(true);
+        expect(which(a)).toBe(i);
+      }
+      await scrollToY(page, at(a0, 1) + 700);
+      expect(near((await about(page)).y, at(a0, 1) + 700, 2)).toBe(true);
+    },
+  );
 
-  test("a tap on a word scrolls to it and opens it; Enter on a focused word does the same", async ({ page }) => {
+  test("a tap on a word scrolls to it and opens it; Enter on a focused word does the same", FULL, async ({ page }) => {
     const a0 = await openAbout(page);
     await page.locator("main.about .word", { hasText: "Celebrate." }).click();
     await expect.poll(async () => which(await about(page)), { timeout: 10_000 }).toBe(2);
@@ -750,7 +769,7 @@ test.describe("about: the scroll morph", () => {
     await expect(page.locator("main.about .w img")).toHaveCount(3);
   });
 
-  test("coming back to the screen starts it closed again; a resize keeps the open word", async ({ page }) => {
+  test("coming back to the screen starts it closed again; a resize keeps the open word", FULL, async ({ page }) => {
     const a0 = await openAbout(page);
     await scrollToY(page, at(a0, MIDS[1]!));
     expect(which(await settled(page))).toBe(1);

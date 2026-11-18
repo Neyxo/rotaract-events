@@ -11,6 +11,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
+  grepInvert: process.env.E2E_FULL ? undefined : /@full/, // the thorough tests (morph.spec.ts FULL): npm run e2e:full
   reporter: process.env.CI ? "list" : [["list"]],
   use: {
     baseURL: `http://127.0.0.1:${PORT}/`,

@@ -14,6 +14,7 @@
     "lint": "oxlint web/src && biome check --error-on-warnings",
     "format": "biome format --write",
     "e2e": "playwright test",
+    "e2e:full": "E2E_FULL=1 playwright test",
     "prepare": "git config core.hooksPath .githooks || true"
   },
   "dependencies": {
