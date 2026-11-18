@@ -284,7 +284,8 @@ describe("Settings", () => {
     act(() => {
       dispatchEvent(new Event("appinstalled"));
     });
-    expect(document.getElementById("installBody")!.textContent).toBe(t("inst_done"));
+    // still this browser tab, not the app: the way into the app, not "you're using the installed app"
+    expect(document.getElementById("installBody")!.textContent).toBe(t("inst_have"));
   });
 
   it("Send to someone: the system's share sheet gets the app's address and the short text about it", async () => {

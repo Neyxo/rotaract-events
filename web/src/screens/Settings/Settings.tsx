@@ -13,6 +13,7 @@ import {
   openAnyUrl,
   samsung,
   seesInstalledApp,
+  standalone,
 } from "../../lib/install";
 import { IconHint } from "../Onboarding/Onboarding";
 import { href } from "../../lib/route";
@@ -94,7 +95,6 @@ function Installed({ open }: { open: string | null }) {
 /** installed: a note; the browser's prompt: one button (in Samsung Internet after installing in Chrome); otherwise this phone's
  *  steps (on Android under a link that opens the app in Chrome), with a link to the other devices' steps on This app */
 function Install() {
-  const prompt = useInstallPrompt();
   const state = useInstallState();
   // in a browser tab: the app already on the phone, as far as the browser can tell (Samsung Internet sees the one it installed)
   const [have, setHave] = useState(false);
@@ -102,14 +102,21 @@ function Install() {
     void seesInstalledApp().then(setHave);
   }, []);
   const open = openAnyUrl();
-  if (state)
+  // running as the app: nothing to install or open; in a tab that just installed it, the way into the app like any tab that sees it
+  if (state === "installing" || standalone())
     return (
       <div id="installBody">
-        <p className="meta">{t(state === "installed" ? "inst_done" : "ob_installing")}</p>
+        <p className="meta">{t(state === "installing" ? "ob_installing" : "inst_done")}</p>
       </div>
     );
-  if (have) return <Installed open={open} />;
-  // an app Chrome installed, which no browser here can see: the intent opens it from Chrome and Samsung Internet alike
+  if (have || state === "installed") return <Installed open={open} />;
+  return <Offer open={open} />;
+}
+
+/** not installed as far as this browser can tell: the way to install (Samsung Internet: in Chrome first), and the link for an app
+ *  Chrome installed, which no browser here can see (the intent opens it from Chrome and Samsung Internet alike) */
+function Offer({ open }: { open: string | null }) {
+  const prompt = useInstallPrompt();
   const already = open && (
     <a className="meta" href={open}>
       {t("inst_open_have")}
