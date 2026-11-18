@@ -90,7 +90,8 @@ export async function install(): Promise<void> {
 
 /** running as the installed app */
 export const standalone = (): boolean =>
-  matchMedia("(display-mode: standalone)").matches || !!(navigator as { standalone?: boolean }).standalone;
+  !!globalThis.matchMedia?.("(display-mode: standalone)").matches ||
+  !!(navigator as { standalone?: boolean }).standalone;
 /** running installed, or installed from this tab a moment ago: no install steps to show */
 export const isInstalled = (): boolean => standalone() || installed;
 /** where installing stands, for a re-render when it moves on (useInstallState() in src/hooks) */

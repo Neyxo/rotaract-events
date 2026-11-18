@@ -66,6 +66,24 @@ function ObNav({
   );
 }
 
+/** a drawn arrow from the middle of the screen up to its top right corner, where Samsung Internet's address bar has the app's icon:
+ *  a loop on the way, a thin glow under it, drawn in once (still with reduced motion) */
+function ToIcon() {
+  return (
+    <svg className="toicon" viewBox="0 0 200 320" aria-hidden="true">
+      <path
+        className="glow"
+        d="M24 312C8 236 92 230 104 182C114 140 70 124 62 156C54 190 120 196 150 140C172 98 178 62 180 22"
+      />
+      <path
+        className="line"
+        d="M24 312C8 236 92 230 104 182C114 140 70 124 62 156C54 190 120 196 150 140C172 98 178 62 180 22"
+      />
+      <path className="head" d="M158 46L180 18L198 50" />
+    </svg>
+  );
+}
+
 /** The app first, and how to get it at once, nothing to tap before: with the browser's prompt one big button that installs, in
  *  whatever browser this is; without one (iPhone, Firefox, DuckDuckGo, inside another app) this system's three steps, with the
  *  way to the browser they name: a link to Chrome on Android, and the address to copy. Below, a faint way past it. Installed, the
@@ -81,13 +99,24 @@ function InstallStep({ title, onWeb }: { title: (text: string) => ReactNode; onW
         <p>{t("ob_installing_t")}</p>
       </>
     );
+  // Samsung Internet: no link can open the app it installed, only its own icon in the address bar, up there: an arrow to it
+  if (state === "installed" && samsung())
+    return (
+      <>
+        <ToIcon />
+        {title(t("ob_inst_done"))}
+        <p>{t("ob_open_samsung")}</p>
+        <button className="skip web faint" type="button" onClick={onWeb}>
+          {t("ob_web_back")}
+        </button>
+      </>
+    );
   if (state === "installed") {
     const open = openAppUrl();
     return (
       <>
         {title(t("ob_inst_done"))}
         <p>{t("ob_inst_done_t")}</p>
-        {samsung() && <p>{t("ob_open_samsung")}</p>}
         {open && (
           <a className="btn big" href={open}>
             {t("ob_open")}
@@ -333,6 +362,8 @@ export function Onboarding({ run }: { run: number }) {
   const dlg = useRef<HTMLDialogElement>(null);
   const h2 = useRef<HTMLHeadingElement>(null);
   const [ob, setOb] = useState<Ob | null>(null);
+  // installed from Samsung Internet: the welcome turns into an arrow over the whole page, to the app's icon in the address bar
+  const pointing = useInstallState() === "installed" && samsung();
   // a new run starts the steps over from the settings as they are: set while rendering, no draw in between shows the old steps
   const [ran, setRan] = useState(0);
   if (run !== ran) {
@@ -357,7 +388,7 @@ export function Onboarding({ run }: { run: number }) {
   const set = (o: Partial<Ob>) => setOb((cur) => cur && { ...cur, ...o });
   return (
     <dialog
-      className={cx("ob", ob?.member === false && "full")}
+      className={cx("ob", ob?.member === false && "full", ob?.step === -1 && pointing && "point")}
       id="ob"
       aria-labelledby="obTitle"
       ref={dlg}
