@@ -947,50 +947,7 @@ function LinkLab() {
           I · The same, back here without Chrome
         </a>
       </div>
-      <OpenAppLab />
       <p className="meta devua">{navigator.userAgent}</p>
-    </>
-  );
-}
-
-/** A link that opens the installed app, whichever browser installed it? The manifest registers the link type web+rotaract: with the
- *  installed app (protocol_handlers), so the phone may hand such links to it. A plain https link, or an intent without a package,
- *  stays in Samsung Internet (tested A to G, 0.17.1); these try the app's own link type, alone and as intents. Reinstall the app
- *  after the manifest changed, then tap each from Samsung Internet and from Chrome, with the app installed from either. */
-function OpenAppLab() {
-  const site = location.host + location.pathname.replace(/[^/]*$/, "");
-  const view = "action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;";
-  const own = (extra = "") => `intent://open#Intent;scheme=web+rotaract;${extra}end`;
-  return (
-    <>
-      <h3>Open the installed app</h3>
-      <p className="meta">
-        Reinstall the app first (it learns the link type when installed). Note for each: the app opens, Chrome or
-        Samsung Internet opens, a choice is offered, or nothing happens.
-      </p>
-      <div className="links">
-        <a className="linkbtn" href="web+rotaract://open">
-          J · The app's own link
-        </a>
-        <a className="linkbtn" href={own()}>
-          K · Its own link, as an intent
-        </a>
-        <a className="linkbtn" href={own(view)}>
-          L · As an intent, action and category named
-        </a>
-        <a className="linkbtn" href={own("package=com.android.chrome;")}>
-          M · Its own link, handed to Chrome
-        </a>
-        <a className="linkbtn" href={own("package=com.sec.android.app.sbrowser;")}>
-          N · Its own link, handed to Samsung Internet
-        </a>
-        <a
-          className="linkbtn"
-          href={`intent://${site}#Intent;scheme=https;${view}package=com.sec.android.app.sbrowser;end`}
-        >
-          O · This site, handed to Samsung Internet
-        </a>
-      </div>
     </>
   );
 }
