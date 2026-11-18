@@ -684,17 +684,17 @@ function Preview() {
   );
 }
 
+// edited in a text box, not prompt(): a prompt cuts a long value (a game's save) short, which then is no JSON
 function StoredKey({ k }: { k: string }) {
-  const edit = () => {
-    const v = prompt(k, localStorage.getItem(k) ?? "");
-    if (v == null) return;
+  const [text, setText] = useState<string | null>(null);
+  const save = () => {
     try {
-      JSON.parse(v);
-    } catch {
-      alert("Not valid JSON, nothing changed.");
+      JSON.parse(text ?? "");
+    } catch (e) {
+      alert(`Not valid JSON, nothing changed: ${(e as Error).message}`);
       return;
     }
-    localStorage.setItem(k, v);
+    localStorage.setItem(k, text ?? "");
     reload();
   };
   const del = () => {
@@ -706,8 +706,15 @@ function StoredKey({ k }: { k: string }) {
     <div className="devkey">
       <code>{k}</code>
       <span>{localStorage.getItem(k)}</span>
-      <Btn label="Edit" onClick={edit} />
+      <Btn label="Edit" onClick={() => setText(localStorage.getItem(k) ?? "")} />
       <Btn label="Delete" onClick={del} />
+      {text !== null && (
+        <div className="devedit">
+          <textarea aria-label={k} value={text} spellCheck={false} onChange={(e) => setText(e.target.value)} />
+          <Btn label="Save" onClick={save} />
+          <Btn label="Cancel" onClick={() => setText(null)} />
+        </div>
+      )}
     </div>
   );
 }

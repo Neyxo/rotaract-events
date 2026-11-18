@@ -342,3 +342,17 @@
   max-width: 80%;
   max-height: 40px;
 }
+.devedit {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+.devedit textarea {
+  width: 100%;
+  min-height: 10rem;
+  font:
+    0.74rem / 1.4 ui-monospace,
+    monospace;
+}

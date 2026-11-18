@@ -16,58 +16,70 @@ export interface StoreKeys {
   "rac.guideSeen": boolean;
   /** the subscribe card on Home was opened once, so it stays away */
   "rac.subSeen": boolean;
-  /** the idle clicker (components/Clicker): hours, francs and people helped this Rotary year, when it was last saved, how the
-   * wheel may be spun (0 tap, 1 swipe, 2 hold), the level of each family wheel, the project slots (null: empty; else the plan
-   * (cause, format, audience, size, budget), what it was judged (stars, weakest part, the budget item that wanted more), its
-   * level, its officer, t seconds into its run or -1 idle), every plan tried so far with its stars, and the pins kept from the
-   * years handed over. The members: how many (mem, a fraction while one is joining), how many of them are tired, trained (pro)
-   * or at the RYLA camp (not in mem) and for how many seconds more, and how many moved on to Rotary. The guest speaker's talk
-   * in effect (boost, -1 none) and its seconds left. The Foundation: donations on their way back ([francs, seconds left]),
-   * all ever given, the Paul Harris pins awarded to each family wheel; the stake on another club's project and the last one's
-   * result in francs. What a handover keeps: the levels of the tree, the culture chosen for this year (-1 none), the names of
-   * the clubs chartered, the best year's people helped, the years handed over, the banners won. v tells an older save apart, which is dropped. */
+  /** the idle clicker (components/Clicker): the service time to spend and all earned this Rotary year (seconds), when it was
+   * last saved, the levels of Handshake (grip) and Momentum (oil), how the wheel may be spun (0 tap, 1 swipe, 2 hold), the
+   * members (0 before the club is founded, a fraction while one is leaving), the club's energy (0 to 1), and whether the club
+   * folded. The stage reached (1 wheel, 2 club, 3 family and upgrades, 4 projects, 5 Avenues, 6 exchange, 7 district, 8
+   * year). Per project: how many are owned, seconds into its run (-1 idle), whether a committee runs it, whether the player switched
+   * that committee off. The Social committee (soc: null not bought, else whether it is on). The real event's run going on (its id, seconds into it) and the ids of those already run. Per Avenue of
+   * Service: its points (pts) and the members of its kind (kind, fractional; the rest are plain). Per wheel of the Rotary family:
+   * its level (fam); the mentors, members who moved on to Rotary once its wheel was there (alum, fractional); the guest
+   * speaker's talk going on (k which, t seconds left). Per club on the exchange: its last prices (px, the last is now), the
+   * shares held (sh) and the time paid for them, and the exchange's best net gain at a sale this year less its sales' net gain (peak); the Foundation's deposits (n seconds put in, t seconds until they come
+   * back). The clubs chartered (chart, kept across handovers), the District conference going on (t seconds into it, n turns
+   * made), the seconds until the next one may start (cool) and of doubled time left (boost). Kept across handovers too: the
+   * years handed over, the helpers (people helped in years before, not spent), the levels they bought (perm: Experience,
+   * Treasurer, Vice-president, Mentoring), and the General Assembly's votes for the year (ga: culture, meeting rhythm, the
+   * president's theme Avenue, the twin club; -1 none). The player's sound (sfx) and music switches, kept across new years. v
+   * tells an older save apart, which is dropped. */
   "rac.clicker": {
-    v: 5;
+    v: 10;
     h: number;
-    f: number;
-    p: number;
+    all: number;
     at: number;
+    grip: number;
+    oil: number;
     spin: number;
-    fam: number[];
-    proj: (null | {
-      c: number;
-      fm: number;
-      a: number;
-      z: number;
-      b: number[];
-      st: number;
-      weak: number;
-      want: number;
-      lv: number;
-      auto: boolean;
-      t: number;
-    })[];
-    book: string[];
-    pins: number;
     mem: number;
-    tired: number;
-    pro: number;
-    camp: number;
-    campT: number;
+    en: number;
+    folded: boolean;
+    stage: number;
+    own: number[];
+    run: number[];
+    com: boolean[];
+    off: boolean[];
+    soc: null | boolean;
+    ev: null | { id: string; t: number };
+    evs: string[];
+    pts: number[];
+    kind: number[];
+    fam: number[];
     alum: number;
+    talk: null | { k: number; t: number };
+    px: number[][];
+    sh: number[];
+    paid: number[];
+    peak: number;
+    dep: { n: number; t: number }[];
+    chart: number;
+    conf: null | { t: number; n: number };
+    cool: number;
     boost: number;
-    boostT: number;
-    grants: number[][];
-    given: number;
-    phf: number[];
-    stake: null | { club: string; k: number; amt: number; win: boolean; t: number };
-    res: number;
-    tree: number[];
-    cult: number;
-    clubs: string[];
-    best: number;
-    yrs: number;
-    ban: number[];
+    years: number;
+    helpers: number;
+    perm: number[];
+    ga: number[];
+    sfx: boolean;
+    music: boolean;
+    /** levels bought at once in the upgrades and projects: 1, 10, or 0 for as many as there is time for */
+    bulk: number;
+    /** the members of each family wheel, the members moved along each mesh of the pipeline, each wheel's slip's seconds left */
+    fm: number[];
+    moved: number[];
+    slip: number[];
+    /** this year's project runs, and the most members the club had */
+    runs: number;
+    top: number;
   };
   /** developer mode switch; rac.dev* preview flags only count while it is on */
   "rac.dev": boolean;
