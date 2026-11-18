@@ -206,6 +206,13 @@ dialog.ob.full {
     transform 0.12s,
     background 0.15s;
 }
+/* a link that looks like the button (Open the app): a block box, so the height and width apply, its text centred, no underline */
+.ob a.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
 .ob .btn:hover {
   background: var(--accent-hover);
 }

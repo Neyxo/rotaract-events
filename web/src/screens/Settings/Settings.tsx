@@ -4,7 +4,7 @@ import { t, tx } from "../../i18n";
 import { setRotary, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { anyDevFlag } from "../../lib/dev";
 import { guessOS, type OS } from "../../lib/geo";
-import { appUrl, chromeUrl, install, isInstalled } from "../../lib/install";
+import { appUrl, chromeUrl, install, isInstalled, samsung } from "../../lib/install";
 import { href } from "../../lib/route";
 import { resetAll, setTheme, store } from "../../lib/store";
 import type { ScreenProps } from "../../App";
@@ -209,6 +209,11 @@ export default function Settings(_props: ScreenProps) {
             </button>
           </div>
         </div>
+        {samsung() && (
+          <p className="meta" style={{ margin: "0 0 12px" }}>
+            {t("theme_samsung")}
+          </p>
+        )}
         <div className="setrow col" id="install">
           <span>{t("inst_title")}</span>
           <Install />

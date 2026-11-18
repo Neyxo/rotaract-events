@@ -216,6 +216,8 @@ const fr: Messages = {
     "Votre club principal et les clubs que vous suivez forment la vue « Mes clubs ». Chercher et filtrer ne change jamais cela.",
   theme_light: "Clair",
   theme_dark: "Sombre",
+  theme_samsung:
+    "Samsung Internet assombrit lui-même les sites, l’app installée aussi, par-dessus le thème choisi ici. Pour le Clair et le Sombre de l’app : dans Samsung Internet, Menu → Paramètres → Labs → activer « Utiliser le thème sombre du site ».",
   change: "Modifier",
   ob_main: "Votre club principal",
   ob_also: "Aussi intéressé par",

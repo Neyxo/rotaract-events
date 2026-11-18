@@ -216,6 +216,8 @@ const de: Messages = {
     "Dein Hauptclub und die Clubs, denen du auch folgst, bilden die Ansicht «Meine Clubs». Suchen und Filtern ändert das nie.",
   theme_light: "Hell",
   theme_dark: "Dunkel",
+  theme_samsung:
+    "Samsung Internet dunkelt Websites von sich aus ab, auch die installierte App, über das hier gewählte Design hinweg. Für das Hell und Dunkel der App: in Samsung Internet Menü → Einstellungen → Labs → «Dunkles Design der Website verwenden» einschalten.",
   change: "Ändern",
   ob_main: "Dein Hauptclub",
   ob_also: "Auch interessiert an",
