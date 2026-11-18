@@ -397,5 +397,26 @@
    "LOCATION:Exact location TBA",
    "CATEGORIES:Rotaract"
   ]
+ },
+ "223170": {
+  "detail": {
+   "description": "Join us at 18:00 at the Opernhaus Christmas Market in Seefeld for some delicious Glühwein, tasty food, and festive vibes! \n\nCome along for a cozy evening filled with good company, Christmas lights, and holiday cheer! 🎄",
+   "image": "https://zurich-international.rotaract.ch/media/cache/rotary_website_content_grid_images/rc/jpEzGDqk/6af383f4afa28.jpeg?v=1.6.0",
+   "registration": "Registration until: Thursday, December 10, 2026 at 6:00 PM\n\nMax. number of participants: 50"
+  },
+  "first_seen": "20261118T101703Z",
+  "modified": "20261118T101703Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223170@rotary.ch",
+   "SUMMARY:After-work Christmas Market Glühwein",
+   "DESCRIPTION:",
+   "URL:https://zurich-international.rotaract.ch/en/agenda/show/223170",
+   "DTSTART;TZID=Europe/Zurich:20261210T180000",
+   "DTEND;TZID=Europe/Zurich:20261210T220000",
+   "LOCATION:Opernhaus Christmas Market",
+   "CATEGORIES:Rotaract"
+  ]
  }
 }
