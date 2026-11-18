@@ -289,7 +289,7 @@ dialog.ob.point {
 .toicon {
   position: absolute;
   top: 6px;
-  right: 10px;
+  right: 46px; /* the tip some 64px from the edge: on Samsung Internet's app icon, left of reload */
   width: min(48vw, 200px);
   height: auto;
   max-height: 52dvh;
