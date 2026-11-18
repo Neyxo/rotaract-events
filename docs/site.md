@@ -16,7 +16,7 @@ One page app in React 19 and TypeScript, built with Vite. `npm run build` writes
 | `static/` | Copied as is: icons, crests, pictures, the manifest, `sw.js`. |
 | `e2e/` | The browser tests (Playwright, `npm run e2e`). |
 
-`npm test` runs the unit tests (Vitest), `npm run typecheck` the TypeScript check, `npm run lint` the linters (oxlint for TypeScript; Biome for the formatting, the CSS and a few readability rules, see `biome.jsonc`), `npm run format` rewrites every file in the one format, `npm run dev` the app with the real data from `public/`.
+`npm test` runs the unit tests (Vitest), `npm run typecheck` the TypeScript check, `npm run lint` the linters (oxlint for TypeScript; Biome for the formatting, the CSS and a few readability rules, see `biome.jsonc`), `npm run format` rewrites every file in the one format, `npm run dev` the app with the real data from `public/`. `npm run e2e` runs the browser tests (Playwright) on every push; `npm run e2e:full` adds the thorough ones (the other morphing heads, scroll sweeps, edge cases).
 
 ## Routes
 
