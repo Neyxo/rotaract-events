@@ -56,9 +56,11 @@ jobs:
         run: npm run lint && npm run typecheck && npm test
       - name: Build the app
         run: npm run build
+      # The browser alone: the runner already has what Chromium needs. --with-deps also fetched fonts and libraries from Ubuntu's
+      # mirrors, which took 14 seconds on a good day and over 6 minutes on a slow one; the tests pass without them.
       - name: End-to-end tests
         if: github.event_name != 'schedule'
-        run: npx playwright install --with-deps chromium && npm run e2e
+        run: npx playwright install chromium && npm run e2e
         env:
           E2E_DIR: dist
       - name: Feed tests
