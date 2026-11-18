@@ -168,10 +168,11 @@ describe("Clicker", () => {
       "45.2 secs",
       "3.00 hrs",
     ]);
-    // the score keeps the number and the unit (a compact letter with it) apart
+    // the score keeps the number and the unit (a compact letter with it) apart. The letter is the Unicode data's: British English
+    // billions are "B" in older versions, "bn" in newer ones (Node 24 on CI)
     expect([parts(45.239), parts(1.23e9 * 31_536_000)]).toEqual([
       ["45.2", " secs"],
-      ["1.23", "B yrs"],
+      ["1.23", expect.stringMatching(/^(B|bn) yrs$/)],
     ]);
   });
   it("the upgrade cards come in a fixed order, the family's once it is there: a new one takes its 🔒 card's place", () => {
