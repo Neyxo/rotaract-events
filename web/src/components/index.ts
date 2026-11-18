@@ -41,6 +41,7 @@ export {
   useTitle,
   useEventListener,
   useInstallPrompt,
+  useInstallState,
   useModal,
   useResize,
 } from "../hooks";

@@ -134,6 +134,11 @@ const fr: Messages = {
     "Cliquez sur l'icône d'installation à droite de la barre d'adresse (un écran avec une flèche).",
     "Cliquez sur « Installer ». Ou ajoutez simplement la page aux favoris.",
   ],
+  g_samsung: [
+    "Touchez le menu ≡ en bas à droite.",
+    "Touchez « Ajouter la page à », puis « Écran d'accueil ».",
+    "Confirmez avec « Ajouter ».",
+  ],
   share_title: "Partager",
   share_send: "Envoyer à quelqu'un",
   share_text:
@@ -165,6 +170,10 @@ const fr: Messages = {
   ob_inst_done: "C'est fait ✓",
   ob_inst_done_t: "Ouvrez Rotaract Events depuis l'écran d'accueil et continuez là.",
   ob_inst_then: "Ouvrez ensuite l'app depuis l'écran d'accueil.",
+  ob_installing: "Installation…",
+  ob_installing_t: "Votre téléphone ajoute l'app. Cela peut prendre quelques secondes.",
+  ob_open_samsung:
+    "Pour l'ouvrir tout de suite : touchez l'icône de l'app dans la barre d'adresse, à côté de Recharger.",
   ob_facts: ["Uniquement les événements publics", "Mis à jour sous 48 heures", "Inscription sur Polaris"],
   yes: "Oui",
   no: "Non",
@@ -217,7 +226,7 @@ const fr: Messages = {
   theme_light: "Clair",
   theme_dark: "Sombre",
   theme_samsung:
-    "Samsung Internet assombrit lui-même les sites, l’app installée aussi, par-dessus le thème choisi ici. Pour le Clair et le Sombre de l’app : dans Samsung Internet, Menu → Paramètres → Labs → activer « Utiliser le thème sombre du site ».",
+    "Samsung Internet assombrit lui-même cette app, par-dessus le thème choisi ici, et Clair comme Sombre peuvent mal s'afficher. Pour les voir comme prévu : dans Samsung Internet, Menu → Paramètres → Affichage et défilement des pages → Mode sombre → désactiver « Forcer le mode sombre pour le contenu web ». Les autres sites gardent alors leurs propres couleurs.",
   change: "Modifier",
   ob_main: "Votre club principal",
   ob_also: "Aussi intéressé par",

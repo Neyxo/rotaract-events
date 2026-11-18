@@ -1,4 +1,4 @@
-// geo, color, pillars, route, share, store, dev
+// geo, color, pillars, route, share, store, dev, install
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { clubVars, onColor, vars } from "./color";
 import { guessClubs, km, mapsUrl, nearestClubs } from "./geo";
@@ -7,6 +7,7 @@ import { href, parseHash } from "./route";
 import { shareUrl } from "./share";
 import { here, store } from "./store";
 import { devFlag, installPretendDate } from "./dev";
+import { chromeUrl, howKey, openAppUrl } from "./install";
 import { fixture } from "../test/fixture";
 import { ev } from "../test/ev";
 
@@ -181,5 +182,17 @@ describe("dev", () => {
     store.set("rac.devDate", "nonsense");
     installPretendDate();
     expect(globalThis.Date).toBe(Real);
+  });
+});
+
+describe("install on Android", () => {
+  const as = (ua: string) => vi.spyOn(navigator, "userAgent", "get").mockReturnValue(ua);
+  const android = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko)";
+  afterEach(() => vi.restoreAllMocks());
+  it("Chrome: the way to Chrome and the button that opens the app; Samsung Internet installs itself, its own steps, no button", () => {
+    as(`${android} Chrome/143.0.0.0 Mobile Safari/537.36`);
+    expect([!!chromeUrl(), !!openAppUrl(), howKey("android")]).toEqual([true, true, "g_android"]);
+    as(`${android} SamsungBrowser/30.0 Chrome/143.0.0.0 Mobile Safari/537.36`);
+    expect([chromeUrl(), openAppUrl(), howKey("android"), howKey("ios")]).toEqual([null, null, "g_samsung", "g_ios"]);
   });
 });

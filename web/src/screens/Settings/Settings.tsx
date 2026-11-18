@@ -4,7 +4,7 @@ import { t, tx } from "../../i18n";
 import { setRotary, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { anyDevFlag } from "../../lib/dev";
 import { guessOS, type OS } from "../../lib/geo";
-import { appUrl, chromeUrl, install, isInstalled, samsung } from "../../lib/install";
+import { appUrl, chromeUrl, howKey, install, samsung } from "../../lib/install";
 import { href } from "../../lib/route";
 import { resetAll, setTheme, store } from "../../lib/store";
 import type { ScreenProps } from "../../App";
@@ -20,7 +20,9 @@ import {
   toast,
   useData,
   useInstallPrompt,
+  useInstallState,
   useStored,
+  Warn,
 } from "../../components";
 import { useNav } from "../../router";
 import { version } from "../../../../package.json";
@@ -60,11 +62,12 @@ function Cur({ ids }: { ids: string[] }) {
  *  (on Android under a link that opens the app in Chrome) */
 function Install() {
   const prompt = useInstallPrompt();
+  const state = useInstallState();
   const [os, setOS] = useState<OS>(guessOS);
-  if (isInstalled())
+  if (state)
     return (
       <div id="installBody">
-        <p className="meta">{t("inst_done")}</p>
+        <p className="meta">{t(state === "installed" ? "inst_done" : "ob_installing")}</p>
       </div>
     );
   if (prompt)
@@ -91,7 +94,7 @@ function Install() {
         ))}
       </div>
       <ol className="steps">
-        {tx(`g_${os}`).map((s, i) => (
+        {tx(howKey(os)).map((s, i) => (
           <li key={i}>{s}</li>
         ))}
       </ol>
@@ -209,11 +212,7 @@ export default function Settings(_props: ScreenProps) {
             </button>
           </div>
         </div>
-        {samsung() && (
-          <p className="meta" style={{ margin: "0 0 12px" }}>
-            {t("theme_samsung")}
-          </p>
-        )}
+        {samsung() && <Warn>{t("theme_samsung")}</Warn>}
         <div className="setrow col" id="install">
           <span>{t("inst_title")}</span>
           <Install />

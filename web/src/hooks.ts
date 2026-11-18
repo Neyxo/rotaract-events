@@ -1,7 +1,7 @@
 // Hooks every screen can use: the data, stored values, the colour wash, the morphing hero, the sticky headings.
 import { use, useEffect, useEffectEvent, useLayoutEffect, useSyncExternalStore, type RefObject } from "react";
 import { getData, loadData, loaded, subscribeData, type AppData } from "./lib/data";
-import { getInstallPrompt, subscribeInstall, type InstallPrompt } from "./lib/install";
+import { getInstallPrompt, installState, subscribeInstall, type InstallPrompt } from "./lib/install";
 import { store, type StoreKey, type StoreKeys } from "./lib/store";
 
 /** events.json and what the app derives from it (lib/data's state): D.data.events, D.clubs, D.settings, D.saved. Re-renders whenever an
@@ -16,6 +16,8 @@ export function useData(): AppData {
 
 /** the browser's install prompt while it can be shown (lib/install's install() shows it), null otherwise */
 export const useInstallPrompt = (): InstallPrompt | null => useSyncExternalStore(subscribeInstall, getInstallPrompt);
+/** installed, installing (the prompt accepted, the app not there yet) or neither; re-renders when that changes */
+export const useInstallState = () => useSyncExternalStore(subscribeInstall, installState);
 
 /** whether an event is saved; re-renders this component only when that changes (a star toggled anywhere) */
 export const useSaved = (id: string): boolean => useSyncExternalStore(subscribeData, () => getData().saved.has(id));

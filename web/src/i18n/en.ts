@@ -139,6 +139,7 @@ const en = {
     "Click the install icon at the right end of the address bar (a screen with an arrow).",
     'Click "Install". Or simply bookmark the page.',
   ],
+  g_samsung: ["Tap the menu ≡ at the bottom right.", 'Tap "Add page to", then "Home screen".', 'Confirm with "Add".'],
   share_title: "Share with others",
   share_send: "Send to someone",
   share_text:
@@ -170,6 +171,9 @@ const en = {
   ob_inst_done: "All done ✓",
   ob_inst_done_t: "Open Rotaract Events from your home screen and carry on there.",
   ob_inst_then: "Then open the app from your home screen.",
+  ob_installing: "Installing…",
+  ob_installing_t: "Your phone is adding the app. This can take a few seconds.",
+  ob_open_samsung: "To open it right away: tap the app icon in the address bar, next to reload.",
   ob_facts: ["Only public events", "Updated within 48 hours", "You register on Polaris"],
   yes: "Yes",
   no: "No",
@@ -217,7 +221,7 @@ const en = {
   theme_light: "Light",
   theme_dark: "Dark",
   theme_samsung:
-    "Samsung Internet darkens websites by itself, the installed app too, over the theme chosen here. For the app’s own Light and Dark: in Samsung Internet, Menu → Settings → Labs → turn on “Use website dark theme”.",
+    "Samsung Internet darkens this app by itself, over the theme chosen here, so Light and Dark can look wrong. To see them as intended: in Samsung Internet, Menu → Settings → Web page view and scrolling → Dark mode → turn off “Force dark mode for web content”. Other websites then keep their own colours.",
   change: "Change",
   ob_main: "Your main club",
   ob_also: "Also interested in",

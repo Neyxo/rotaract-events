@@ -133,6 +133,11 @@ const it: Messages = {
     "Clicca l'icona di installazione a destra nella barra degli indirizzi (uno schermo con una freccia).",
     "Clicca «Installa». Oppure aggiungi la pagina ai preferiti.",
   ],
+  g_samsung: [
+    "Tocca il menu ≡ in basso a destra.",
+    "Tocca «Aggiungi pagina a», poi «Schermata Home».",
+    "Conferma con «Aggiungi».",
+  ],
   share_title: "Condividi con altri",
   share_send: "Invia a qualcuno",
   share_text:
@@ -164,6 +169,9 @@ const it: Messages = {
   ob_inst_done: "Tutto fatto ✓",
   ob_inst_done_t: "Apri Rotaract Events dalla schermata iniziale e continua lì.",
   ob_inst_then: "Poi apri l'app dalla schermata iniziale.",
+  ob_installing: "Installazione…",
+  ob_installing_t: "Il telefono sta aggiungendo l'app. Può richiedere qualche secondo.",
+  ob_open_samsung: "Per aprirla subito: tocca l'icona dell'app nella barra degli indirizzi, accanto a Ricarica.",
   ob_facts: ["Solo eventi pubblici", "Aggiornato entro 48 ore", "Ti iscrivi su Polaris"],
   yes: "Sì",
   no: "No",
@@ -212,7 +220,7 @@ const it: Messages = {
   theme_light: "Chiaro",
   theme_dark: "Scuro",
   theme_samsung:
-    "Samsung Internet scurisce da sé i siti, anche l’app installata, sopra il tema scelto qui. Per il Chiaro e lo Scuro dell’app: in Samsung Internet, Menu → Impostazioni → Labs → attivare «Usa il tema scuro del sito».",
+    "Samsung Internet scurisce da sé questa app, sopra il tema scelto qui, e Chiaro e Scuro possono apparire sbagliati. Per vederli come previsto: in Samsung Internet, Menu → Impostazioni → Visualizzazione e scorrimento pagine → Modalità scura → disattivare «Forza la modalità scura per i contenuti web». Gli altri siti mantengono poi i loro colori.",
   change: "Modifica",
   ob_main: "Il tuo club principale",
   ob_also: "Interessato anche a",

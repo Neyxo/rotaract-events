@@ -228,7 +228,7 @@ describe("Settings", () => {
     expect(screen.getAllByRole("tab")).toHaveLength(3);
   });
 
-  it("install (after the one above: installed stays for the session): the prompt accepted, Settings says it is installed instead of showing the steps", async () => {
+  it("install (after the one above: installed stays for the session): the prompt accepted, Settings says it is installing, then installed, instead of showing the steps", async () => {
     const ev = Object.assign(new Event("beforeinstallprompt", { cancelable: true }), {
       prompt: vi.fn(async () => {}),
       userChoice: Promise.resolve({ outcome: "accepted" }),
@@ -239,6 +239,10 @@ describe("Settings", () => {
       fireEvent.click(button("Install app"));
     });
     expect(screen.queryAllByRole("tab")).toHaveLength(0);
+    expect(document.getElementById("installBody")!.textContent).toBe(t("ob_installing"));
+    act(() => {
+      dispatchEvent(new Event("appinstalled"));
+    });
     expect(document.getElementById("installBody")!.textContent).toBe(t("inst_done"));
   });
 

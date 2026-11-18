@@ -6,7 +6,7 @@ import { t, tx } from "../../i18n";
 import { club, getData, isRac, myClubs, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { BRAND, cx, vars } from "../../lib/color";
 import { guessClubs } from "../../lib/geo";
-import { appUrl, chromeUrl, install, isInstalled, openAppUrl } from "../../lib/install";
+import { appUrl, chromeUrl, howKey, install, isInstalled, openAppUrl, samsung } from "../../lib/install";
 import { guessOS } from "../../lib/geo";
 import type { Pillar } from "../../lib/pillars";
 import { store } from "../../lib/store";
@@ -20,6 +20,7 @@ import {
   toast,
   useData,
   useInstallPrompt,
+  useInstallState,
   useModal,
   useSubFlow,
   type IconName,
@@ -65,19 +66,28 @@ function ObNav({
   );
 }
 
-const HOW = { ios: "g_ios", android: "g_android", desktop: "g_desktop" } as const;
 /** The app first, and how to get it at once, nothing to tap before: with the browser's prompt one big button that installs, in
  *  whatever browser this is; without one (iPhone, Firefox, DuckDuckGo, inside another app) this system's three steps, with the
  *  way to the browser they name: a link to Chrome on Android, and the address to copy. Below, a faint way past it. Installed, the
- *  website's part is over: a button that opens the app where a page can (Android), and the way back here small enough to miss. */
+ *  website's part is over: a button that opens the app where a page can (Chrome on Android; in Samsung Internet only its own app
+ *  icon in the address bar does), and the way back here small enough to miss. Between the two, while the phone adds the app, a wait. */
 function InstallStep({ title, onWeb }: { title: (text: string) => ReactNode; onWeb: () => void }) {
   const prompt = useInstallPrompt();
-  if (isInstalled()) {
+  const state = useInstallState();
+  if (state === "installing")
+    return (
+      <>
+        {title(t("ob_installing"))}
+        <p>{t("ob_installing_t")}</p>
+      </>
+    );
+  if (state === "installed") {
     const open = openAppUrl();
     return (
       <>
         {title(t("ob_inst_done"))}
         <p>{t("ob_inst_done_t")}</p>
+        {samsung() && <p>{t("ob_open_samsung")}</p>}
         {open && (
           <a className="btn big" href={open}>
             {t("ob_open")}
@@ -102,7 +112,7 @@ function InstallStep({ title, onWeb }: { title: (text: string) => ReactNode; onW
       ) : (
         <>
           <ol className="qsteps">
-            {tx(HOW[guessOS()]).map((s, i) => (
+            {tx(howKey(guessOS())).map((s, i) => (
               <li key={i}>{s}</li>
             ))}
           </ol>

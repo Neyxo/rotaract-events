@@ -482,7 +482,7 @@ describe("welcome steps", () => {
   });
 
   // last: an accepted install is remembered for as long as the page lives (lib/install), so no later test would see the install step
-  it("installed from the prompt: the website's part is over, with a way to carry on here all the same", async () => {
+  it("installed from the prompt: a wait while the phone adds it, then the website's part is over, with a way to carry on here all the same", async () => {
     const prompt = vi.fn(async () => {});
     act(() => {
       window.dispatchEvent(
@@ -497,8 +497,15 @@ describe("welcome steps", () => {
       click(t("inst_btn"));
     });
     expect(prompt).toHaveBeenCalledTimes(1);
+    // accepted, but the phone is still adding it: a wait, no way on yet
+    expect(title().textContent).toBe(t("ob_installing"));
+    expect(inDlg().queryAllByRole("button")).toEqual([]);
+    act(() => {
+      window.dispatchEvent(new Event("appinstalled"));
+    });
     expect(title().textContent).toBe(t("ob_inst_done"));
     inDlg().getByText(t("ob_inst_done_t"));
+    expect(inDlg().queryByText(t("ob_open_samsung"))).toBeNull(); // Samsung Internet only
     expect(
       inDlg()
         .getAllByRole("button")

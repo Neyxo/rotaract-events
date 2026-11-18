@@ -134,6 +134,11 @@ const de: Messages = {
     "Rechts in der Adressleiste auf das Installieren-Symbol klicken (Bildschirm mit Pfeil).",
     "«Installieren» klicken. Oder die Seite einfach als Lesezeichen speichern.",
   ],
+  g_samsung: [
+    "Tippe unten rechts auf das Menü ≡.",
+    "Tippe auf «Seite hinzufügen zu», dann «Startbildschirm».",
+    "Bestätige mit «Hinzufügen».",
+  ],
   share_title: "Mit anderen teilen",
   share_send: "Jemandem schicken",
   share_text:
@@ -165,6 +170,9 @@ const de: Messages = {
   ob_inst_done: "Alles erledigt ✓",
   ob_inst_done_t: "Öffne Rotaract Events vom Homescreen und mach dort weiter.",
   ob_inst_then: "Öffne dann die App vom Homescreen.",
+  ob_installing: "Wird installiert…",
+  ob_installing_t: "Dein Handy fügt die App hinzu. Das kann ein paar Sekunden dauern.",
+  ob_open_samsung: "Gleich öffnen: Tippe in der Adressleiste auf das App-Symbol neben «Neu laden».",
   ob_facts: ["Nur öffentliche Anlässe", "Innert 48 Stunden aktuell", "Anmelden auf Polaris"],
   yes: "Ja",
   no: "Nein",
@@ -217,7 +225,7 @@ const de: Messages = {
   theme_light: "Hell",
   theme_dark: "Dunkel",
   theme_samsung:
-    "Samsung Internet dunkelt Websites von sich aus ab, auch die installierte App, über das hier gewählte Design hinweg. Für das Hell und Dunkel der App: in Samsung Internet Menü → Einstellungen → Labs → «Dunkles Design der Website verwenden» einschalten.",
+    "Samsung Internet dunkelt diese App von sich aus ab, über das hier gewählte Design hinweg, so dass Hell und Dunkel falsch aussehen können. Damit sie wie vorgesehen erscheinen: in Samsung Internet Menü → Einstellungen → Webseitenansicht und Scrollen → Dunkelmodus → «Dunkelmodus für Webinhalte erzwingen» ausschalten. Andere Websites behalten dann ihre eigenen Farben.",
   change: "Ändern",
   ob_main: "Dein Hauptclub",
   ob_also: "Auch interessiert an",
