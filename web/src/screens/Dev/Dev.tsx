@@ -291,8 +291,8 @@ const runClass = (state: string, ended: boolean): Level => {
 const levelOfAge = (hours: number): Level => (hours < 30 ? "ok" : "bad");
 
 /** The card's three lights. Only the newest finished run counts (older failures show in the strip of dots alone), and yellow
- *  means one thing: a run is going right now. The app is what the last run built; the data is also red when it is too old or a
- *  club could not be read. */
+ *  means one thing: a run is going right now. The app is red when the last run failed (what it should have built isn't live);
+ *  the data goes by its own age and the clubs it could not read, since a failed push leaves the last events as they were. */
 export function cardState({
   runs,
   failures,
@@ -306,13 +306,17 @@ export function cardState({
   const last = runs?.find(
     (r) => r.status === "completed" && r.conclusion !== "cancelled" && r.conclusion !== "skipped",
   );
-  const failed = !!last && last.conclusion !== "success";
   let app: Level = "ok";
-  if (failed) app = "bad";
+  if (last && last.conclusion !== "success") app = "bad";
   else if (running) app = "warn";
-  const data = worst(levelOfAge(ageHours), failures || failed ? "bad" : "ok");
+  const data = worst(levelOfAge(ageHours), failures ? "bad" : "ok");
   return { all: worst(app, data), app, data, running };
 }
+/** a page from before the last successful run: what it says about the app is that of an older version */
+export const outdated = (runs: GhRunRow[] | null, commit: string): string | null => {
+  const live = runs?.find((r) => r.conclusion === "success");
+  return commit && live && !live.head_sha.startsWith(commit) ? live.head_sha.slice(0, 7) : null;
+};
 const HEALTH_TEXT: Record<Level, string> = { ok: "All good", warn: "Updating", bad: "Something is broken" };
 
 /** the runs' history in one line: green when every finished run worked, yellow when an older one failed, red when the last one did.
@@ -493,6 +497,7 @@ function Health({ st }: { st: Stat }) {
   const runs = r && r !== "error" ? r.workflow_runs : null;
   const h = runs ? runHealth(runs) : null;
   const c = cardState({ runs, failures: st.failures.length, ageHours: age });
+  const newer = outdated(runs, __APP_COMMIT__);
   // what changed last, app or data: after a push, the one line to look for
   const latest = APP_BUILT > gen ? APP_BUILT : gen;
   return (
@@ -505,6 +510,15 @@ function Health({ st }: { st: Stat }) {
           <time>{ago(latest)}</time>
         </span>
       </div>
+      {newer ? (
+        <p className="devstate warn devrunning">
+          <i />
+          {`A newer version is live (commit ${newer}): this page is older. `}
+          <button type="button" className="linkbtn" onClick={reload}>
+            Reload
+          </button>
+        </p>
+      ) : null}
       {c.running ? (
         <p className="meta devrunning">
           <a href={c.running.html_url} target="_blank" rel="noopener">
@@ -918,51 +932,7 @@ function LinkLab() {
           7 · Outlook: helper page (in use)
         </a>
       </div>
-      <OpenAppLab />
       <p className="meta devua">{navigator.userAgent}</p>
-    </>
-  );
-}
-
-/** Which link opens the installed app from a browser tab? Chrome hands the plain intent to the app, Samsung Internet keeps it and
- *  reloads the website, even though Chrome lists the app Samsung installed. Ways it might hand it over instead; tap each in the browser
- *  the app was installed from, with the app installed. lib/install.ts's openAppUrl() is A, and hidden in Samsung Internet. */
-function OpenAppLab() {
-  const root = location.host + location.pathname.replace(/[^/]*$/, "");
-  const site = "https://" + root;
-  const intent = (extra = "") => `intent://${root}#Intent;scheme=https;${extra}end`;
-  const view = "action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;";
-  return (
-    <>
-      <h3>Open the installed app</h3>
-      <p className="meta">
-        With the app installed, tap each and note what opens: the app (good), the website again, an app picker, or
-        nothing.
-      </p>
-      <div className="links">
-        <a className="linkbtn" href={intent()}>
-          A · Intent (in use, not in Samsung)
-        </a>
-        <a className="linkbtn" href={intent(view)}>
-          B · Intent, action and category named
-        </a>
-        <a className="linkbtn" href={intent(view + "launchFlags=0x10000000;")}>
-          C · Intent, as a new task
-        </a>
-        <a className="linkbtn" href={intent(`S.browser_fallback_url=${encodeURIComponent(site + "#/dev/links")};`)}>
-          D · Intent with a fallback address
-        </a>
-        <a className="linkbtn" href={site} target="_blank" rel="noopener">
-          E · Plain link, new tab
-        </a>
-        <Btn label="F · By script, window.open" onClick={() => void window.open(site, "_blank", "noopener")} />
-        <Btn
-          label="G · By script, intent"
-          onClick={() => {
-            location.href = intent(view);
-          }}
-        />
-      </div>
     </>
   );
 }

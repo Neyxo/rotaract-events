@@ -6,7 +6,7 @@ import { loadData } from "../../lib/data";
 import { parseHash } from "../../lib/route";
 import type { Status } from "../../lib/types";
 import { Toast } from "../../components";
-import Dev, { browserName, cardState, nextRun, runHealth } from "./Dev";
+import Dev, { browserName, cardState, nextRun, outdated, runHealth } from "./Dev";
 
 const STATUS: Status = {
   generated: "20261111T005856Z",
@@ -155,14 +155,24 @@ describe("cardState", () => {
     expect(at(8, null)).toMatchObject({ all: "ok", app: "ok", data: "ok" }); // a local build
     const going = run(null, "2026-11-11T09:58:00Z", 3);
     expect(at(8, [going, ...RUNS])).toMatchObject({ all: "warn", app: "warn", data: "ok", running: going });
+    // a failed push: the app it should have built isn't live; the data is as it was
     expect(at(8, [run("failure", "2026-11-11T09:00:00Z"), ...RUNS])).toMatchObject({
       all: "bad",
       app: "bad",
-      data: "bad",
+      data: "ok",
     });
     expect(at(8, [run("cancelled", "2026-11-11T09:00:00Z"), ...RUNS]).all).toBe("ok"); // replaced by a newer push
     expect(at(31)).toMatchObject({ all: "bad", app: "ok", data: "bad" }); // the app's banner shows from 30 h
     expect(at(8, RUNS, 1)).toMatchObject({ all: "bad", app: "ok", data: "bad" });
+  });
+});
+
+describe("outdated", () => {
+  it("names the commit of the last successful run when this page was built from another one", () => {
+    expect(outdated(RUNS, "abc1234")).toBeNull();
+    expect(outdated(RUNS, "0000000")).toBe("abc1234");
+    expect(outdated([run(null, "2026-11-11T09:00:00Z"), ...RUNS], "0000000")).toBe("abc1234"); // a running one isn't live yet
+    expect([outdated(RUNS, ""), outdated(null, "0000000")]).toEqual([null, null]); // a local build; no runs read
   });
 });
 
