@@ -115,6 +115,11 @@ const de: Messages = {
   inst_title: "Auf dem Handy installieren",
   inst_btn: "App installieren",
   inst_chrome: "In Chrome öffnen",
+  inst_in_chrome: "In Chrome installieren",
+  inst_here: "Hier in Samsung Internet installieren",
+  inst_here_steps: "Oder hier in Samsung Internet:",
+  inst_chrome_why:
+    "Empfohlen: Aus Chrome öffnet sich die App gleich nach dem Installieren, und der Dunkelmodus von Samsung Internet färbt sie nicht um.",
   inst_done: "✓ Du nutzt die installierte App.",
   ios: "iPhone / iPad",
   android: "Android",
@@ -711,6 +716,7 @@ const de: Messages = {
     ]),
   },
   projects: "Projekte",
+  tips_show: "Täglich «Schon gewusst?» auf Home",
   rotary_show: "Rotary-Anlässe anzeigen",
   rotary_hint:
     "Anlässe, die Rotary Clubs mit anderen Clubs teilen, pro Distrikt. Standardmässig aus, damit Rotaract-Anlässe im Vordergrund bleiben.",

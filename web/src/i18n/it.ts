@@ -114,6 +114,11 @@ const it: Messages = {
   inst_title: "Installa sul telefono",
   inst_btn: "Installa l'app",
   inst_chrome: "Apri in Chrome",
+  inst_in_chrome: "Installa in Chrome",
+  inst_here: "Installa qui in Samsung Internet",
+  inst_here_steps: "Oppure qui in Samsung Internet:",
+  inst_chrome_why:
+    "Consigliato: da Chrome l'app si apre subito dopo l'installazione, e la modalità scura di Samsung Internet non la ricolora.",
   inst_done: "✓ Stai usando l'app installata.",
   ios: "iPhone / iPad",
   android: "Android",
@@ -698,6 +703,7 @@ const it: Messages = {
     ]),
   },
   projects: "Progetti",
+  tips_show: "«Lo sapevi?» quotidiano nella Home",
   rotary_show: "Mostra gli eventi del Rotary",
   rotary_hint:
     "Gli eventi che i Rotary club condividono con altri club, per distretto. Disattivati per impostazione predefinita, così gli eventi Rotaract restano in primo piano.",

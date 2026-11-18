@@ -120,6 +120,11 @@ const en = {
   inst_title: "Install on your phone",
   inst_btn: "Install app",
   inst_chrome: "Open in Chrome",
+  inst_in_chrome: "Install in Chrome",
+  inst_here: "Install here in Samsung Internet",
+  inst_here_steps: "Or here in Samsung Internet:",
+  inst_chrome_why:
+    "Recommended: from Chrome the app opens right after installing, and Samsung Internet's dark mode doesn't recolour it.",
   inst_done: "✓ You're using the installed app.",
   ios: "iPhone / iPad",
   android: "Android",
@@ -693,6 +698,7 @@ const en = {
     ]),
   },
   projects: "Projects",
+  tips_show: 'Daily "Did you know?" on Home',
   rotary_show: "Show Rotary events",
   rotary_hint:
     "Events Rotary clubs share with other clubs, per district. Off by default so Rotaract events stay in front.",

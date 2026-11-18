@@ -91,13 +91,22 @@ header {
   text-decoration: none;
   color: var(--text);
 }
-.brand img {
+.brand img,
+.brand .wl svg {
   height: 30px;
   width: auto;
   display: block;
 }
+/* the dark theme draws the logo itself, white (Chrome.tsx WHITE_LOGO); the red file is the light theme's */
+.brand .wl {
+  display: none;
+  color: #fff;
+}
 :root[data-theme="dark"] .brand img {
-  filter: brightness(0) invert(1);
+  display: none;
+}
+:root[data-theme="dark"] .brand .wl {
+  display: block;
 }
 .brand span {
   display: none;

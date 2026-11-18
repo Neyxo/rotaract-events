@@ -6,7 +6,7 @@ import { t, tx } from "../../i18n";
 import { club, getData, isRac, myClubs, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { BRAND, cx, vars } from "../../lib/color";
 import { guessClubs } from "../../lib/geo";
-import { appUrl, chromeUrl, howKey, install, isInstalled, openAppUrl, samsung } from "../../lib/install";
+import { appUrl, chromeInstead, chromeUrl, howKey, install, isInstalled, openAppUrl, samsung } from "../../lib/install";
 import { guessOS } from "../../lib/geo";
 import type { Pillar } from "../../lib/pillars";
 import { store } from "../../lib/store";
@@ -99,18 +99,31 @@ function InstallStep({ title, onWeb }: { title: (text: string) => ReactNode; onW
       </>
     );
   }
+  // Samsung Internet: Chrome first (the app opens from there, and Samsung's forced dark mode doesn't reach it), here second
+  const chrome = chromeInstead();
   return (
     <>
       {title(t("ob_inst"))}
       <p>{t("ob_inst_t")}</p>
+      {chrome && (
+        <>
+          <div className="choice">
+            <a className="btn big" href={chrome}>
+              {t("inst_in_chrome")}
+            </a>
+          </div>
+          <p className="meta">{t("inst_chrome_why")}</p>
+        </>
+      )}
       {prompt ? (
         <div className="choice">
-          <button className="btn big" type="button" onClick={() => void install()}>
-            {t("inst_btn")}
+          <button className={chrome ? "btn big alt" : "btn big"} type="button" onClick={() => void install()}>
+            {chrome ? t("inst_here") : t("inst_btn")}
           </button>
         </div>
       ) : (
         <>
+          {chrome && <p>{t("inst_here_steps")}</p>}
           <ol className="qsteps">
             {tx(howKey(guessOS())).map((s, i) => (
               <li key={i}>{s}</li>

@@ -10,6 +10,11 @@ import { Icon, type IconName } from "../Icon";
 import { useResize, useStored } from "../../hooks";
 import { canGoBack } from "../../router";
 import { Oath } from "../Clicker/Oath";
+import LOGO from "../../../static/rotaract.svg?raw";
+
+/** The dark theme's white logo: the file's own drawing in the page, in the text colour. A white made by a filter over the red file
+ *  turns black under Samsung Internet's forced dark mode (the logo vanished); this one stays white, or grey when forced. */
+const WHITE_LOGO = LOGO.replaceAll("fill:#c10042", "fill:currentColor");
 
 /** what the top bar and tabs mark as current */
 export type Active = "home" | "discover" | "calendar" | "about" | "app" | "settings" | "dev" | null;
@@ -47,6 +52,7 @@ export function TopBar({ active, back = false, extra = null }: { active: Active;
           )}
           <a className="brand" href={href("home")} aria-label="Rotaract Events">
             <img src="rotaract.svg" alt="Rotaract" />
+            <i className="wl" dangerouslySetInnerHTML={{ __html: WHITE_LOGO }} />
           </a>
         </div>
         <div className="rgt">

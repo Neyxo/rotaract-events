@@ -7,7 +7,7 @@ import { href, parseHash } from "./route";
 import { shareUrl } from "./share";
 import { here, store } from "./store";
 import { devFlag, installPretendDate } from "./dev";
-import { chromeUrl, howKey, openAppUrl } from "./install";
+import { chromeInstead, chromeUrl, howKey, openAppUrl } from "./install";
 import { fixture } from "../test/fixture";
 import { ev } from "../test/ev";
 
@@ -194,5 +194,15 @@ describe("install on Android", () => {
     expect([!!chromeUrl(), !!openAppUrl(), howKey("android")]).toEqual([true, true, "g_android"]);
     as(`${android} SamsungBrowser/30.0 Chrome/143.0.0.0 Mobile Safari/537.36`);
     expect([chromeUrl(), openAppUrl(), howKey("android"), howKey("ios")]).toEqual([null, null, "g_samsung", "g_ios"]);
+  });
+  it("Samsung Internet alone is sent to Chrome, with a way back that marks Chrome as missing", () => {
+    as(`${android} Chrome/143.0.0.0 Mobile Safari/537.36`);
+    expect(chromeInstead()).toBeNull();
+    as(`${android} SamsungBrowser/30.0 Chrome/143.0.0.0 Mobile Safari/537.36`);
+    const back = /S\.browser_fallback_url=([^;]+);/.exec(chromeInstead()!)![1]!;
+    expect(decodeURIComponent(back)).toMatch(/\?nochrome$/);
+    store.set("rac.noChrome", true);
+    expect(chromeInstead()).toBeNull();
+    store.remove("rac.noChrome");
   });
 });

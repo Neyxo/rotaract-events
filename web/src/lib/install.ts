@@ -1,7 +1,7 @@
 // Installing the app: the browser's install prompt (Chrome, Edge, Android) and whether the app already runs installed.
 // The prompt fires once, early, often before the screen that offers it is shown: it is caught here, at start, for the welcome
 // steps and Settings alike (useInstallPrompt() in src/hooks re-renders when it arrives or is used up).
-import { emitter } from "./store";
+import { emitter, store } from "./store";
 
 /** the beforeinstallprompt event; not in TypeScript's DOM types */
 export interface InstallPrompt extends Event {
@@ -26,6 +26,16 @@ export const chromeUrl = (): string | null =>
   /Android/.test(navigator.userAgent) && !samsung()
     ? `intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;end`
     : null;
+/** a link that opens this page in Chrome on Android; fallback: where a browser goes instead when Chrome isn't there */
+export const chromeIntent = (fallback?: string): string =>
+  `intent://${location.host}${location.pathname}#Intent;scheme=https;package=com.android.chrome;` +
+  (fallback ? `S.browser_fallback_url=${encodeURIComponent(fallback)};` : "") +
+  "end";
+/** In Samsung Internet, the way to install in Chrome instead: from Chrome the app opens straight after installing, and Samsung's
+ *  forced dark mode doesn't reach it. A page can't see which apps are there, so the link tries; without Chrome it comes back here
+ *  with ?nochrome, which is kept (rac.noChrome), and Samsung's own install is all that is offered from then on. */
+export const chromeInstead = (): string | null =>
+  samsung() && !store.get("rac.noChrome", false) ? chromeIntent(appUrl() + "?nochrome") : null;
 /** the key of this system's install steps: Samsung Internet has its own menu */
 export const howKey = (os: "ios" | "android" | "desktop"): "g_ios" | "g_android" | "g_desktop" | "g_samsung" =>
   os === "android" && samsung() ? "g_samsung" : `g_${os}`;
@@ -41,6 +51,7 @@ export const openAppUrl = (): string | null =>
 export const appUrl = (): string => location.origin + location.pathname.replace(/[^/]*$/, "");
 
 if (typeof window !== "undefined") {
+  if (new URLSearchParams(location.search).has("nochrome")) store.set("rac.noChrome", true);
   addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     caught = e as InstallPrompt;

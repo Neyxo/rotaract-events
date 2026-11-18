@@ -5,6 +5,7 @@ import { fixture } from "../../test/fixture";
 import { t } from "../../i18n";
 import { getData, loadData, setSettings } from "../../lib/data";
 import { parseHash } from "../../lib/route";
+import { store } from "../../lib/store";
 import { Toast } from "../../components";
 import Settings from "./Settings";
 
@@ -178,19 +179,32 @@ describe("Settings", () => {
     vi.restoreAllMocks();
   });
 
-  it("install on Samsung Internet: its own prompt is offered like any browser's", () => {
+  it("install on Samsung Internet: Chrome first (with a way back when it isn't there), its own prompt second; without Chrome, its prompt alone", () => {
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(
       "Mozilla/5.0 (Linux; Android 14; SM-S921B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/27.0 Chrome/125.0.0.0 Mobile Safari/537.36",
     );
-    dispatchEvent(
-      Object.assign(new Event("beforeinstallprompt", { cancelable: true }), {
-        prompt: vi.fn(async () => {}),
-        userChoice: Promise.resolve({ outcome: "dismissed" }),
-      }),
-    );
-    show();
-    button("Install app");
-    vi.restoreAllMocks();
+    try {
+      dispatchEvent(
+        Object.assign(new Event("beforeinstallprompt", { cancelable: true }), {
+          prompt: vi.fn(async () => {}),
+          userChoice: Promise.resolve({ outcome: "dismissed" }),
+        }),
+      );
+      show();
+      const chrome = screen.getByRole("link", { name: t("inst_in_chrome") }).getAttribute("href")!;
+      expect(chrome).toMatch(/^intent:\/\/.+;package=com\.android\.chrome;S\.browser_fallback_url=.+%3Fnochrome;end$/);
+      button(t("inst_here"));
+      screen.getByText(t("inst_chrome_why"));
+      // the Chrome link came back: no Chrome on this phone
+      cleanup();
+      store.set("rac.noChrome", true);
+      show();
+      expect(screen.queryByRole("link", { name: t("inst_in_chrome") })).toBeNull();
+      button(t("inst_btn"));
+    } finally {
+      store.remove("rac.noChrome");
+      vi.restoreAllMocks();
+    }
   });
 
   it("Reset the app: asks first; only Yes forgets the app's own keys and starts over", () => {

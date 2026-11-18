@@ -12,6 +12,10 @@ export interface StoreKeys {
   "rac.seen": Seen;
   "rac.seenPrev": Record<string, string>;
   "rac.rotary": boolean;
+  /** the link to install in Chrome came back: this phone has no Chrome (lib/install chromeInstead) */
+  "rac.noChrome": boolean;
+  /** Home's daily "Did you know?" line: off unless switched on in Settings */
+  "rac.tips": boolean;
   "rac.onboarded": boolean;
   "rac.guideSeen": boolean;
   /** the subscribe card on Home was opened once, so it stays away */

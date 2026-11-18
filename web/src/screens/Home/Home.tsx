@@ -57,9 +57,11 @@ function Row({ e, label, soon = false }: { e: Event; label: string; soon?: boole
   );
 }
 
-/** one muted line a day: a "did you know", or the special date's own line (lib/dates) */
+/** one muted line a day: the special date's own line (lib/dates), or, when switched on in Settings, a "did you know" */
 function DayLine() {
   const { special, text } = dayLine();
+  const tips = useStored("rac.tips", false);
+  if (!special && !tips) return null;
   return (
     <p className="fact">
       {special ? null : <b>{t("dyk")} </b>}

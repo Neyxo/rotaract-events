@@ -4,7 +4,7 @@ import { t, tx } from "../../i18n";
 import { setRotary, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { anyDevFlag } from "../../lib/dev";
 import { guessOS, type OS } from "../../lib/geo";
-import { appUrl, chromeUrl, howKey, install, samsung } from "../../lib/install";
+import { appUrl, chromeInstead, chromeUrl, howKey, install, samsung } from "../../lib/install";
 import { href } from "../../lib/route";
 import { resetAll, setTheme, store } from "../../lib/store";
 import type { ScreenProps } from "../../App";
@@ -70,22 +70,32 @@ function Install() {
         <p className="meta">{t(state === "installed" ? "inst_done" : "ob_installing")}</p>
       </div>
     );
+  // Samsung Internet: installing in Chrome first, see Onboarding
+  const instead = chromeInstead();
+  const why = instead && <p className="meta">{t("inst_chrome_why")}</p>;
   if (prompt)
     return (
       <div id="installBody">
-        <button className="linkbtn primary" type="button" onClick={() => void install()}>
-          {t("inst_btn")}
+        {instead && (
+          <a className="linkbtn primary" href={instead}>
+            {t("inst_in_chrome")}
+          </a>
+        )}
+        <button className={instead ? "linkbtn" : "linkbtn primary"} type="button" onClick={() => void install()}>
+          {instead ? t("inst_here") : t("inst_btn")}
         </button>
+        {why}
       </div>
     );
-  const chrome = chromeUrl();
+  const chrome = chromeUrl() ?? instead;
   return (
     <div id="installBody">
       {chrome && (
         <a className="linkbtn primary" href={chrome}>
-          {t("inst_chrome")}
+          {instead ? t("inst_in_chrome") : t("inst_chrome")}
         </a>
       )}
+      {why}
       <div className="seg" role="tablist">
         {(["ios", "android", "desktop"] as const).map((k) => (
           <button key={k} type="button" role="tab" aria-selected={os === k} onClick={() => setOS(k)}>
@@ -128,6 +138,7 @@ export default function Settings(_props: ScreenProps) {
   // nothing chosen yet: the theme index.html started with
   const dark = useStored("rac.theme", document.documentElement.dataset.theme === "dark" ? "dark" : "light") === "dark";
   const rotary = useStored("rac.rotary", false);
+  const tips = useStored("rac.tips", false);
   const unlocked = useStored("rac.devUnlocked", false);
   const dev = useStored("rac.dev", false);
   // the preview switches (pretend date, guest) only count while developer mode is on and are read once at start: when switching
@@ -213,6 +224,10 @@ export default function Settings(_props: ScreenProps) {
           </div>
         </div>
         {samsung() && <Warn>{t("theme_samsung")}</Warn>}
+        <div className="setrow">
+          <span>{t("tips_show")}</span>
+          <OnOff id="tipsSeg" on={tips} onPick={(on) => store.set("rac.tips", on)} />
+        </div>
         <div className="setrow col" id="install">
           <span>{t("inst_title")}</span>
           <Install />
