@@ -2,6 +2,7 @@
 // In the browser it first shows how to install the app (step -1); installed, it stops there: the welcome goes on in the app.
 // A member: welcome, clubs, good to know, calendar. A guest: welcome, three slides, clubs near.
 import { useRef, useState, type ReactNode, type RefObject } from "react";
+import { createPortal } from "react-dom";
 import { t, tx } from "../../i18n";
 import { club, getData, isRac, myClubs, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { BRAND, cx, vars } from "../../lib/color";
@@ -81,6 +82,28 @@ function ToIcon() {
       />
       <path className="head" d="M158 46L180 18L198 50" />
     </svg>
+  );
+}
+
+/** The arrow alone, over the page, from Settings' "Open the app" in Samsung Internet: the app it installed opens from its icon only */
+export function IconHint({ onClose }: { onClose: () => void }) {
+  const dlg = useRef<HTMLDialogElement>(null);
+  const h2 = useRef<HTMLHeadingElement>(null);
+  useModal(dlg, true, { focus: h2 });
+  return createPortal(
+    <dialog className="ob point" ref={dlg} onClose={onClose} aria-labelledby="iconHint">
+      <div className="ob-in">
+        <ToIcon />
+        <h2 id="iconHint" tabIndex={-1} ref={h2}>
+          {t("ob_open")}
+        </h2>
+        <p>{t("ob_open_samsung")}</p>
+        <button className="skip web faint" type="button" onClick={() => dlg.current?.close()}>
+          {t("close")}
+        </button>
+      </div>
+    </dialog>,
+    document.body,
   );
 }
 

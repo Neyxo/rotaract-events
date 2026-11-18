@@ -205,6 +205,35 @@ describe("Settings", () => {
     }
   });
 
+  it("open the app: Samsung Internet sees the app it installed and points to its icon; on Android otherwise a link that opens Chrome's", async () => {
+    const samsungUA =
+      "Mozilla/5.0 (Linux; Android 14; SM-S921B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/30.0 Chrome/143.0.0.0 Mobile Safari/537.36";
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue(samsungUA);
+    const nav = navigator as { getInstalledRelatedApps?: () => Promise<unknown[]> };
+    nav.getInstalledRelatedApps = async () => [{ platform: "webapp" }];
+    try {
+      show();
+      await act(async () => {});
+      screen.getByText(t("inst_have"));
+      fireEvent.click(button(t("ob_open")));
+      screen.getByRole("heading", { name: t("ob_open") });
+      screen.getByText(t("ob_open_samsung"));
+      cleanup();
+      // nothing seen (Chrome doesn't see the app it installed): the install offer, and the link for an app Chrome installed
+      nav.getInstalledRelatedApps = async () => [];
+      ua.mockReturnValue(samsungUA.replace("SamsungBrowser/30.0 ", ""));
+      show();
+      await act(async () => {});
+      expect(screen.queryByText(t("inst_have"))).toBeNull();
+      expect(screen.getByRole("link", { name: t("inst_open_have") }).getAttribute("href")).toBe(
+        "intent://localhost:3000/#Intent;scheme=https;end",
+      );
+    } finally {
+      delete nav.getInstalledRelatedApps;
+      vi.restoreAllMocks();
+    }
+  });
+
   it("Reset the app: asks first; only Yes forgets the app's own keys and starts over", () => {
     const replace = vi.fn();
     vi.stubGlobal("location", { ...location, replace, hash: "#/settings" });

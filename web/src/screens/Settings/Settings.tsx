@@ -4,7 +4,17 @@ import { t, tx } from "../../i18n";
 import { setRotary, setSettings, withAlsoToggled, withHome } from "../../lib/data";
 import { anyDevFlag } from "../../lib/dev";
 import { guessOS } from "../../lib/geo";
-import { appUrl, chromeInstead, chromeUrl, howKey, install, samsung } from "../../lib/install";
+import {
+  appUrl,
+  chromeInstead,
+  chromeUrl,
+  howKey,
+  install,
+  openAnyUrl,
+  samsung,
+  seesInstalledApp,
+} from "../../lib/install";
+import { IconHint } from "../Onboarding/Onboarding";
 import { href } from "../../lib/route";
 import { resetAll, setTheme, store } from "../../lib/store";
 import type { ScreenProps } from "../../App";
@@ -58,17 +68,53 @@ function Cur({ ids }: { ids: string[] }) {
   );
 }
 
+/** the app is on the phone, seen from a browser tab: Samsung Internet's own app opens from its address-bar icon only, so the arrow to
+ *  it; anywhere else the intent (open) */
+function Installed({ open }: { open: string | null }) {
+  const [hint, setHint] = useState(false);
+  return (
+    <div id="installBody">
+      <p className="meta">{t("inst_have")}</p>
+      {samsung() ? (
+        <button className="linkbtn primary" type="button" onClick={() => setHint(true)}>
+          {t("ob_open")}
+        </button>
+      ) : (
+        open && (
+          <a className="linkbtn primary" href={open}>
+            {t("ob_open")}
+          </a>
+        )
+      )}
+      {hint && <IconHint onClose={() => setHint(false)} />}
+    </div>
+  );
+}
+
 /** installed: a note; the browser's prompt: one button (in Samsung Internet after installing in Chrome); otherwise this phone's
  *  steps (on Android under a link that opens the app in Chrome), with a link to the other devices' steps on This app */
 function Install() {
   const prompt = useInstallPrompt();
   const state = useInstallState();
+  // in a browser tab: the app already on the phone, as far as the browser can tell (Samsung Internet sees the one it installed)
+  const [have, setHave] = useState(false);
+  useEffect(() => {
+    void seesInstalledApp().then(setHave);
+  }, []);
+  const open = openAnyUrl();
   if (state)
     return (
       <div id="installBody">
         <p className="meta">{t(state === "installed" ? "inst_done" : "ob_installing")}</p>
       </div>
     );
+  if (have) return <Installed open={open} />;
+  // an app Chrome installed, which no browser here can see: the intent opens it from Chrome and Samsung Internet alike
+  const already = open && (
+    <a className="meta" href={open}>
+      {t("inst_open_have")}
+    </a>
+  );
   // Samsung Internet: installing in Chrome first, see Onboarding
   const instead = chromeInstead();
   const why = instead && <p className="meta">{t("inst_chrome_why")}</p>;
@@ -84,6 +130,7 @@ function Install() {
           {instead ? t("inst_here") : t("inst_btn")}
         </button>
         {why}
+        {already}
       </div>
     );
   // no install button in this browser: the way to one that has it, and this phone's own steps; other devices' are on This app
@@ -101,6 +148,7 @@ function Install() {
           <li key={i}>{s}</li>
         ))}
       </ol>
+      {already}
       <a className="meta" href={href("public") + "#inst"}>
         {t("inst_other_h")}
       </a>

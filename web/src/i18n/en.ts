@@ -122,6 +122,8 @@ const en = {
   inst_chrome: "Open in Chrome",
   inst_in_chrome: "Install in Chrome",
   inst_other_h: "Install on another device",
+  inst_have: "The app is installed on this phone.",
+  inst_open_have: "Already installed? Open the app",
   inst_here: "Install here in Samsung Internet",
   inst_here_steps: "Or here in Samsung Internet:",
   inst_chrome_why:

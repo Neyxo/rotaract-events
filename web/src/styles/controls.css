@@ -164,6 +164,11 @@ a.chip:hover {
 .seg button[aria-selected="true"]:focus-visible {
   outline-color: var(--on-accent);
 }
+/* the small links under the install steps (an app already installed, another device): one a line */
+#installBody > a.meta {
+  display: block;
+  margin-top: 8px;
+}
 #installBody .seg {
   margin: 10px 0 4px;
 }

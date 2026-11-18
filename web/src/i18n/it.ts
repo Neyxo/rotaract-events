@@ -116,6 +116,8 @@ const it: Messages = {
   inst_chrome: "Apri in Chrome",
   inst_in_chrome: "Installa in Chrome",
   inst_other_h: "Installare su un altro dispositivo",
+  inst_have: "L'app è installata su questo telefono.",
+  inst_open_have: "Già installata? Apri l'app",
   inst_here: "Installa qui in Samsung Internet",
   inst_here_steps: "Oppure qui in Samsung Internet:",
   inst_chrome_why:
