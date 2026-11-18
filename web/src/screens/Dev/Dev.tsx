@@ -6,6 +6,7 @@ import { club } from "../../lib/data";
 import { clubVars, cx, DISTRICT_IDS, DISTRICTS } from "../../lib/color";
 import { dayLine, fmt, isPast, racYear, racYearLabel } from "../../lib/dates";
 import { devFlag } from "../../lib/dev";
+import { appUrl, chromeIntent } from "../../lib/install";
 import { href } from "../../lib/route";
 import { store, type StoreKey, type StoreKeys } from "../../lib/store";
 import type { Club, Event, Status } from "../../lib/types";
@@ -930,6 +931,20 @@ function LinkLab() {
         <Link label="6 · Outlook: plain link" to={o} />
         <a className="linkbtn" href={goUrl(o)} target="_blank" rel="noopener">
           7 · Outlook: helper page (in use)
+        </a>
+      </div>
+      {/* Samsung Internet keeps a plain link to its own installed app; the install step sends Samsung users to Chrome (lib/install) */}
+      <h3>This app in Chrome</h3>
+      <p className="meta">
+        In Samsung Internet, with the app installed from Chrome: does Chrome open the app, or only the website? I is the
+        link the install step uses; its way back (no Chrome) is marked so it doesn't hide the Chrome offer here.
+      </p>
+      <div className="links">
+        <a className="linkbtn" href={chromeIntent()}>
+          H · This site in Chrome
+        </a>
+        <a className="linkbtn" href={chromeIntent(appUrl() + "?nochrome-test#/dev/links")}>
+          I · The same, back here without Chrome
         </a>
       </div>
       <p className="meta devua">{navigator.userAgent}</p>
