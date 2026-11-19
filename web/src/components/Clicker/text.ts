@@ -272,7 +272,7 @@ export const TEXT = (
       paused: "⏸️ Zu wenig Mitglieder",
       mile: "×2 schneller ab {n}",
       free: "👥 {n} frei",
-      event: ["Echter Anlass!", "Bis {d}, nur einmal"],
+      event: ["Echter Event!", "Bis {d}, nur einmal"],
       avenues: "Dienstzweige",
       av: ["Clubdienst", "Berufsdienst", "Gemeindienst", "Internationaler Dienst", "Jugenddienst"],
       kinds: ["Gesellige", "Berufsleute", "Macher", "Weltenbummler", "Mentoren", "Andere"],

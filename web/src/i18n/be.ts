@@ -128,7 +128,7 @@ const be: Partial<Messages> = {
   news_new: "{n} nöii",
   news_rest: "sit dim letschte Bsuech",
   news_moved: "{n} verschobe",
-  home_soon: "Gly",
+  home_soon: "Aaläss",
   ob_start: "Los geits",
   reg_by: "Aamälde bis {d}",
   near_btn: "Mi Standort bruuche",
