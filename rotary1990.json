@@ -381,8 +381,8 @@
    "registration": ""
   },
   "first_seen": "20261118T101703Z",
-  "modified": "20261118T101703Z",
-  "sequence": 0,
+  "modified": "20261118T235504Z",
+  "sequence": 1,
   "status": "active",
   "vevent": [
    "UID:polaris-220147@rotary.ch",
@@ -390,8 +390,8 @@
    "DESCRIPTION:Notre amie Nathalie Monaco nous fera le plaisir de sa conférence de classification. Elle nous présentera son parcours et son activité professionnelle\\, une belle occasion de mieux la connaître et de partager un moment d'amitié rotarienne. Venez nombreux l'écouter.   Inscription obligatoire jusqu'au ...",
    "LOCATION:Hôtellerie de Châtonneyre",
    "URL:https://vevey-montreux-riviera.rotary1990.ch/de/agenda/show/220147",
-   "DTSTART;TZID=Europe/Zurich:20270106T114500",
-   "DTEND;TZID=Europe/Zurich:20270106T133000"
+   "DTSTART;TZID=Europe/Zurich:20270120T114500",
+   "DTEND;TZID=Europe/Zurich:20270120T140000"
   ]
  },
  "220154": {
