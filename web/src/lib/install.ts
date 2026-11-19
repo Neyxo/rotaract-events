@@ -52,7 +52,7 @@ export const openAnyUrl = (): string | null =>
     ? `intent://${location.host}${location.pathname.replace(/[^/]*$/, "")}#Intent;scheme=https;end`
     : null;
 /** whether this browser sees the app installed (getInstalledRelatedApps and the manifest's related_applications): Samsung Internet
- *  sees an app it installed itself; Chrome didn't see its own (tested in 0.17.7). false where a browser can't tell */
+ *  and Chrome each see the app they installed themselves, never the other's (docs/install.md). false where a browser can't tell */
 export async function seesInstalledApp(): Promise<boolean> {
   const get = (navigator as { getInstalledRelatedApps?: () => Promise<unknown[]> }).getInstalledRelatedApps;
   try {
