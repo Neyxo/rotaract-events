@@ -213,7 +213,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6ace1c177dd0c.jpg",
    "organiser": "Rotary Zürcher Weinland",
-   "registration": "Anmeldung bis: 19.11.2026 10:15"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -697,7 +697,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6a81aa670a509.png",
    "organiser": "Rotary Volketswil",
-   "registration": "Anmeldung bis: 19.11.2026 09:30"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -799,7 +799,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6a87e08e70fc7.jpg",
    "organiser": "Rotary Zurich International",
-   "registration": "Anmeldung bis: 19.11.2026 08:00"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -820,7 +820,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/2845273083.jpg",
    "organiser": "Rotary Liechtenstein",
-   "registration": "Anmeldung bis: 19.11.2026 07:00"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -1070,7 +1070,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6ad9b49e08a9c.jpg",
    "organiser": "Rotary Zürcher Weinland",
-   "registration": "Anmeldung bis: 19.11.2026 10:00"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -1269,6 +1269,26 @@
    "URL:https://liechtenstein.rotary2000.ch/de/agenda/show/223124",
    "DTSTART;TZID=Europe/Zurich:20261124T121500",
    "DTEND;TZID=Europe/Zurich:20261124T134500"
+  ]
+ },
+ "223584": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Zürcher Weinland",
+   "registration": "Anmeldung bis: 15.04.2027 10:15"
+  },
+  "first_seen": "20261119T102702Z",
+  "modified": "20261119T102702Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223584@rotary.ch",
+   "SUMMARY:Vortrag von Walter Schmid",
+   "LOCATION:Landgasthof zum Bahnhof",
+   "URL:https://rotary-zuercherweinland.ch/de/agenda/show/223584",
+   "DTSTART;TZID=Europe/Zurich:20270415T121500",
+   "DTEND;TZID=Europe/Zurich:20270415T140000"
   ]
  }
 }
