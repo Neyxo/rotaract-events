@@ -6,7 +6,7 @@ import { club } from "../../lib/data";
 import { clubVars, cx, DISTRICT_IDS, DISTRICTS } from "../../lib/color";
 import { dayLine, fmt, isPast, racYear, racYearLabel } from "../../lib/dates";
 import { devFlag } from "../../lib/dev";
-import { appUrl, chromeIntent } from "../../lib/install";
+import { appUrl, chromeIntent, getInstallPrompt, installState, standalone } from "../../lib/install";
 import { href } from "../../lib/route";
 import { store, type StoreKey, type StoreKeys } from "../../lib/store";
 import type { Club, Event, Status } from "../../lib/types";
@@ -947,46 +947,164 @@ function LinkLab() {
           I · The same, back here without Chrome
         </a>
       </div>
-      <OpenApp />
       <p className="meta devua">{navigator.userAgent}</p>
     </>
   );
 }
 
-/** What opens the installed app: a link from another app does (Android hands it to the app that claims the address), a link inside
- *  the browser to its own site doesn't (Chrome keeps same-site links in the tab; Samsung Internet keeps every web link unless its
- *  "Open links in other apps" is on). An intent link without a browser named is the one way out of the tab in Chrome. */
-function OpenApp() {
-  const [apps, setApps] = useState<string>("checking…");
-  useEffect(() => {
-    const get = (navigator as { getInstalledRelatedApps?: () => Promise<{ platform: string; url?: string }[]> })
-      .getInstalledRelatedApps;
-    if (!get) setApps("this browser can't tell");
-    else
-      get
+/** What this browser can tell about the app and where it runs, as label and value. Chrome reports its own installed app
+ *  (getInstalledRelatedApps) only when the manifest lists itself under related_applications, with exactly the address the page
+ *  names, and the installed app was built from a manifest at that same address (chrome://webapks shows it). */
+async function appReport(): Promise<[string, string][]> {
+  const yn = (b: boolean) => (b ? "yes" : "no");
+  const link = document.querySelector<HTMLLinkElement>('link[rel="manifest"]')?.href ?? "";
+  let m: { scope?: string; related_applications?: { platform?: string; url?: string }[] } = {};
+  const loaded = !link
+    ? "no manifest named"
+    : await fetch(link, { cache: "no-cache" })
+        .then((r) => r.json())
+        .then((j) => {
+          m = j as typeof m;
+          return "yes";
+        })
+        .catch((e: unknown) => "error: " + String(e));
+  const related = (m.related_applications ?? []).map((r) => ({
+    platform: r.platform ?? "?",
+    url: r.url ? new URL(r.url, link).href : "",
+  }));
+  const scope = new URL(m.scope ?? ".", link || location.href).href;
+  const get = (navigator as { getInstalledRelatedApps?: () => Promise<unknown[]> }).getInstalledRelatedApps;
+  const seen = !get
+    ? "this browser can't tell"
+    : await get
         .call(navigator)
-        .then((a) => setApps(a.length ? a.map((x) => x.platform).join(", ") : "none found"))
-        .catch((e: unknown) => setApps("error: " + String(e)));
+        .then((apps) => (apps.length ? JSON.stringify(apps) : "none"))
+        .catch((e: unknown) => "error: " + String(e));
+  return [
+    ["Browser", browserName(navigator.userAgent)],
+    ["Running as", standalone() ? "the installed app" : "a browser tab"],
+    ["Top-level page / secure", `${yn(window.top === window)} / ${yn(isSecureContext)}`],
+    ["Page", location.href],
+    ["Manifest the page names", link || "none"],
+    ["Manifest loaded", loaded],
+    ["Related apps in it", related.map((r) => `${r.platform}: ${r.url || "no address"}`).join("; ") || "none"],
+    ["Lists itself, same address", yn(related.some((r) => r.platform === "webapp" && r.url === link))],
+    ["Scope", scope],
+    ["Page inside the scope", yn(location.href.startsWith(scope))],
+    ["Installed app seen by the browser", seen],
+    // Chrome and Samsung Internet hold the prompt back once they know their own app is there
+    ["Install prompt offered", yn(!!getInstallPrompt())],
+    ["Installed from this tab", installState() ?? "no"],
+    ["Service worker in charge", yn(!!navigator.serviceWorker?.controller)],
+    ["Marked as having no Chrome", yn(store.get("rac.noChrome", false))],
+  ];
+}
+
+/** What opens the installed app from inside the browser, and what the browser knows about it. A link from another app opens it
+ *  (Android hands the address over); a link inside the browser to its own site stays in the tab. Read from Chromium's source: an
+ *  intent leaves the tab, and Chrome opens an app it installed itself when that app is the only one answering; with a second
+ *  app answering (one from Samsung Internet too) Android asks. Naming the app's package should leave one. Untested: R, S, T. */
+function AppCheck() {
+  const [rows, setRows] = useState<[string, string][]>([]);
+  const [pkg, setPkg] = useState(() => store.get("rac.devPkg", ""));
+  useEffect(() => {
+    // a moment later: the install prompt arrives after the page has loaded
+    const id = setTimeout(() => void appReport().then(setRows), 1500);
+    return () => clearTimeout(id);
   }, []);
+  const name = (v: string) => {
+    const clean = v.replace(/[^\w.]/g, "");
+    setPkg(clean);
+    if (clean) store.set("rac.devPkg", clean);
+    else store.remove("rac.devPkg");
+  };
+  const report = () =>
+    navigator.clipboard
+      .writeText(
+        [
+          ...rows.map(([k, v]) => `${k}: ${v}`),
+          `Package: ${pkg || "not given"}`,
+          `User agent: ${navigator.userAgent}`,
+        ].join("\n"),
+      )
+      .then(() => toast("Report copied"));
   const site = location.host + location.pathname.replace(/[^/]*$/, "");
   const view = "action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;";
+  const back = `S.browser_fallback_url=${encodeURIComponent(appUrl() + "?noapp-test#/dev/app")};`;
+  const direct = `S.browser_fallback_url=${encodeURIComponent(appUrl())};`;
   return (
     <>
-      <h3>Open the installed app</h3>
-      <p className="meta">{`Installed app seen by this browser: ${apps}`}</p>
       <p className="meta">
-        In Chrome: P is the "Open the app" link of the install step. Does it open the app, or offer a choice with the
-        apps? In Samsung Internet: first turn on Menu → Settings → Useful features → "Open links in other apps", then
-        tap P and Q.
+        Open this in the browser tab, not in the app, once per browser and per way the app was installed. "Checking"
+        takes a moment.
+      </p>
+      <dl className="devdark">
+        {rows.length ? (
+          rows.map(([k, v]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))
+        ) : (
+          <div>
+            <dt>Checking…</dt>
+            <dd />
+          </div>
+        )}
+      </dl>
+      <div className="links">
+        <Btn label="Copy report" onClick={() => void report()} />
+      </div>
+      <h3>The app's package</h3>
+      <p className="meta">
+        An app Chrome installed: type chrome://webapks into Chrome's address bar. Its "Manifest URL" must be the
+        manifest named above, letter for letter, or Chrome doesn't see the app (then: uninstall, install again). Its
+        "Package name" (org.chromium.webapk…) goes here. An app Samsung Internet installed: with the phone on a
+        computer, adb shell pm list packages | grep -i webapk.
+      </p>
+      <Row label="Package">
+        <input
+          type="text"
+          value={pkg}
+          placeholder="org.chromium.webapk…"
+          aria-label="Package name of the installed app"
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
+          onChange={(e) => name(e.target.value)}
+        />
+      </Row>
+      <h3>Open the installed app</h3>
+      <p className="meta">
+        Tap each, in Chrome and in Samsung Internet, and note: the app opens, a choice of apps, the page reloads, or the
+        Play Store. P is the link Settings uses. R and S need the package above. T names nothing that exists, so the
+        browser falls back to this site's address, which Chrome may hand to the app.
       </p>
       <div className="links">
         <a className="linkbtn" href={`intent://${site}#Intent;scheme=https;end`}>
-          P · Open the app (no browser named)
+          P · Open the app (no browser named, in use)
         </a>
         <a className="linkbtn" href={`intent://${site}#Intent;scheme=https;${view}end`}>
           Q · The same, action and category named
         </a>
+        {pkg ? (
+          <>
+            <a className="linkbtn" href={`intent://${site}#Intent;scheme=https;package=${pkg};end`}>
+              R · The app's package named
+            </a>
+            <a className="linkbtn" href={`intent://${site}#Intent;scheme=https;package=${pkg};${back}end`}>
+              S · The same, back here without the app
+            </a>
+          </>
+        ) : (
+          <p className="meta">R and S: give the package first.</p>
+        )}
+        <a className="linkbtn" href={`intent://open#Intent;scheme=rac-nothing;${direct}end`}>
+          T · Nothing that exists, fallback to this site
+        </a>
       </div>
+      <p className="meta devua">{navigator.userAgent}</p>
     </>
   );
 }
@@ -1220,6 +1338,7 @@ const PAGES = {
   commits: ["Commits", "What changed in the app, and when", "book"],
   build: ["This build", "Its run's steps, layers, counts and files", "info"],
   links: ["Link lab", "Which calendar link stays in the browser on a phone", "ext"],
+  app: ["Installed app", "What this browser knows about the app, and links that may open it", "phone"],
   dark: ["Dark mode check", "What this browser tells a page and paints in dark mode", "moon"],
   preview: ["Preview on this device", "Guest view, new marks, a pretend date", "phone"],
   device: ["This device", "Service worker, cache and stored settings", "laptop"],
@@ -1250,6 +1369,7 @@ export default function Dev({ route }: ScreenProps) {
           commits: () => <Commits />,
           build: () => <Build st={st} own={own} up={up} rot={rot.events} />,
           links: () => <LinkLab />,
+          app: () => <AppCheck />,
           dark: () => <DarkCheck />,
           preview: () => <Preview />,
           device: () => <DeviceInfo dev={dev} />,

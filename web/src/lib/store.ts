@@ -97,6 +97,8 @@ export interface StoreKeys {
    *  add a prefers-color-scheme rule; read by index.html at load */
   "rac.devScheme": string;
   "rac.devSchemeRule": boolean;
+  /** the installed app's Android package, typed in on the developer screen to try links that name it */
+  "rac.devPkg": string;
 }
 export type StoreKey = keyof StoreKeys;
 

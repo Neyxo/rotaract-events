@@ -224,6 +224,7 @@ describe("developer screen", () => {
       "#/dev/commits",
       "#/dev/build",
       "#/dev/links",
+      "#/dev/app",
       "#/dev/dark",
       "#/dev/preview",
       "#/dev/device",
@@ -434,6 +435,21 @@ describe("developer screen", () => {
       fireEvent.click(device.getByRole("button", { name: "Clear all app data" }));
     });
     expect(localStorage.getItem("rac.dev")).toBe("true");
+  });
+
+  it("installed app page: links naming the app's package once it is given, kept for the next visit", async () => {
+    const m = await page("app");
+    expect(m.queryByRole("link", { name: /^R · / })).toBeNull();
+    fireEvent.change(m.getByRole("textbox", { name: "Package name of the installed app" }), {
+      target: { value: " org.chromium.webapk.a1_v2;x " },
+    });
+    expect(m.getByRole("link", { name: /^R · / }).getAttribute("href")).toBe(
+      "intent://localhost:3000/#Intent;scheme=https;package=org.chromium.webapk.a1_v2x;end",
+    );
+    expect(m.getByRole("link", { name: /^S · / }).getAttribute("href")).toMatch(
+      /;S\.browser_fallback_url=.+noapp-test.+;end$/,
+    );
+    expect(localStorage.getItem("rac.devPkg")).toBe('"org.chromium.webapk.a1_v2x"');
   });
 
   it("content checks fold their lists or say none", async () => {
