@@ -17,11 +17,12 @@
   display: grid;
   gap: 6px;
 }
-.fam .box li {
+/* the crosses and ticks are for the plain lists: numbered steps (ol) keep their numbers */
+.fam .box ul li {
   display: flex;
   gap: 8px;
 }
-.fam .box li::before {
+.fam .box ul li::before {
   content: "✕";
   color: var(--accent);
   font-weight: 800;
