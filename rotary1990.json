@@ -662,5 +662,365 @@
    "DTSTART;TZID=Europe/Zurich:20261105T120000",
    "DTEND;TZID=Europe/Zurich:20261210T120000"
   ]
+ },
+ "223601": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 29.12.2026 12:15"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223601@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223601",
+   "DTSTART;TZID=Europe/Zurich:20270104T121500",
+   "DTEND;TZID=Europe/Zurich:20270104T131500"
+  ]
+ },
+ "223602": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 15.01.2027 12:15"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223602@rotary.ch",
+   "SUMMARY:Mittagessen mit Governor René Loretan (Rotisserie) - Hobelkäsepräsentation",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223602",
+   "DTSTART;TZID=Europe/Zurich:20270118T121500",
+   "DTEND;TZID=Europe/Zurich:20270118T131500"
+  ]
+ },
+ "223603": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 22.01.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223603@rotary.ch",
+   "SUMMARY:Abendessen mit Referentin Anne Lévy (Direktorin BAG)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223603",
+   "DTSTART;TZID=Europe/Zurich:20270128T183000",
+   "DTEND;TZID=Europe/Zurich:20270128T223000"
+  ]
+ },
+ "223604": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 29.01.2027 12:15"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223604@rotary.ch",
+   "SUMMARY:Mittagessen mit Referentin Nathaly Bachmann (Rotisserie & Dachstock)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223604",
+   "DTSTART;TZID=Europe/Zurich:20270201T121500",
+   "DTEND;TZID=Europe/Zurich:20270201T133000"
+  ]
+ },
+ "223605": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 12.02.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223605@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223605",
+   "DTSTART;TZID=Europe/Zurich:20270215T121500",
+   "DTEND;TZID=Europe/Zurich:20270215T131500"
+  ]
+ },
+ "223606": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 19.02.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223606@rotary.ch",
+   "SUMMARY:Abendessen mit Referent Dr. Beat Brechbühl (Kellerhals Carrard)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223606",
+   "DTSTART;TZID=Europe/Zurich:20270225T183000",
+   "DTEND;TZID=Europe/Zurich:20270225T223000"
+  ]
+ },
+ "223607": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 26.02.2027 12:15"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223607@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223607",
+   "DTSTART;TZID=Europe/Zurich:20270301T121500",
+   "DTEND;TZID=Europe/Zurich:20270301T131500"
+  ]
+ },
+ "223608": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 12.03.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223608@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223608",
+   "DTSTART;TZID=Europe/Zurich:20270315T121500",
+   "DTEND;TZID=Europe/Zurich:20270315T131500"
+  ]
+ },
+ "223609": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 19.03.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223609@rotary.ch",
+   "SUMMARY:Abendessen mit Referentin Eva Jaisli (CEO PB Swiss Tools)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223609",
+   "DTSTART;TZID=Europe/Zurich:20270325T183000",
+   "DTEND;TZID=Europe/Zurich:20270325T223000"
+  ]
+ },
+ "223610": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 02.04.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223610@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223610",
+   "DTSTART;TZID=Europe/Zurich:20270405T121500",
+   "DTEND;TZID=Europe/Zurich:20270405T131500"
+  ]
+ },
+ "223611": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 16.04.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223611@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223611",
+   "DTSTART;TZID=Europe/Zurich:20270419T121500",
+   "DTEND;TZID=Europe/Zurich:20270419T131500"
+  ]
+ },
+ "223612": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 30.04.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223612@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223612",
+   "DTSTART;TZID=Europe/Zurich:20270503T121500",
+   "DTEND;TZID=Europe/Zurich:20270503T131500"
+  ]
+ },
+ "223613": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 23.04.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223613@rotary.ch",
+   "SUMMARY:Abendessen mit Referentin Kathrin Altwegg (Astrophysikerin\\, Prof.Uni Bern)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223613",
+   "DTSTART;TZID=Europe/Zurich:20270429T183000",
+   "DTEND;TZID=Europe/Zurich:20270429T223000"
+  ]
+ },
+ "223614": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": ""
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223614@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie) = Pfingsten",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223614",
+   "DTSTART;TZID=Europe/Zurich:20270517T121500",
+   "DTEND;TZID=Europe/Zurich:20270517T131500"
+  ]
+ },
+ "223615": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 21.05.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223615@rotary.ch",
+   "SUMMARY:Abendessen mit Referentin Dr. med. Anja Wüest (Kunderwunsch Praxis Bern)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223615",
+   "DTSTART;TZID=Europe/Zurich:20270527T183000",
+   "DTEND;TZID=Europe/Zurich:20270527T223000"
+  ]
+ },
+ "223616": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 04.06.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223616@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223616",
+   "DTSTART;TZID=Europe/Zurich:20270607T121500",
+   "DTEND;TZID=Europe/Zurich:20270607T131500"
+  ]
+ },
+ "223618": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 11.06.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223618@rotary.ch",
+   "SUMMARY:Amtsübergabe RC Köniz mit Abendessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223618",
+   "DTSTART;TZID=Europe/Zurich:20270617T183000",
+   "DTEND;TZID=Europe/Zurich:20270617T223000"
+  ]
+ },
+ "223619": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Köniz",
+   "registration": "Anmeldung bis: 18.06.2027 12:00"
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223619@rotary.ch",
+   "SUMMARY:Mittagessen (Rotisserie)",
+   "LOCATION:Landhaus Liebefeld",
+   "URL:https://koeniz.rotary1990.ch/de/agenda/show/223619",
+   "DTSTART;TZID=Europe/Zurich:20270621T121500",
+   "DTEND;TZID=Europe/Zurich:20270621T131500"
+  ]
  }
 }

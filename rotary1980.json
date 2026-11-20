@@ -724,7 +724,7 @@
    "description": "",
    "image": "https://rotary1980.ch/media/cache/rotary_website_event_grid/7450946943.jpg",
    "organiser": "Rotary Laufenburg-Fricktal",
-   "registration": "Anmeldung bis: 20.11.2026 06:30"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -1127,15 +1127,15 @@
    "description": "",
    "image": "",
    "organiser": "Rotary Balsthal",
-   "registration": "Anmeldung bis: 23.11.2026 23:55"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261118T101703Z",
-  "sequence": 1,
+  "modified": "20261120T100711Z",
+  "sequence": 2,
   "status": "active",
   "vevent": [
    "UID:polaris-221704@rotary.ch",
-   "SUMMARY:Partneranlass: Pharmalogistik\\, Galexis AG Niederbipp",
+   "SUMMARY:Abgesagt: Partneranlass: Pharmalogistik\\, Galexis AG Niederbipp",
    "LOCATION:Galexis AG",
    "URL:https://balsthal.rotary1980.ch/de/agenda/show/221704",
    "DTSTART;TZID=Europe/Zurich:20261125T180000",
@@ -1544,6 +1544,27 @@
    "URL:https://rotary-laufenburg.ch/de/agenda/show/223216",
    "DTSTART;TZID=Europe/Zurich:20270321T140000",
    "DTEND;TZID=Europe/Zurich:20270321T170000"
+  ]
+ },
+ "223639": {
+  "detail": {
+   "description": "",
+   "image": "https://rotary1980.ch/media/cache/rotary_website_event_grid/8538937348.jpeg",
+   "organiser": "Rotary Baden",
+   "registration": ""
+  },
+  "first_seen": "20261120T100711Z",
+  "modified": "20261120T100711Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-223639@rotary.ch",
+   "SUMMARY:Sponsorenlauf für \"143 - Die dargebotene Hand\"",
+   "DESCRIPTION:Sponsorenlauf\\, Sportanlage Aue in Baden Die fünf Regio- Clubs Baden\\, Baden- Rohrdorferberg\\,\\nWettingen\\, Wettingen- Heitersberg und der Rotaract Baden organisieren gemeinsam\\nden Sponsorenlauf zu Gunsten von 143.ch. Die Dargebotene Hand bietet allen\\nMenschen kostenlose Beratung. Damit dies so bleibt i...",
+   "LOCATION:Sportanlage Aue",
+   "URL:https://rotary-baden.ch/de/agenda/show/223639",
+   "DTSTART;TZID=Europe/Zurich:20270522T100000",
+   "DTEND;TZID=Europe/Zurich:20270522T140000"
   ]
  }
 }

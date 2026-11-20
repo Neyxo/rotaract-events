@@ -213,7 +213,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6ace1c177dd0c.jpg",
    "organiser": "Rotary Zürcher Weinland",
-   "registration": ""
+   "registration": "Anmeldung bis: 10.12.2026 10:15"
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -902,16 +902,16 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6aa84dbcd51b9.jpg",
    "organiser": "Rotary Uster",
-   "registration": "Anmeldung bis: 26.11.2026 10:00"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
+  "modified": "20261120T100711Z",
+  "sequence": 1,
   "status": "active",
   "vevent": [
    "UID:polaris-220891@rotary.ch",
    "SUMMARY:Rotary am Uster-Märt",
-   "DESCRIPTION:End Polio Now – der Rotary-Bär kommt nach Uster! Gemeinsam gegen Kinderlähmung Am 26. und 27. November 2026 ist der Rotary Club Uster am Uster Märt mit einem eigenen Stand dabei. Im Mittelpunkt stehen sympathischen Rotary-Plüschbären – als Botschafter für eine Welt ohne Kinderlähmung. Mit dem Verkau...",
+   "DESCRIPTION:Bären helfen Kindern – Gemeinsam gegen Kinderlähmung! Der Rotary Club Uster engagiert sich am Uschter Märt vom 26. und 27. November 2026 für eine Welt ohne Kinderlähmung.\\nKinderlähmung (Polio) ist eine hochansteckende Viruserkrankung\\, die das Nervensystem angreifen und zu bleibenden Lähmungen führe...",
    "LOCATION:Uster Märt",
    "URL:https://uster.rotary2000.ch/de/agenda/show/220891",
    "DTSTART;TZID=Europe/Zurich:20261126T100000",
