@@ -863,9 +863,9 @@
    "registration": ""
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
-  "status": "active",
+  "modified": "20261121T095445Z",
+  "sequence": 1,
+  "status": "cancelled",
   "vevent": [
    "UID:polaris-220481@rotary.ch",
    "SUMMARY:ROTARY BENEFIZ-BALL 2026 ZU GUNSTEN DER LEWA CONSERVACY",
