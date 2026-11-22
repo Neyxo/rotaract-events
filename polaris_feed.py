@@ -15,6 +15,7 @@ import copy
 import datetime as dt
 import html
 import json
+import math
 import os
 import re
 import shutil
@@ -562,17 +563,27 @@ def build_calendar(club, history, now):
 
 SWISS_BOX = (5.9, 45.8, 10.6, 47.9)  # lon/lat corners around Switzerland and Liechtenstein: preferred, and trusted more
 NO_PLACE = re.compile(r"(online|virtuell|virtual|zoom|teams|tb[adc]|tdb|folgt|noch offen|zuhause|\W*)", re.I)  # shops and bars carry these names
+CLUB_REACH_KM = 100  # a venue known by its name only is believed this far from the club's city, not further
+SAME_PLACE_KM = 2  # hits further apart than this are different places: which one is meant is a guess
+TOO_WIDE = {"country", "state", "region", "county"}  # no place to pin, and no rival of the town with the same name
 TOWNS = {"city", "town", "village", "municipality", "hamlet", "suburb", "city_district", "borough", "quarter", "neighbourhood", "postcode"}
+
+
+def km(a, b):
+    """rough distance between two [lat, lon] at Swiss latitudes"""
+    return math.hypot((a[0] - b[0]) * 111, (a[1] - b[1]) * 76)
 
 
 def geocode(query, cache):
     """[lat, lon, is it a town] of a place via Nominatim (OpenStreetMap), or None. Cached, incl. misses.
 
-    Outside SWISS_BOX only towns count: a bar in Hamburg that happens to share the venue's name is the usual hit there.
+    Better no place than a wrong one. None as well when the answer is not clear: a second hit of the same kind elsewhere
+    ("Restaurant Post" is in every other village). And outside SWISS_BOX only towns count: a bar in Hamburg that happens
+    to share the venue's name is the usual hit there.
     ponytail: so an address abroad is pinned on its town; trust addresses abroad too once events there are common."""
     if query not in cache:
         url = "https://nominatim.openstreetmap.org/search?" + urllib.parse.urlencode(
-            {"q": query, "format": "jsonv2", "limit": 1, "viewbox": ",".join(map(str, SWISS_BOX))})
+            {"q": query, "format": "jsonv2", "limit": 10, "viewbox": ",".join(map(str, SWISS_BOX))})
         try:
             results = json.loads(get(url))
         except urllib.error.HTTPError as e:
@@ -581,26 +592,30 @@ def geocode(query, cache):
             results = []  # a query Nominatim refuses: treat as not found
         finally:
             time.sleep(1)  # Nominatim's usage policy: one request per second at most
-        cache[query] = None
-        if results:
-            lat, lon, town = float(results[0]["lat"]), float(results[0]["lon"]), results[0].get("addresstype") in TOWNS
-            if town or (SWISS_BOX[0] <= lon <= SWISS_BOX[2] and SWISS_BOX[1] <= lat <= SWISS_BOX[3] and results[0].get("addresstype") != "country"):
-                cache[query] = [round(lat, 5), round(lon, 5), town]
+        hits = [(float(r["lat"]), float(r["lon"]), r.get("addresstype") in TOWNS, r.get("importance") or 0) for r in results
+                if r.get("addresstype") not in TOO_WIDE]
+        hits = [h for h in hits if h[2] or (SWISS_BOX[0] <= h[1] <= SWISS_BOX[2] and SWISS_BOX[1] <= h[0] <= SWISS_BOX[3])]
+        lat, lon, town, weight = hits[0] if hits else (0, 0, False, 0)
+        # a rival: elsewhere and about as well known (Opatija the town has a namesake village: no rival; venues all weigh 0)
+        clear = hits and not any(w > weight - 0.1 and km((lat, lon), h) > SAME_PLACE_KM for *h, _, w in hits[1:])
+        cache[query] = [round(lat, 5), round(lon, 5), town] if clear else None
     return cache[query]
 
 
 def locate(location, city, cache):
-    """[lat, lon] of an event's location text, or of the club's city when the text leads nowhere.
+    """[lat, lon] of a location text, or None when it leads nowhere or is not clear: no pin beats a wrong pin.
 
-    A bare name: a town as it is ("Berlin"), anything else in the club's city first ("Hotel Wilder Mann" exists in many towns).
+    A bare name: a town as it is ("Berlin"), anything else in the club's city first ("Hotel Wilder Mann" exists in many towns),
+    then as it is if that is within CLUB_REACH_KM of the club's city (the only "L'Espace" on the map is a cinema in Besançon).
     An address: as it is, then without its first parts ("Blaue Ente, Seefeldstrasse 223, 8008 Zürich" -> "8008 Zürich"). Its
     last part alone counts with a postcode or as a town, otherwise in the club's city ("Seefeldstrasse 223": every town has
-    one). Then its first part if that is a town ("Saanen, Ferienhaus Eggli")."""
+    one). Then its first part if that is a town ("Saanen, Ferienhaus Eggli"). The club's city itself is never the answer."""
     location = "" if NO_PLACE.fullmatch(location.strip()) else location.strip()
-    parts = [p.strip() for p in location.split(",") if p.strip()]
+    parts = [p.strip() for p in re.split("[,;]", location) if p.strip()]
     near = lambda text: [(f"{text}, {city}", False)] if city else []
     if len(parts) == 1:
         tries = [(location, True), *near(location), (location, False)]  # (query, has to be a town)
+        tries += [(m.group(), False)] if (m := re.search(r"\b\d{4} \S.*", location)) else []  # "Klosbachstrasse 2 (Kreuzplatz) 8032 Zürich"
     elif parts:
         last = parts[-1]
         tries = [(", ".join(parts[n:]), False) for n in range(len(parts) - 1)]
@@ -609,9 +624,11 @@ def locate(location, city, cache):
     else:
         tries = []
     try:
-        for query, town in [*tries, (city, False)]:
-            if query and (hit := geocode(query, cache)) and (hit[2] or not town):
-                return hit[:2]
+        home = geocode(city, cache) if city else None
+        for query, town in tries:
+            if (hit := geocode(query, cache)) and (hit[2] or not town):
+                if hit[2] or query != location or not home or km(hit, home) <= CLUB_REACH_KM:
+                    return hit[:2]
     except Exception:
         pass  # geocoder unreachable: try again next run (misses aren't cached)
     return None
@@ -673,7 +690,7 @@ def site_data(clubs, histories, now, cache, news=None, projects=None, instagram=
     by_start = sorted(events.values(), key=lambda e: e["start"])
     entries = [{"id": c["id"], "name": c["name"], "short": c.get("short", c["name"]), "url": c["base_url"],
                    "color": c.get("color", "#d41367"), "logo": c.get("logo", ""), "district": c.get("district", ""),
-                   "coords": locate("", c.get("city", ""), cache), "photos": c.get("photos", []), "news": (news or {}).get(c["id"], []),
+                   "coords": locate(c.get("city", ""), "", cache), "photos": c.get("photos", []), "news": (news or {}).get(c["id"], []),
                    "projects": (projects or {}).get(c["id"], []),
                    "instagram": (instagram or {}).get(c["id"], []),  # latest posts, see fetch_instagram(); [] while that layer is off
                    "links": {k: c[k] for k in ("instagram", "linkedin") if c.get(k)},

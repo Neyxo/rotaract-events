@@ -30,4 +30,12 @@ Polaris has no events API. The public agenda pages and the per-event calendar fi
 
 ## Locations
 
-For the map and the radius search, places are looked up with Nominatim, OpenStreetMap's free geocoder, at one request per second. A bare name is taken as it is when it is a town, otherwise it is looked for in the club's city first. An address is tried as it is, then without its first parts (a last part without a postcode has to be a town, or is looked for in the club's city), then by its first part if that is a town. The club's city is the last resort. Places in and around Switzerland are preferred; further away only towns are taken, so an address abroad lands on its town. Placeholders such as "Online" or "tbd" and whole countries are never a place. Results are cached in `data/places.json` as `[lat, lon, is it a town]`; edit an entry there to fix a wrong place.
+For the map and the radius search, places are looked up with Nominatim, OpenStreetMap's free geocoder, at one request per second. The rule is that no place beats a wrong place: an event that cannot be placed with confidence has no coordinates, so it has no dot on the map and is counted as "without a place" in the radius search.
+
+- A bare name is taken as it is when it is a town. Otherwise it is looked for in the club's city, then anywhere within 100 km of it.
+- An address is tried as it is, then without its first parts. A last part without a postcode has to be a town, or is looked for in the club's city. Then the first part counts if it is a town.
+- An answer with a second hit elsewhere that is about as well known is not clear and is dropped ("Restaurant Post").
+- Places in and around Switzerland are preferred; further away only towns are taken, so an address abroad lands on its town.
+- Placeholders such as "Online" or "tbd" and whole countries or cantons are never a place. The club's city is never used in place of the event's own.
+
+Results are cached in `data/places.json` as `[lat, lon, is it a town]`; edit an entry there to fix a wrong place.
