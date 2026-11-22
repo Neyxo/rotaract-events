@@ -1,0 +1,1223 @@
+{
+ "1 Rue du 23-Août, 1205 Genève, Suisse": null,
+ "1 Rue du 23-Août, 1205 Genève, Switzerland": null,
+ "1205 Genève, Suisse": [
+  46.19656,
+  6.14141,
+  true
+ ],
+ "1205 Genève, Switzerland": [
+  46.19658,
+  6.14141,
+  true
+ ],
+ "21 - Lugano, Lugano": null,
+ "3123 Belp": [
+  46.88888,
+  7.49875,
+  false
+ ],
+ "4410 Liestal": [
+  47.48397,
+  7.73478,
+  true
+ ],
+ "5325 Leibstadt": [
+  47.59051,
+  8.17566,
+  true
+ ],
+ "6005 Luzern, Raum Bonjour": null,
+ "7 rue Marie-Thérèse Maurette, 1208 Genève": [
+  46.19815,
+  6.17249,
+  false
+ ],
+ "8001 Zurich": [
+  47.37256,
+  8.54169,
+  true
+ ],
+ "8002 Zürich": [
+  47.36168,
+  8.53068,
+  true
+ ],
+ "8032 Zürich": [
+  47.36676,
+  8.56194,
+  true
+ ],
+ "8044 Zürich": null,
+ "9000 St.Gallen": [
+  47.42399,
+  9.37426,
+  true
+ ],
+ "9010 St.Gallen": [
+  47.43909,
+  9.37738,
+  true
+ ],
+ "AMM Künzli": null,
+ "Adlisbergstrasse 36 8044 Zürich": [
+  47.37548,
+  8.57627,
+  false
+ ],
+ "Adlisbergstrasse 36 8044 Zürich, Zürich": [
+  47.37548,
+  8.57627,
+  false
+ ],
+ "Alpeneggstrasse 8, 3012 Bern": [
+  46.95281,
+  7.43836,
+  false
+ ],
+ "Aregger Holzbau, Industriestrasse 46, 6034 Inwil": null,
+ "B. Braun Medical AG, Seesatz 17, 6204 Sempach": null,
+ "Baden": [
+  47.47368,
+  8.30868,
+  true
+ ],
+ "Baden / Wettingen": [
+  47.46584,
+  8.32661,
+  true
+ ],
+ "Badenerstrasse, 97 8004 Zürich": [
+  47.37399,
+  8.52543,
+  false
+ ],
+ "Badweg 10, 8001 Zürich": [
+  47.37155,
+  8.5329,
+  false
+ ],
+ "Bahnhofplatz 7, 6210 Sursee": [
+  47.17059,
+  8.09856,
+  false
+ ],
+ "Balthasar 8, Webergasse 8, 9000 St. Gallen, Schweiz": null,
+ "Balthasar 8, Webergasse 8, 9000 St.Gallen": [
+  47.4233,
+  9.37466,
+  false
+ ],
+ "Bar/Eventlokal \"Die Weinerei 1877\"": null,
+ "Bar/Eventlokal \"Die Weinerei 1877\", Sursee": null,
+ "Barcelona, Spain": [
+  41.38258,
+  2.17707,
+  true
+ ],
+ "Barfüserplatz, Steinenberg 14, 4051 Basel": null,
+ "Basel": [
+  47.55811,
+  7.58783,
+  true
+ ],
+ "Baselstrasse 38, 4125 Riehen": [
+  47.58428,
+  7.64971,
+  false
+ ],
+ "Beatengasse 11, 8001 Zürich": [
+  47.37566,
+  8.54007,
+  false
+ ],
+ "Beau-Rivage Genève": [
+  46.20922,
+  6.14982,
+  false
+ ],
+ "Beau-Rivage Genève, Genève": [
+  46.20922,
+  6.14982,
+  false
+ ],
+ "Beau-Rivage Genève, Quai du Mont-Blanc 13, 1201 Genève": null,
+ "Beck Maier": null,
+ "Bellinzona": [
+  46.19205,
+  9.02059,
+  true
+ ],
+ "Bergrestaurant Roggen": [
+  47.30417,
+  7.71712,
+  false
+ ],
+ "Berlin": [
+  52.51739,
+  13.39513,
+  true
+ ],
+ "Bern": [
+  46.94847,
+  7.45217,
+  true
+ ],
+ "Bern-HB | Welle7, Eventraum 3. Etage (Deck 3), Schanzenstrasse 5, 3008 Bern": null,
+ "Berufsbildungsschule Winterthur BBW an der Wülflingerstrasse 17": null,
+ "Bewegungs- und Pflegezentrum Holbeinhof, Leimenstrasse 67, 4051 Basel": null,
+ "Bistro & Bar, Schneidergasse 2, 4051 Basel": null,
+ "Blau Ente": null,
+ "Blau Ente, Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223": null,
+ "Blau Ente, Zürich": null,
+ "Blaue Ente, Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223": null,
+ "Blaue Ente, Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223, 8008 Zürich": null,
+ "Blaue Ente, Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223.": null,
+ "Blaue Ente, Seefeldstrasse 223, 8008 Zürich, Switzerland": null,
+ "Blumenmarkt, Marktplatz 25, 9000 St.Gallen": [
+  47.42588,
+  9.37452,
+  false
+ ],
+ "Bodega Española": [
+  47.37122,
+  8.54416,
+  false
+ ],
+ "Bowling Universum, Industriestraße 15, 6010 Kriens": null,
+ "Brandschenkestrasse 178, 8002 Zürich": [
+  47.3624,
+  8.52589,
+  false
+ ],
+ "Bruno's Best AG, Kägiswilerstrasse 37, 6060 Sarnen": null,
+ "Bundesamt für Strassen ASTRA": null,
+ "Bundesamt für Strassen ASTRA, Bern": [
+  46.97659,
+  7.47195,
+  false
+ ],
+ "CH-9001 St.Gallen, St. Gallen": [
+  47.42562,
+  9.37624,
+  true
+ ],
+ "Café Europa - Europaallee": null,
+ "Café Europa - Europaallee, Zürich": null,
+ "Café Himmel - Breakfast at Heaven": null,
+ "Capannone di Pregassona": [
+  46.01951,
+  8.96421,
+  false
+ ],
+ "Capannone di Pregassona, Lugano": [
+  46.01951,
+  8.96421,
+  false
+ ],
+ "Carrer de la Marina": null,
+ "Cascina di Sorengo, Via Cremignone 4G, 6924 Sorengo": null,
+ "Casino Bern": [
+  46.9469,
+  7.44849,
+  false
+ ],
+ "Casino Bern, Bern": [
+  46.9469,
+  7.44849,
+  false
+ ],
+ "Casino Bern, Casinoplatz 1, 3011 Bern, Schweiz": null,
+ "Casino Bern, Salon d’Or": null,
+ "Casinoplatz 1, 3011 Bern, Schweiz": [
+  46.94688,
+  7.44817,
+  false
+ ],
+ "Castelgrande, Bellinzona": [
+  46.1929,
+  9.02175,
+  false
+ ],
+ "Chalet Zuriberg, Orellistrasse 21, 8044 Zürich": null,
+ "Champions Lounge BSC YB (Stadion Wankdorf)": null,
+ "Champions Lounge BSC YB (Stadion Wankdorf), Bern": null,
+ "Chiffon, Hirschengraben 36, 8001 Zürich": [
+  47.37256,
+  8.54772,
+  false
+ ],
+ "Chur": [
+  46.85475,
+  9.52649,
+  true
+ ],
+ "Cinéma Rex et Salle del Castillo à Vevey": null,
+ "Circle Convention Hall": null,
+ "Claridenstrasse 7, 8002 Zürich": null,
+ "Congress Hotel Seepark Thun": [
+  46.74504,
+  7.63414,
+  false
+ ],
+ "Cully": [
+  46.48832,
+  6.72968,
+  true
+ ],
+ "Cupra Marittima": [
+  43.02399,
+  13.83948,
+  true
+ ],
+ "Dolder Eis & Bad AG Adlisbergstrasse 36 CH – 8044 Zürich": null,
+ "Dolder Eis & Bad AG Adlisbergstrasse 36 CH – 8044 Zürich, Zürich": null,
+ "Ecocentro di Massagno, Via Lepori 8, 6900 Massagno": null,
+ "Eigen, 5325 Leibstadt": null,
+ "Ein Bummel in und um Andelfingen herum": null,
+ "Erlebnis Waldegg, Teufen AR, 9053": null,
+ "Eschenbach LU": [
+  47.13302,
+  8.31797,
+  true
+ ],
+ "Espace Perrier": [
+  47.00862,
+  7.00299,
+  false
+ ],
+ "Europapl. 1, 6005 Luzern": [
+  47.05044,
+  8.31167,
+  false
+ ],
+ "Eventraum 3. Etage (Deck 3), Schanzenstrasse 5, 3008 Bern": null,
+ "Exact location TBA": null,
+ "Exact location TBA, Zürich": null,
+ "FOOUND 2000": [
+  46.20835,
+  6.13848,
+  false
+ ],
+ "FOOUND 2000, Genève": [
+  46.20835,
+  6.13848,
+  false
+ ],
+ "Falkenstrasse 11, 8008 Zürich": [
+  47.36522,
+  8.54754,
+  false
+ ],
+ "Falläsch 1 Kaltbach": null,
+ "Falläsch 1 Kaltbach, Sursee": null,
+ "Ferienhaus Eggli": null,
+ "Ferienhaus Eggli, Zürich": null,
+ "Ferme de Pierre-à-Bot": [
+  47.00265,
+  6.91186,
+  false
+ ],
+ "Fira Barcelona Gran Via, Barcelona, Spain": null,
+ "Fischer Weine, Bahnhofplatz 7, 6210 Sursee": null,
+ "Flugplatz Olten, Gheidweg, 4600 Olten": [
+  47.34308,
+  7.88719,
+  false
+ ],
+ "Franziskanerplatz": null,
+ "Franziskanerplatz, Luzern": [
+  47.04989,
+  8.30319,
+  false
+ ],
+ "Freizeitzentrum Säntispark, Wiesenbachstrasse 9, 9030 Abtwil": null,
+ "Fribourg": [
+  46.80557,
+  7.16127,
+  true
+ ],
+ "Fyrabig Lounge": null,
+ "Galerie - Bar": null,
+ "Galexis AG": null,
+ "Gasthof Kreuz Egerkingen": [
+  47.3222,
+  7.79573,
+  false
+ ],
+ "Gemeinschaftsraum Steini, Ziegeleiweg 1, 6048 Horw": null,
+ "Genève": [
+  46.20176,
+  6.1466,
+  true
+ ],
+ "Gewerbestrasse 30, 4123 Allschwil": [
+  47.55954,
+  7.54705,
+  false
+ ],
+ "Golf Meggen AG, Kreuzbuchweg 1, 6045 Meggen": null,
+ "Grand Casino Luzern, Haldenstrasse 6, 6006 Luzern": null,
+ "Haldenstrasse 6, 6006 Luzern": [
+  47.05501,
+  8.31697,
+  false
+ ],
+ "Hapimag Resort Flims": [
+  46.83175,
+  9.28198,
+  false
+ ],
+ "Hapimag Resort Flims, Zürich": null,
+ "Haus des Holzes, Centralstrasse 34, 6210 Sursee": [
+  47.17048,
+  8.10059,
+  false
+ ],
+ "Haus zum Rüden": [
+  47.37086,
+  8.5432,
+  false
+ ],
+ "Haus zum Rüden, Limmatquai 42, 8001 Zürich": [
+  47.37086,
+  8.5432,
+  false
+ ],
+ "Haus zum Rüden, Zürich": [
+  47.37086,
+  8.5432,
+  false
+ ],
+ "Hechtplatz, 8001 Zürich": [
+  47.36846,
+  8.54454,
+  false
+ ],
+ "Herrengasse 35": null,
+ "Herrengasse 35, Vaduz": [
+  47.1427,
+  9.51876,
+  false
+ ],
+ "Heuberg 26, 4051 Basel, Schweiz": [
+  47.55616,
+  7.5862,
+  false
+ ],
+ "Heuberg 26, 4051 Basel, Switzerland": [
+  47.55616,
+  7.5862,
+  false
+ ],
+ "Heubergkeller, Heuberg 26, 4051 Basel, Schweiz": null,
+ "Heubergkeller, Heuberg 26, 4051 Basel, Switzerland": null,
+ "Hirschengraben 36, 8001 Zürich": [
+  47.37258,
+  8.54781,
+  false
+ ],
+ "Hirschengraben 49, 6003 Luzern": [
+  47.05078,
+  8.30095,
+  false
+ ],
+ "Hof Vogelsang, Vogelsang 4, 6030 Ebikon": null,
+ "Hohenems": [
+  47.364,
+  9.68927,
+  true
+ ],
+ "Holzerhurd 60, 8046 Zürich": [
+  47.42334,
+  8.49677,
+  false
+ ],
+ "Hotel Arte": [
+  46.49911,
+  9.84011,
+  false
+ ],
+ "Hotel Astoria": null,
+ "Hotel Du Parc": null,
+ "Hotel Gasthof Löwen": null,
+ "Hotel Grace La Margna": [
+  46.49871,
+  9.84599,
+  false
+ ],
+ "Hotel Hyatt": null,
+ "Hotel Kettenbrücken": null,
+ "Hotel Kreuz, Zeughausgasse 41, 3011 Bern": [
+  46.94888,
+  7.44453,
+  false
+ ],
+ "Hotel National, Haldenstrasse 4, 6006 Luzern": [
+  47.05479,
+  8.31494,
+  false
+ ],
+ "Hotel Ristorante Unione, Via Henri Guisan 1, 6500 Bellinzona": null,
+ "Hotel Schweizerhof Luzern, Schweizerhofquai, 6002 Luzern": [
+  47.05431,
+  8.31017,
+  false
+ ],
+ "Hôtellerie de Châtonneyre": [
+  46.472,
+  6.83394,
+  false
+ ],
+ "IWAZ Wetzikon, Neugrundstrasse 4, 8620 Wetzikon": null,
+ "Industriestrasse 46, 6034 Inwil": [
+  47.11783,
+  8.34724,
+  false
+ ],
+ "Industriestraße 15, 6010 Kriens": [
+  47.02354,
+  8.29957,
+  false
+ ],
+ "Inseliquai, 6005 Luzern": [
+  47.04859,
+  8.31427,
+  false
+ ],
+ "KEIN Rotary Dinner": null,
+ "KEIN Rotary Lunch": null,
+ "KKL Luzern, Europapl. 1, 6005 Luzern": null,
+ "KUNI & GUNDE - Café, Bistro & Bar, Schneidergasse 2, 4051 Basel": null,
+ "Kaffeeösterei Demmel": null,
+ "Kantonsschule Stein": [
+  47.54752,
+  7.95466,
+  false
+ ],
+ "Kantonsschule am Burggraben St. Gallen": [
+  47.42561,
+  9.38085,
+  false
+ ],
+ "Kasernenstrasse 22, 4410 Liestal": [
+  47.48242,
+  7.73724,
+  false
+ ],
+ "Kathedrale St.Gallen": null,
+ "Kernkraftwerk Leibstadt AG, Eigen, 5325 Leibstadt": null,
+ "Ketschelenstraße 1": [
+  47.26024,
+  9.59061,
+  false
+ ],
+ "Ketschelenstraße 1, Vaduz": null,
+ "Kirchplatz": null,
+ "Klosbachstrasse 2 (Kreuzplatz) 8032 Zürich": null,
+ "Klosbachstrasse 2 (Kreuzplatz) 8032 Zürich, Zürich": null,
+ "Kongresszentrum Kreuz, Bern": [
+  46.94895,
+  7.44456,
+  false
+ ],
+ "Kreuzbuchweg 1, 6045 Meggen": [
+  47.04758,
+  8.35622,
+  false
+ ],
+ "Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223": null,
+ "Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223, 8008 Zurich": null,
+ "Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223, 8008 Zürich": null,
+ "Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223.": null,
+ "Kulturzentrum Schützenmatte": null,
+ "Kunsthaus Zürich": [
+  47.37022,
+  8.54798,
+  false
+ ],
+ "Kägiswilerstrasse 37, 6060 Sarnen": [
+  46.90556,
+  8.25523,
+  false
+ ],
+ "Landgasthof Riehen, Baselstrasse 38, 4125 Riehen": null,
+ "Landgasthof zum Bahnhof": null,
+ "Landhaus Liebefeld": [
+  46.93204,
+  7.42108,
+  false
+ ],
+ "Langstrasse 62, 8004 Zürich": [
+  47.37674,
+  8.52609,
+  false
+ ],
+ "Leimenstrasse 67, 4051 Basel": [
+  47.55184,
+  7.58057,
+  false
+ ],
+ "Leymen": [
+  47.49404,
+  7.48269,
+  true
+ ],
+ "Lido Riva Caccia + Parco del Guidino Paradiso": null,
+ "Lido Riva Caccia + Parco del Guidino Paradiso, Lugano": null,
+ "Lido di Lugano, Via Lido, 6900 Lugano": [
+  46.00471,
+  8.96332,
+  false
+ ],
+ "Lidostrasse, 6006 Luzern": [
+  47.04945,
+  8.3385,
+  false
+ ],
+ "Lieu de livraison à choisir": null,
+ "Limmatpromenade, Baden": [
+  47.47995,
+  8.31358,
+  false
+ ],
+ "Limmatquai 138, 8001 Zürich": [
+  47.37609,
+  8.54388,
+  false
+ ],
+ "Locanda della Masseria, Via Trevano 2, 6948 Porza": [
+  46.02509,
+  8.96043,
+  false
+ ],
+ "Logans Office": null,
+ "Logans Office, Basel": null,
+ "Lozärner Wiehnachtsmärt, Franziskanerplatz": null,
+ "Lugano": [
+  46.0038,
+  8.95123,
+  true
+ ],
+ "Lugano - Villa Ciani": [
+  46.00463,
+  8.95654,
+  false
+ ],
+ "Lugano - Villa Ciani, Lugano": null,
+ "Luzern": [
+  47.05214,
+  8.30581,
+  true
+ ],
+ "L’ESPACE": [
+  47.21862,
+  5.97429,
+  false
+ ],
+ "L’ESPACE, 1 Rue du 23-Août, 1205 Genève, Suisse": null,
+ "L’ESPACE, 1 Rue du 23-Août, 1205 Genève, Switzerland": null,
+ "L’ESPACE, Genève": null,
+ "MS Rhystärn, Schifflände 4051 Basel": null,
+ "Maison Internationale des Associations, Rue des Savoises 15, 1205 Genève, Switzerland": null,
+ "Manabar": [
+  47.54616,
+  7.58614,
+  false
+ ],
+ "Manabar, Basel": [
+  47.54616,
+  7.58614,
+  false
+ ],
+ "Marché de Fribourg - Rue de Romont": null,
+ "Martel am Bahnhof St.Gallen, Poststrasse 11, CH-9001 St.Gallen": null,
+ "Migros City Zürich, Löwenstrasse, 8001 Zürich": [
+  47.37525,
+  8.53611,
+  false
+ ],
+ "Migros Landstrasse Wettingen": [
+  47.46736,
+  8.32446,
+  false
+ ],
+ "Migros Landstrasse Wettingen, Baden": [
+  47.46736,
+  8.32446,
+  false
+ ],
+ "Migros Wettingen": [
+  47.46736,
+  8.32446,
+  false
+ ],
+ "Migros Wettingen, Baden": [
+  47.46736,
+  8.32446,
+  false
+ ],
+ "Milchstrasse 9, Ostermundigen": [
+  46.96111,
+  7.48159,
+  false
+ ],
+ "MiniGolf Bar, Ruelle des Templiers 4, 1207 Eaux-Vives, Genève": null,
+ "Minigolf Lido, Lidostrasse, 6006 Luzern": null,
+ "Monosuisse, Emmen": [
+  47.07041,
+  8.2792,
+  false
+ ],
+ "Mythenquai 59, 8002 Zürich": [
+  47.35196,
+  8.53417,
+  false
+ ],
+ "Mühle Burgholz": null,
+ "Münstergasse 30, 8001 Zürich": [
+  47.37171,
+  8.54394,
+  false
+ ],
+ "Nachbar Luzern": [
+  47.04587,
+  8.30511,
+  false
+ ],
+ "Nachbar Luzern, Luzern": [
+  47.04587,
+  8.30511,
+  false
+ ],
+ "Neben dem OLMA-Haupteingang. Sonnenstrasse 27, 9000 St.Gallen": null,
+ "Neugasse 53, 9000 St.Gallen": [
+  47.42408,
+  9.37465,
+  false
+ ],
+ "Neugrundstrasse 4, 8620 Wetzikon": [
+  47.32489,
+  8.78323,
+  false
+ ],
+ "Neuweg 12, 8125 Zollikerberg": [
+  47.34765,
+  8.60072,
+  false
+ ],
+ "Neuweg 16": null,
+ "Nähere Informationen zu Treffpunkt": null,
+ "Nähere Informationen zu Treffpunkt, Schichten etc. folgen": null,
+ "Nüschelerstrasse 9, 8001 Zürich": [
+  47.37129,
+  8.53709,
+  false
+ ],
+ "Oberdorfstrasse 20, 8001 Zurich": null,
+ "Opatija, Kroatien": [
+  45.33845,
+  14.309,
+  true
+ ],
+ "Opernhaus Christmas Market": null,
+ "Opernhaus Christmas Market, Zürich": null,
+ "Orellistrasse 21, 8044 Zürich": [
+  47.38243,
+  8.56689,
+  false
+ ],
+ "Parco Tassino": [
+  46.00114,
+  8.94508,
+  false
+ ],
+ "Parco Tassino, Lugano": [
+  46.00114,
+  8.94508,
+  false
+ ],
+ "Park-Hotel am Rhein": [
+  47.55827,
+  7.79868,
+  false
+ ],
+ "Parkhotel Wallberg": [
+  47.38999,
+  8.68654,
+  false
+ ],
+ "Parkplatz Tannwald, Leymen": null,
+ "Pavillon des Mangettes": [
+  46.26711,
+  6.96374,
+  false
+ ],
+ "Piazza Riforma + FLAMEL Restaurant & Mixology Bar": null,
+ "Piazza Riforma + FLAMEL Restaurant & Mixology Bar, Lugano": null,
+ "Pier 7 / Bellevue (Details folgen)": null,
+ "Pier 7 / Bellevue (Details folgen), Zürich": null,
+ "Poststrasse 11, CH-9001 St.Gallen": null,
+ "Pumpstation, Zurich": null,
+ "Quai du Mont-Blanc 13, 1201 Genève": [
+  46.20922,
+  6.14982,
+  false
+ ],
+ "Rabadan, Bellinzona": null,
+ "Rathaus Brauerei, Unter der Egg 2, 6004 Luzern": null,
+ "Rathaus Sursee": [
+  47.17273,
+  8.10939,
+  false
+ ],
+ "Rathaus Sursee, Luzern": [
+  47.17146,
+  8.10674,
+  false
+ ],
+ "Raum A 027, Bern": [
+  46.9295,
+  7.42085,
+  false
+ ],
+ "Raum A-124 in der UniS, Bern": null,
+ "Raum Bonjour": null,
+ "Raum Bonjour, Luzern": null,
+ "Restaurant Blaue Ente, Kulturareal Mühle Tiefenbrunnen, Seefeldstrasse 223, 8008 Zurich": null,
+ "Restaurant Chiffon, Hirschengraben 36, 8001 Zürich": null,
+ "Restaurant Du Pont, Zürich": null,
+ "Restaurant Eden Rheinfelden": null,
+ "Restaurant Eintracht Kestenholz": [
+  47.28149,
+  7.75323,
+  false
+ ],
+ "Restaurant Feldschlösschen": null,
+ "Restaurant Post": null,
+ "Restaurant Schifflände": [
+  47.29059,
+  8.20233,
+  false
+ ],
+ "Restaurant Schüür": [
+  47.33542,
+  9.13101,
+  false
+ ],
+ "Restaurant zur Werkstatt, Waldstätterstrasse 18, 6003 Luzern": null,
+ "Ristorante Ariva, Riva Paradiso 3, 6900 Paradiso": null,
+ "Ristorante Buonap, Stabile Laboratori Protetti, via Collina d'Oro 3, 6924 Sorengo": null,
+ "Ristorante Vela Bianca Ascona": null,
+ "Ristorante Vela Bianca Ascona, Lugano": null,
+ "Riva Paradiso 3, 6900 Paradiso": [
+  45.99092,
+  8.94985,
+  false
+ ],
+ "Rodteggstrasse 3, 6005 Luzern": [
+  47.03656,
+  8.31162,
+  false
+ ],
+ "Rodteggstrasse 3, 6005 Luzern, Raum Bonjour": null,
+ "Romero und anschliessend Rose Baden": null,
+ "Romero und anschliessend Rose Baden, Baden": null,
+ "Rotdegg Stiftung": null,
+ "Rotdegg Stiftung, Rodteggstrasse 3, 6005 Luzern, Raum Bonjour": null,
+ "Rudolfs Weihnacht, Inseliquai, 6005 Luzern": null,
+ "Rudolfs Weihnachtsmarkt, Inseliquai, 6005 Luzern": null,
+ "Rue des Savoises 15, 1205 Genève, Switzerland": [
+  46.20082,
+  6.13849,
+  false
+ ],
+ "Ruelle des Templiers 4, 1207 Eaux-Vives, Genève": [
+  46.2006,
+  6.15658,
+  false
+ ],
+ "Saanen": [
+  46.48976,
+  7.26158,
+  true
+ ],
+ "Saanen, Ferienhaus Eggli": null,
+ "Salon d’Or": null,
+ "Salon d’Or, Bern": null,
+ "Schanzenstrasse 5, 3008 Bern": [
+  46.94789,
+  7.43614,
+  false
+ ],
+ "Schichten etc. folgen": null,
+ "Schichten etc. folgen, Solothurn": null,
+ "Schifflände 4051 Basel, Basel": [
+  47.55982,
+  7.58816,
+  false
+ ],
+ "Schloss Andelfingen": [
+  47.59603,
+  8.68012,
+  false
+ ],
+ "Schmidgasse 6, 8001 Zürich": [
+  47.37466,
+  8.54354,
+  false
+ ],
+ "Schneidergasse 2, 4051 Basel": [
+  47.55854,
+  7.58673,
+  false
+ ],
+ "Schulanlage Ebent": null,
+ "Schwertgasse 27, 9000 St. Gallen, Schweiz": [
+  47.42763,
+  9.37744,
+  false
+ ],
+ "Schönauweg 5, 9000 St. Gallen": [
+  47.41753,
+  9.34605,
+  false
+ ],
+ "Seefeldstrasse 223, 8008 Zurich": [
+  47.35194,
+  8.56117,
+  false
+ ],
+ "Seefeldstrasse 223, 8008 Zürich": [
+  47.35194,
+  8.56117,
+  false
+ ],
+ "Seefeldstrasse 223, 8008 Zürich, Switzerland": [
+  47.35194,
+  8.56117,
+  false
+ ],
+ "Seefeldstrasse 223, Zürich": [
+  47.35194,
+  8.56117,
+  false
+ ],
+ "Seefeldstrasse 223., Zürich": [
+  47.35194,
+  8.56117,
+  false
+ ],
+ "Seesatz 17, 6204 Sempach": [
+  47.12356,
+  8.19514,
+  false
+ ],
+ "Seestrasse 557, 8038 Zürich": [
+  47.33591,
+  8.54222,
+  false
+ ],
+ "Selnaustrasse 25​, 8001 Zurich": [
+  47.37223,
+  8.53201,
+  false
+ ],
+ "Sera communiqué": null,
+ "Siebe Dupf Kellerei AG Kasernenstrasse 25 4410 Liestal": null,
+ "Siebe Dupf Kellerei AG Kasernenstrasse 25 4410 Liestal, Basel": null,
+ "Siehe Programm": null,
+ "Siehe Programm, Bern": null,
+ "Sihlfeldstrasse 49, 8003 Zürich": [
+  47.37472,
+  8.51672,
+  false
+ ],
+ "Solothrun Hauptbahnhof": null,
+ "Solothrun Hauptbahnhof, Luzern": null,
+ "Solothurn": [
+  47.20814,
+  7.5384,
+  true
+ ],
+ "Sozialwerk Pfarrer Sieber's Pfuusbus - Bernd has details if necessary": null,
+ "Spielplatz Unterbach": null,
+ "Spielplatz Unterbach, Luzern": null,
+ "Sportanlage Aue": null,
+ "Sprenger AG Geigenbau, Neugasse 53, 9000 St.Gallen": null,
+ "Square (HSG)": [
+  47.43333,
+  9.37482,
+  false
+ ],
+ "Square (HSG), St. Gallen": [
+  47.43333,
+  9.37482,
+  false
+ ],
+ "St. Gallen": [
+  47.42562,
+  9.37624,
+  true
+ ],
+ "St. Jakobsstrasse 17": [
+  47.5504,
+  7.59624,
+  false
+ ],
+ "St. Jakobsstrasse 17, Basel": [
+  47.5504,
+  7.59624,
+  false
+ ],
+ "St.Gallen": [
+  47.42562,
+  9.37624,
+  true
+ ],
+ "Stabile Laboratori Protetti, via Collina d'Oro 3, 6924 Sorengo": null,
+ "Stadtkino Basel, Klostergasse 5, 4051 Basel": [
+  47.55317,
+  7.5908,
+  false
+ ],
+ "Stadttheater Sursee": [
+  47.17351,
+  8.10903,
+  false
+ ],
+ "Stadttheater Sursee, Sursee": [
+  47.17351,
+  8.10903,
+  false
+ ],
+ "Starts at the ZRH Innovation Hub (Adress: The Circle 46)": null,
+ "Station Reuti, Hasliberg": [
+  46.74935,
+  8.23712,
+  false
+ ],
+ "Steinenberg 14, 4051 Basel": [
+  47.55432,
+  7.58946,
+  false
+ ],
+ "Stump's Alpenrose": [
+  47.19,
+  9.32852,
+  false
+ ],
+ "Städtle 34": [
+  47.13928,
+  9.52237,
+  false
+ ],
+ "Städtle 34, Vaduz": [
+  47.13928,
+  9.52237,
+  false
+ ],
+ "Stärnemärit Kleine Schanze Bern": null,
+ "Stärnemärit Kleine Schanze Bern, Bern": null,
+ "Sursee": [
+  47.17253,
+  8.10678,
+  true
+ ],
+ "Talk to Bernd - but we all know where to find the Pfuusbus and Sozialwerk Pfarrer Sieber": null,
+ "Talstation Stöckalp, Melchsee-Frutt": [
+  46.802,
+  8.27878,
+  false
+ ],
+ "Talstation der Bergbahn Kandersteg-Oeschinensee": null,
+ "Talstation der Bergbahn Kandersteg-Oeschinensee, Luzern": null,
+ "Terminal Flughafen Bern, 3123 Belp": null,
+ "Teufen AR, 9053": [
+  47.3902,
+  9.39032,
+  false
+ ],
+ "Tierschutz Zürich, Zürichbergstrasse 263, 8044 Zürich": null,
+ "Tischenloostrasse 75, 8800 Thalwil": [
+  47.2862,
+  8.5643,
+  false
+ ],
+ "Tonhalle Zürich, Claridenstrasse 7, 8002 Zürich": null,
+ "Treppe Opernhaus Zürich": null,
+ "Treppe Opernhaus Zürich, Zürich": null,
+ "UBS Konferenzsaal Grünenhof, Nüschelerstrasse 9, 8001 Zürich": null,
+ "Ueberlandstrasse 129, 8600 Dübendorf": [
+  47.40237,
+  8.61149,
+  false
+ ],
+ "Uni Bern, UniS, Raum A 027": null,
+ "UniS, Raum A 027": null,
+ "Universität Bern": [
+  46.95095,
+  7.43866,
+  false
+ ],
+ "Universität Bern, Bern": [
+  46.95095,
+  7.43866,
+  false
+ ],
+ "Universität Bern, Raum A-124 in der UniS": null,
+ "Unter der Egg 2, 6004 Luzern": [
+  47.0519,
+  8.30642,
+  false
+ ],
+ "Unterstrasse 6, 9000 St.Gallen": null,
+ "Uster Märt": null,
+ "Utoquai 50, 8008 Zürich": [
+  47.36176,
+  8.54701,
+  false
+ ],
+ "Vaduz": [
+  47.13929,
+  9.5228,
+  true
+ ],
+ "Van der Merwe Center (Allschwil), Gewerbestrasse 30, 4123 Allschwil": null,
+ "Vebo Genusswerkstatt Oensingen": null,
+ "Via Ceresio 15, Capannone di Pregassona": null,
+ "Via Cremignone 4G, 6924 Sorengo": [
+  46.00356,
+  8.93267,
+  false
+ ],
+ "Via Henri Guisan 1, 6500 Bellinzona": [
+  46.19463,
+  9.02441,
+  false
+ ],
+ "Via Lepori 8, 6900 Massagno": [
+  46.01327,
+  8.93932,
+  false
+ ],
+ "Via Montalbano 5, 6900 Lugano": [
+  45.99338,
+  8.93974,
+  false
+ ],
+ "Villa Ciani": [
+  46.00463,
+  8.95654,
+  false
+ ],
+ "Villa Ciani, Lugano": [
+  46.00463,
+  8.95654,
+  false
+ ],
+ "Villa Principe Leopoldo": [
+  45.99338,
+  8.93974,
+  false
+ ],
+ "Villa Principe Leopoldo, Lugano": [
+  45.99338,
+  8.93974,
+  false
+ ],
+ "Villa Principe Leopoldo, Via Montalbano 5, 6900 Lugano": null,
+ "Villa Principe Leopoldo, via Montalbano 5, 6900 Lugano": null,
+ "Vismara - Via alla stampa": null,
+ "Vismara - Via alla stampa, 21 - Lugano": null,
+ "Vogelsang 4, 6030 Ebikon": [
+  47.07791,
+  8.32448,
+  false
+ ],
+ "Waldhütte der Holzkorporation Maur": null,
+ "Waldstätterstrasse 18, 6003 Luzern": [
+  47.04667,
+  8.30932,
+  false
+ ],
+ "Webergasse 8, 9000 St. Gallen, Schweiz": [
+  47.42331,
+  9.37461,
+  false
+ ],
+ "Weisser Wind, Oberdorfstrasse 20, 8001 Zurich": null,
+ "Weitere Informationen folgen": null,
+ "Wetzlar": [
+  50.57056,
+  8.53125,
+  true
+ ],
+ "Wiesenbachstrasse 9, 9030 Abtwil": [
+  47.41883,
+  9.31539,
+  false
+ ],
+ "Wildpark Peter & Paul, Wildpark-Haus an der Kirchlistrasse 98, 9010 St.Gallen": null,
+ "Wildpark-Haus an der Kirchlistrasse 98, 9010 St.Gallen": null,
+ "Winterthur": [
+  47.49917,
+  8.72915,
+  true
+ ],
+ "Ziegeleiweg 1, 6048 Horw": [
+  47.01827,
+  8.30412,
+  false
+ ],
+ "Zofingerhaus, Alpeneggstrasse 8, 3012 Bern": null,
+ "Zollstrasse 80, 8005 Zürich": [
+  47.3813,
+  8.53151,
+  false
+ ],
+ "Zunfthaus zur Waag": [
+  47.37024,
+  8.54031,
+  false
+ ],
+ "Zunfthaus zur Waag, Zürich": [
+  47.37024,
+  8.54031,
+  false
+ ],
+ "Zunfthaus zur Zimmerleuten": [
+  47.37064,
+  8.54325,
+  false
+ ],
+ "Zurich": [
+  47.37445,
+  8.54104,
+  true
+ ],
+ "Zürich": [
+  47.37445,
+  8.54104,
+  true
+ ],
+ "Zürichbergstrasse 263, 8044 Zürich": [
+  47.38588,
+  8.57862,
+  false
+ ],
+ "auswärts gemäss Programm": null,
+ "im Pflegeheim St. Otmar, Schönauweg 5, 9000 St. Gallen": null,
+ "im Pflegeheim St. Otmar, St. Gallen": null,
+ "via Collina d'Oro 3, 6924 Sorengo": [
+  45.99569,
+  8.93624,
+  false
+ ],
+ "via Montalbano 5, 6900 Lugano": [
+  45.99338,
+  8.93974,
+  false
+ ],
+ "ØYA Bar Kafé Klub, Schwertgasse 27, 9000 St. Gallen, Schweiz": null
+}

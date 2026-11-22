@@ -1211,18 +1211,18 @@
  "223117": {
   "detail": {
    "description": "",
-   "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6af1c83d86867.jpg",
+   "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6b033d6a02341.jpg",
    "organiser": "Rotary Liechtenstein",
    "registration": "Anmeldung bis: 01.12.2026 10:15"
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
+  "modified": "20261122T210421Z",
+  "sequence": 1,
   "status": "active",
   "vevent": [
    "UID:polaris-223117@rotary.ch",
-   "SUMMARY:Berufsdienst: Klassifikationsvortrag Gerald Hosp",
-   "DESCRIPTION:Rotary ist eine berufsständisch aufgebaute Gemeinschaft. Sie lebt von und mit Vertretern der verschiedenen beruflichen Klassifikationen. Rotarier wird man durch seinen Beruf. Jeder Rotarier ist im Club der Repräsentant seines Berufszweiges. Klassifikationsvorträge dienen dem Berufsdienst für die ro...",
+   "SUMMARY:South Africa’s Foreign Policy: How History Continues to Shape Its Direction",
+   "DESCRIPTION:In diesem rotarischen Jahr widmen wir uns im Club dem Thema: «Lernen aus der Vergangenheit?» In einer sich rasant verändernden Welt stellt sich die Frage\\, ob die Vergangenheit helfen kann\\, die Gegenwart und Zukunft zu erklären und zu optimieren. Südafrika geriet 1652 zunächst unter niederländische\\,...",
    "LOCATION:Hotel Gasthof Löwen",
    "URL:https://liechtenstein.rotary2000.ch/de/agenda/show/223117",
    "DTSTART;TZID=Europe/Zurich:20261201T121500",
