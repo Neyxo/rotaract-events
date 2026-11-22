@@ -146,6 +146,27 @@
    "CATEGORIES:Rotaract"
   ]
  },
+ "208066": {
+  "detail": {
+   "description": "Liebe Rotaracterinnen und Rotaracter\n\nEinmal im Jahr besucht der Governor jeden Club in seinem Distrikt. Für uns ist dieser Abend ein Höhepunkt im Clubjahr. Wir können zeigen, was uns als Rotaract Club Bern ausmacht. Gleichzeitig erfahren wir aus erster Hand, was den Distrikt und die Rotary-Welt bewegt.\n\nAm Mittwoch, 9. Dezember 2026, dürfen wir unseren Governor René Loretan im Hotel Kreuz in Bern willkommen heissen. Begleitet wird er von Assistant Governor Dorothea Drayer.\n\nProgramm\n\n17:30 Uhr – Treffen des Vorstands mit dem Governor\n\n18:30 Uhr – Begrüssung aller Mitglieder und Präsentation des Governors\n\nAnschliessend – Hobelkäse und gemeinsamer Austausch\n\nEine Tradition zum Geniessen\n\nRené Loretan bringt zu seinen Clubbesuchen eine eigene Tradition mit. Zu einer kurzen Präsentation gibt es Hobelkäse. So verbinden wir Inhalt mit Genuss und haben Zeit für gute Gespräche. Dabei könnt ihr eure Ideen, Fragen und Projekte direkt mit ihm teilen.\n\nGut zu wissen\n\nUnser Distrikt 1990 umfasst den Kanton Bern und die ganze Westschweiz. Der Governor reist also einiges, bevor er bei uns ankommt.\n\nEin Rotary-Jahr dauert jeweils vom 1. Juli bis 30. Juni. Jeder Governor ist genau ein Jahr im Amt. Dieser Besuch ist deshalb eine einmalige Gelegenheit.\n\nHobelkäse ist eigentlich aus der Not entstanden. Die Bauern trockneten ihren Alpkäse, damit er den Winter überdauerte. Den Gstaader Hobelkäse soll es sogar schon seit 1548 geben. Fast 480 Jahre Tradition zeigen eindrücklich, wie lange etwas Gutes Bestand haben kann. Vielleicht auch eine kleine Inspiration für unseren Club 😉\n\nAnmeldung\n\nDer Governor-Besuch ist eine Pflichtveranstaltung. Wir bitten um eine frühzeitige An- oder Abmeldung im Polaris bis am 25. November 2026.\n\nWir freuen uns auf einen inspirierenden und geselligen Abend mit euch!\n\nHerzliche Grüsse\n\nCaroline & das Vorstandsteam",
+   "image": "https://bern.rotaract.ch/media/cache/rotary_website_content_grid_images/rc/rA1YVfLm/7059345397.png?v=1.6.0",
+   "registration": "Anmeldung bis: Mittwoch, 25. November 2026 um 18:00\n\nMaximale Anzahl Teilnehmer: 25"
+  },
+  "first_seen": "20261122T095206Z",
+  "modified": "20261122T095206Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-208066@rotary.ch",
+   "SUMMARY:Governor-Besuch mit Hobelkäse",
+   "DESCRIPTION:",
+   "URL:https://bern.rotaract.ch/de/agenda/show/208066",
+   "DTSTART;TZID=Europe/Zurich:20261209T173000",
+   "DTEND;TZID=Europe/Zurich:20261209T210000",
+   "LOCATION:Hotel Kreuz\\, Zeughausgasse 41\\, 3011 Bern",
+   "CATEGORIES:Rotaract"
+  ]
+ },
  "208749": {
   "detail": {
    "description": "Wir laden herzlich zu unserem monatlichen Stammtisch ein. Diesmal treffen wir uns im Casino Bern zum gemütlichen Beisammensein und Austausch.\n\nMit Jazz Begleitung - eine Tischreservation ist nicht möglich.\n\nhttps://www.casinobern.ch/programm/apero-jazz-2/",
@@ -353,6 +374,27 @@
    "DTSTART;TZID=Europe/Zurich:20270130T120000",
    "DTEND;TZID=Europe/Zurich:20270130T170000",
    "LOCATION:Zofingerhaus\\, Alpeneggstrasse 8\\, 3012 Bern",
+   "CATEGORIES:Rotaract"
+  ]
+ },
+ "222512": {
+  "detail": {
+   "description": "Liebe Rotaracterinnen und Rotaracter\n\nBitte tragt euch schon jetzt den Donnerstag, 21. Januar 2027, in die Agenda ein. An diesem Abend findet unsere Winter-Generalversammlung statt.\n\nDie GV ist der Moment, in dem wir gemeinsam auf das erste halbe Clubjahr zurückblicken und die Weichen für die Zukunft stellen. Jede Stimme zählt. Wir freuen uns deshalb, wenn möglichst viele von euch dabei sind und mitentscheiden.\n\nVorgesehene Traktanden\n\nBegrüssung und Wahl der Stimmenzähler\n\nGenehmigung der Traktandenliste und des letzten GV-Protokolls\n\nRückblick der Präsidentin auf das erste Halbjahr\n\nFinanzen und Zwischenstand Budget\n\nMitgliedermutationen\n\nAusblick auf das zweite Halbjahr\n\nAnträge und Diverses\nWir freuen uns auf einen lebendigen Abend mit euch!\n\nHerzliche Grüsse\n\nCaroline & das Vorstandsteam",
+   "image": "https://bern.rotaract.ch/media/cache/rotary_website_content_grid_images/rc/NaR3AzHW/3539242357.png?v=1.6.0",
+   "registration": "Anmeldung bis: Mittwoch, 20. Januar 2027 um 17:00\n\nMaximale Anzahl Teilnehmer: 25"
+  },
+  "first_seen": "20261122T095206Z",
+  "modified": "20261122T095206Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-222512@rotary.ch",
+   "SUMMARY:Winter-GV 2027",
+   "DESCRIPTION:",
+   "URL:https://bern.rotaract.ch/de/agenda/show/222512",
+   "DTSTART;TZID=Europe/Zurich:20270121T181500",
+   "DTEND;TZID=Europe/Zurich:20270121T203000",
+   "LOCATION:Universität Bern",
    "CATEGORIES:Rotaract"
   ]
  },

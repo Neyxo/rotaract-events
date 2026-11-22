@@ -130,13 +130,13 @@
    "registration": "Anmeldung bis: 14.12.2026 18:00"
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
+  "modified": "20261122T095206Z",
+  "sequence": 1,
   "status": "active",
   "vevent": [
    "UID:polaris-215475@rotary.ch",
    "SUMMARY:Werte und die Rechtssprechung",
-   "DESCRIPTION:Gerichtspräsident Viktor Egloff (Obergericht Aargau) gibt spannende Einblicke in das Spannungsfeld zwischen gesellschaftlichen Werten und moderner Rechtsprechung. Im Zentrum des Referats steht die Frage\\, wie sich juristische Entscheidungen in einem sich wandelnden Werteumfeld behaupten – und wo Ger...",
+   "DESCRIPTION:Was können Gerichte leisten - und was nicht. Obergerichtspräsident und Präsident der Justizleitung\\, Viktor Egloff\\, am Obergericht Aargau gibt  Einblicke in das Spannungsfeld zwischen gesellschaftlichen Werten und moderner Rechtsprechung. Im Zentrum des Referats steht die Frage\\, wie sich juristische...",
    "LOCATION:Hotel Du Parc",
    "URL:https://rotary-baden.ch/de/agenda/show/215475",
    "DTSTART;TZID=Europe/Zurich:20261215T121500",
