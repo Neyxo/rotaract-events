@@ -168,11 +168,40 @@ assert ics_text(["LOCATION:Inseliquai\\, 6005 Luzern", "DESCRIPTION:a\\nb\\; c"]
 assert ics_text(["DESCRIPTION:a\\nb\\; c"], "DESCRIPTION") == "a\nb; c"
 assert ics_text([], "LOCATION") == ""
 
-# Location fallback: full text, then comma parts from the end, then club city. Pre-filled cache = no network.
-cache = {"Rudolfs Weihnachtsmarkt, Inseliquai, 6005 Luzern": None, "6005 Luzern": [47.05, 8.31], "Nowhere": None, "Luzern": [47.0, 8.0]}
+# Location fallback, see locate(). Pre-filled cache = no network. A cached place: [lat, lon, is it a town].
+cache = {"Rudolfs Weihnachtsmarkt, Inseliquai, 6005 Luzern": None, "Inseliquai, 6005 Luzern": None, "6005 Luzern": [47.05, 8.31, True],
+         "Nowhere, Luzern": None, "Nowhere": None, "Luzern": [47.0, 8.0, True], "Bern": [46.95, 7.45, True],
+         "Hotel Wilder Mann, Luzern": [47.05, 8.3, False], "Hotel Wilder Mann": [47.69, 9.27, False],
+         "Basel": [47.55, 7.59, True], "Basel, Luzern": [47.05, 8.29, False], "Manabar": [47.4, 8.5, False], "Manabar, Luzern": None,
+         "Blaue Ente, Seefeldstrasse 223, 8008 Zürich, Switzerland": None, "Seefeldstrasse 223, 8008 Zürich, Switzerland": [47.35, 8.56, False],
+         "Casino Bern, Salon d’Or": None, "Salon d’Or": [47.2, 8.1, False], "Salon d’Or, Bern": None, "Casino Bern": [46.947, 7.448, False],
+         "Blaue Ente, Mühle Tiefenbrunnen, Seefeldstrasse 223": None, "Mühle Tiefenbrunnen, Seefeldstrasse 223": None,
+         "Seefeldstrasse 223, Zürich": [47.35, 8.56, False], "Zürich": [47.37, 8.54, True],
+         "Terminal Flughafen Bern, 3123 Belp": None, "3123 Belp": [46.89, 7.5, False],
+         "Saanen, Ferienhaus Eggli": None, "Ferienhaus Eggli": None, "Ferienhaus Eggli, Zürich": None, "Saanen": [46.49, 7.26, True]}
 assert locate("Rudolfs Weihnachtsmarkt, Inseliquai, 6005 Luzern", "Bern", cache) == [47.05, 8.31]
+assert locate("Blaue Ente, Seefeldstrasse 223, 8008 Zürich, Switzerland", "Zürich", cache) == [47.35, 8.56], "the address, not the country"
+assert locate("Hotel Wilder Mann", "Luzern", cache) == [47.05, 8.3], "the one in the club's town, not the one in Meersburg"
+assert locate("Basel", "Luzern", cache) == [47.55, 7.59], "the town, not Baselstrasse in the club's town"
+assert locate("Manabar", "Luzern", cache) == [47.4, 8.5], "not in the club's town: wherever it is"
+assert locate("Casino Bern, Salon d’Or", "Bern", cache) == [46.95, 7.45], "a last part that is no town is not trusted"
+assert locate("Blaue Ente, Mühle Tiefenbrunnen, Seefeldstrasse 223", "Zürich", cache) == [47.35, 8.56], "a street as the last part: in the club's city"
+assert locate("Terminal Flughafen Bern, 3123 Belp", "Bern", cache) == [46.89, 7.5], "a postcode is trusted as it is"
+assert locate("Saanen, Ferienhaus Eggli", "Zürich", cache) == [46.49, 7.26], "the town in front"
 assert locate("Nowhere", "Luzern", cache) == [47.0, 8.0]
 assert locate("", "Luzern", cache) == [47.0, 8.0]
+assert locate("Online ", "Luzern", cache) == locate("tbd", "Luzern", cache) == locate("-", "Luzern", cache) == [47.0, 8.0], "no place: never looked up"
+saved_get, saved_sleep = polaris_feed.get, polaris_feed.time.sleep
+polaris_feed.time.sleep = lambda s: None
+polaris_feed.get = lambda url, attempts=3: '[{"lat": "46.79851", "lon": "8.23197", "addresstype": "country"}]'
+assert polaris_feed.geocode("Switzerland", cache) is None and cache["Switzerland"] is None, "a whole country is no place"
+polaris_feed.get = lambda url, attempts=3: '[{"lat": "41.38258", "lon": "2.177073", "addresstype": "city"}]'
+assert polaris_feed.geocode("Barcelona, Spain", cache) == [41.38258, 2.17707, True], "a town abroad is found"
+polaris_feed.get = lambda url, attempts=3: '[{"lat": "53.68335", "lon": "9.98746", "addresstype": "amenity"}]'
+assert polaris_feed.geocode("Café Europa", cache) is None, "a venue abroad with the same name is not trusted"
+polaris_feed.get = lambda url, attempts=3: '[{"lat": "47.26024", "lon": "9.59061", "addresstype": "building"}]'
+assert polaris_feed.geocode("Ketschelenstraße 1", cache) == [47.26024, 9.59061, False], "Feldkirch: just across the border counts"
+polaris_feed.get, polaris_feed.time.sleep = saved_get, saved_sleep
 
 joint = {"status": "active", "vevent": event("j", "20261201T190000", "Joint"), "sequence": 0, "modified": "T",
          "detail": {"image": "https://x.ch/a.png", "description": "Full text", "registration": "until Friday"}}

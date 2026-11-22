@@ -560,31 +560,60 @@ def build_calendar(club, history, now):
     return "\r\n".join(fold(l) for l in lines) + "\r\n"
 
 
+SWISS_BOX = (5.9, 45.8, 10.6, 47.9)  # lon/lat corners around Switzerland and Liechtenstein: preferred, and trusted more
+NO_PLACE = re.compile(r"(online|virtuell|virtual|zoom|teams|tb[adc]|tdb|folgt|noch offen|zuhause|\W*)", re.I)  # shops and bars carry these names
+TOWNS = {"city", "town", "village", "municipality", "hamlet", "suburb", "city_district", "borough", "quarter", "neighbourhood", "postcode"}
+
+
 def geocode(query, cache):
-    """[lat, lon] of a Swiss/Liechtenstein place via swisstopo, or None. Cached, incl. misses."""
+    """[lat, lon, is it a town] of a place via Nominatim (OpenStreetMap), or None. Cached, incl. misses.
+
+    Outside SWISS_BOX only towns count: a bar in Hamburg that happens to share the venue's name is the usual hit there.
+    ponytail: so an address abroad is pinned on its town; trust addresses abroad too once events there are common."""
     if query not in cache:
-        url = "https://api3.geo.admin.ch/rest/services/api/SearchServer?" + urllib.parse.urlencode(
-            {"searchText": query, "type": "locations", "sr": 4326, "limit": 1})
+        url = "https://nominatim.openstreetmap.org/search?" + urllib.parse.urlencode(
+            {"q": query, "format": "jsonv2", "limit": 1, "viewbox": ",".join(map(str, SWISS_BOX))})
         try:
-            results = json.loads(get(url))["results"]
+            results = json.loads(get(url))
         except urllib.error.HTTPError as e:
-            if e.code >= 500:
+            if e.code >= 500 or e.code == 429:
                 raise
-            results = []  # swisstopo rejects some queries (long, "&", "|") with 400: treat as not found
-        cache[query] = [round(results[0]["attrs"]["lat"], 5), round(results[0]["attrs"]["lon"], 5)] if results else None
+            results = []  # a query Nominatim refuses: treat as not found
+        finally:
+            time.sleep(1)  # Nominatim's usage policy: one request per second at most
+        cache[query] = None
+        if results:
+            lat, lon, town = float(results[0]["lat"]), float(results[0]["lon"]), results[0].get("addresstype") in TOWNS
+            if town or (SWISS_BOX[0] <= lon <= SWISS_BOX[2] and SWISS_BOX[1] <= lat <= SWISS_BOX[3] and results[0].get("addresstype") != "country"):
+                cache[query] = [round(lat, 5), round(lon, 5), town]
     return cache[query]
 
 
 def locate(location, city, cache):
-    """Try the full location, then its comma-separated parts (usually "6005 Luzern" is last), then the club's city."""
-    parts = [p.strip() for p in location.split(",")]
-    for query in dict.fromkeys([location, *reversed(parts), city]):
-        if query:
-            try:
-                if coords := geocode(query, cache):
-                    return coords
-            except Exception:
-                return None  # geocoder unreachable: try again next run (misses aren't cached)
+    """[lat, lon] of an event's location text, or of the club's city when the text leads nowhere.
+
+    A bare name: a town as it is ("Berlin"), anything else in the club's city first ("Hotel Wilder Mann" exists in many towns).
+    An address: as it is, then without its first parts ("Blaue Ente, Seefeldstrasse 223, 8008 Zürich" -> "8008 Zürich"). Its
+    last part alone counts with a postcode or as a town, otherwise in the club's city ("Seefeldstrasse 223": every town has
+    one). Then its first part if that is a town ("Saanen, Ferienhaus Eggli")."""
+    location = "" if NO_PLACE.fullmatch(location.strip()) else location.strip()
+    parts = [p.strip() for p in location.split(",") if p.strip()]
+    near = lambda text: [(f"{text}, {city}", False)] if city else []
+    if len(parts) == 1:
+        tries = [(location, True), *near(location), (location, False)]  # (query, has to be a town)
+    elif parts:
+        last = parts[-1]
+        tries = [(", ".join(parts[n:]), False) for n in range(len(parts) - 1)]
+        tries += [(last, False)] if re.match(r"\d{4}", last) else [(last, True)] * (not re.search(r"\d", last)) + near(last)
+        tries.append((parts[0], True))
+    else:
+        tries = []
+    try:
+        for query, town in [*tries, (city, False)]:
+            if query and (hit := geocode(query, cache)) and (hit[2] or not town):
+                return hit[:2]
+    except Exception:
+        pass  # geocoder unreachable: try again next run (misses aren't cached)
     return None
 
 
@@ -927,7 +956,7 @@ def main():
     merged = merged_history(clubs, histories)
     everyone = {"name": "Rotaract Schweiz & Liechtenstein – alle Clubs", "lang": "de"}
     (out / "all.ics").write_text(build_calendar(everyone, merged, now), newline="")
-    cache_path = data / "geocode.json"
+    cache_path = data / "places.json"
     cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
     instagram = fetch_instagram(clubs, out, os.environ.get("INSTAGRAM_TOKEN"), os.environ.get("INSTAGRAM_USER_ID"), report=report)
     site = site_data(clubs, histories, now, cache, news, projects, instagram)
