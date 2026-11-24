@@ -66,7 +66,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/8638427834.jpeg",
    "organiser": "Rotary St. Moritz",
-   "registration": "Anmeldung bis: 23.11.2026 19:00"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -516,7 +516,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6288040493.png",
    "organiser": "Rotary Volketswil",
-   "registration": "Anmeldung bis: 23.11.2026 23:55"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
@@ -680,12 +680,12 @@
    "registration": ""
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
+  "modified": "20261124T123531Z",
+  "sequence": 1,
   "status": "active",
   "vevent": [
    "UID:polaris-219340@rotary.ch",
-   "SUMMARY:Lunch at work",
+   "SUMMARY:Plauderlunch (Lunch @ work fällt aus)",
    "LOCATION:Weitere Informationen folgen",
    "URL:https://rotaryvolketswil.ch/de/agenda/show/219340",
    "DTSTART;TZID=Europe/Zurich:20261126T114500",
@@ -1255,7 +1255,7 @@
    "description": "",
    "image": "https://rotary2000.ch/media/cache/rotary_website_event_grid/6af1de18533f2.jpg",
    "organiser": "Rotary Liechtenstein",
-   "registration": "Anmeldung bis: 24.11.2026 10:15"
+   "registration": ""
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",
