@@ -1291,15 +1291,15 @@
    "registration": "Anmeldung bis: 29.11.2026 23:55"
   },
   "first_seen": "20261111T095123Z",
-  "modified": "20261111T095123Z",
-  "sequence": 0,
+  "modified": "20261126T105921Z",
+  "sequence": 1,
   "status": "active",
   "vevent": [
    "UID:polaris-222427@rotary.ch",
    "SUMMARY:Partneranlass: Weihnachten",
    "LOCATION:Bergrestaurant Roggen",
    "URL:https://balsthal.rotary1980.ch/de/agenda/show/222427",
-   "DTSTART;TZID=Europe/Zurich:20261203T174500",
+   "DTSTART;TZID=Europe/Zurich:20261203T171500",
    "DTEND;TZID=Europe/Zurich:20261203T223000"
   ]
  },
@@ -1370,7 +1370,7 @@
    "description": "",
    "image": "https://rotary1980.ch/media/cache/rotary_website_event_grid/6506939353.jpg",
    "organiser": "Rotary Olten",
-   "registration": ""
+   "registration": "Anmeldung bis: 09.12.2026 18:00"
   },
   "first_seen": "20261111T095123Z",
   "modified": "20261111T095123Z",

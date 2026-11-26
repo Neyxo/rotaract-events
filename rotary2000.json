@@ -1290,5 +1290,45 @@
    "DTSTART;TZID=Europe/Zurich:20270415T121500",
    "DTEND;TZID=Europe/Zurich:20270415T140000"
   ]
+ },
+ "224031": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Zürcher Weinland",
+   "registration": "Anmeldung bis: 29.04.2027 10:15"
+  },
+  "first_seen": "20261126T105921Z",
+  "modified": "20261126T105921Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-224031@rotary.ch",
+   "SUMMARY:Referat von Thomas Peyer\\, Finanzchef Fifa",
+   "LOCATION:Landgasthof zum Bahnhof",
+   "URL:https://rotary-zuercherweinland.ch/de/agenda/show/224031",
+   "DTSTART;TZID=Europe/Zurich:20270429T121500",
+   "DTEND;TZID=Europe/Zurich:20270429T140000"
+  ]
+ },
+ "224062": {
+  "detail": {
+   "description": "",
+   "image": "",
+   "organiser": "Rotary Zürcher Weinland",
+   "registration": ""
+  },
+  "first_seen": "20261126T105921Z",
+  "modified": "20261126T105921Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-224062@rotary.ch",
+   "SUMMARY:Referat\\, Thema noch offen",
+   "LOCATION:Landgasthof zum Bahnhof",
+   "URL:https://rotary-zuercherweinland.ch/de/agenda/show/224062",
+   "DTSTART;TZID=Europe/Zurich:20270218T121500",
+   "DTEND;TZID=Europe/Zurich:20270218T140000"
+  ]
  }
 }
