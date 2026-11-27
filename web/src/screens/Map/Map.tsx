@@ -374,7 +374,9 @@ function zoomApart(map: L.Map, es: Event[]): void {
   let z = now + 1;
   while (z < SPLIT && groupNear(es, (e) => map.project(e.coords!, z)).length < es.length) z++;
   const bounds = L.latLngBounds(es.map((e) => e.coords!));
-  map.flyTo(bounds.getCenter(), Math.max(now + 1, Math.min(z, map.getBoundsZoom(bounds, false, L.point(80, 80)))));
+  map.flyTo(bounds.getCenter(), Math.max(now + 1, Math.min(z, map.getBoundsZoom(bounds, false, L.point(80, 80)))), {
+    duration: 0.45,
+  });
 }
 
 /** the classified archive: the past events as the usual event cards, in the bunker's skin (app.css .bunker: typewriter type, army green,
