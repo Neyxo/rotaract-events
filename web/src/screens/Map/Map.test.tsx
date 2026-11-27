@@ -24,7 +24,8 @@ const past = () => screen.getByRole<HTMLInputElement>("checkbox", { name: /^Past
 const withCoords = () => getData().data.events.filter((e) => e.coords);
 /** events on the map: a single pin counts one, a stack its badge */
 const pinned = (el: Element) =>
-  [...el.querySelectorAll(".mapevent")].reduce((n, m) => n + Number(m.querySelector("em")?.textContent ?? 1), 0);
+  el.querySelectorAll(".mapevent").length +
+  [...el.querySelectorAll(".mapgroup em")].reduce((n, b) => n + Number(b.textContent), 0);
 
 describe("map", () => {
   it("draws the map, then the past switch with the count of upcoming events", async () => {
@@ -44,7 +45,7 @@ describe("map", () => {
     });
     await waitFor(() => expect(screen.getByText(nEvents(all.length))).toBeTruthy());
     expect(pinned(container)).toBe(all.length);
-    const dot = container.querySelector<HTMLElement>(".mapevent:not(.mapgroup)")!;
+    const dot = container.querySelector<HTMLElement>(".mapevent")!;
     const e = all.find((x) => x.title === dot.title)!;
     expect(dot.querySelector("span")?.getAttribute("style")).toMatch(
       /^--c:#[0-9a-f]{6};--on-c:(#fff|#1f1c26)(;--crest:url\(.+\))?$/,
@@ -56,16 +57,25 @@ describe("map", () => {
     expect(pop.getAttribute("href")).toBe("#/event/" + e.id);
   });
 
-  it("a stack of close events opens them all as a list", async () => {
+  it("a stack shows no date and opens no popup; the fade of an open popup goes with it when the pins are redrawn", async () => {
+    history.replaceState({ past: true }, "");
     const { container } = render(<MapScreen route={route} />);
     await waitFor(() => expect(container.querySelector(".mapgroup")).not.toBeNull());
     const stack = container.querySelector<HTMLElement>(".mapgroup")!;
-    const n = Number(stack.querySelector("em")!.textContent);
+    expect(stack.querySelector("b, i")).toBeNull();
     act(() => {
       fireEvent.click(stack);
     });
-    expect(document.querySelectorAll(".maplist .mapcard").length).toBe(n);
-    expect(container.querySelector(".leaflet-container")!.classList.contains("picking")).toBe(true);
+    expect(document.querySelector(".mapcard")).toBeNull();
+    act(() => {
+      fireEvent.click(container.querySelector<HTMLElement>(".mapevent")!);
+    });
+    const map = container.querySelector(".leaflet-container")!;
+    expect(map.classList.contains("picking")).toBe(true);
+    act(() => {
+      fireEvent.click(past());
+    });
+    expect(map.classList.contains("picking")).toBe(false);
   });
 
   it("groupNear groups what is within the radius of a group's first item", () => {
@@ -96,6 +106,7 @@ describe("map", () => {
   });
 
   it("the clubs switch hides the club pins and is kept in the history entry", async () => {
+    history.replaceState({ past: true }, "");
     const { container } = render(<MapScreen route={route} />);
     await waitFor(() => expect(container.querySelectorAll(".mapclub").length).toBeGreaterThan(0));
     act(() => {
@@ -103,7 +114,7 @@ describe("map", () => {
     });
     await waitFor(() => expect(container.querySelectorAll(".mapclub").length).toBe(0));
     expect((history.state as { clubs?: boolean }).clubs).toBe(false);
-    expect(container.querySelectorAll(".mapevent").length).toBeGreaterThan(0);
+    expect(pinned(container)).toBeGreaterThan(0);
   });
 
   it("past is kept in the history entry, so back/forward restores it", async () => {

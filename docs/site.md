@@ -27,7 +27,7 @@ Hash routes, so every screen is the same `index.html` and works on GitHub Pages 
 | `#/` | **Home**: your main club and the clubs you follow, the next event, deadlines, saved events, news. Includes the international events. Without a club: explore mode. |
 | `#/discover?…` | **Discover**: all of Rotaract with search and filters. Filters go into the URL, so a view can be shared. |
 | `#/calendar` | **Calendar**: a full-screen month; a day opens a sheet with its events. |
-| `#/map` | Events on a map of Switzerland & Liechtenstein, events as calendar pins on their club's crest, close ones stacked with a count (popup: the event card, trimmed), the clubs' towns as crests in a cogged ring (popup: the club header in small; can be hidden) and the three Rotary districts as coloured areas. |
+| `#/map` | Events on a map of Switzerland & Liechtenstein, events as calendar pins on their club's crest, close ones stacked with a count that zooms in when tapped (popup: picture and the event card, trimmed), the clubs' towns as crests in a cogged ring (popup: the club header in small; can be hidden) and the three Rotary districts as coloured areas. |
 | `#/event/<id>` | One event: picture, when, where, deadline, description, register on Polaris, add to calendar, share. |
 | `#/club/<id>` | One club: next event, About this club (how to join, partner clubs), news, projects, pictures, more events. |
 | `#/settings` | Main club, clubs to also show, Rotary events on or off, language, appearance, install, share. |

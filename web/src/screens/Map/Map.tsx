@@ -9,8 +9,8 @@ import "leaflet/dist/leaflet.css";
 import type { ScreenProps } from "../../App";
 import { nEvents, t } from "../../i18n";
 import { BRAND, clubVars, DISTRICT_IDS, DISTRICTS, isDistrict, onColor } from "../../lib/color";
-import { club, isRac } from "../../lib/data";
-import { fmt, isPast, whenShort } from "../../lib/dates";
+import { club, isRac, myClubs, type AppData } from "../../lib/data";
+import { deadlineState, fmt, isPast, whenShort } from "../../lib/dates";
 import { SWISSTOPO_GREY } from "../../lib/geo";
 import { href } from "../../lib/route";
 import type { Club, Event } from "../../lib/types";
@@ -36,17 +36,20 @@ function eventIcon(c: Club, e: Event): L.DivIcon {
   return L.divIcon({ className: "mapevent", iconSize: [36, 46], iconAnchor: [18, 46], popupAnchor: [0, -46], html });
 }
 
-/** events close together: a stack of sheets, the next one's date on top and how many in a badge */
-function groupIcon(c: Club, es: Event[]): L.DivIcon {
-  const html = `<span style="${sheetVars(c)}">${sheet(new Date(es[0]!.start))}<em>${es.length}</em></span>`;
-  return L.divIcon({
-    className: "mapevent mapgroup",
-    iconSize: [36, 46],
-    iconAnchor: [18, 46],
-    popupAnchor: [0, -50],
-    html,
-  });
+/** events close together: up to three blank sheets fanned out, each in its event's club colour, and how many in front. No date, so it
+ *  is never read as one event; a tap zooms in until they come apart. */
+function groupIcon(D: AppData, es: Event[]): L.DivIcon {
+  const fan = es.length > 2 ? [-16, 0, 16] : [-10, 10];
+  const sheets = fan
+    .map((r, i) => `<s style="${pinVars(club(D, es[i]!.clubs[0] ?? "").color || BRAND.cranberry)};--r:${r}deg"></s>`)
+    .join("");
+  return L.divIcon({ className: "mapgroup", iconSize: [48, 44], html: `<span>${sheets}<em>${es.length}</em></span>` });
 }
+
+/** from this zoom on events are never stacked; events at the very same place (one without its own place sits on its club's town)
+ *  are spread on a small circle instead */
+const SPLIT = 14;
+const SPREAD = 26;
 
 /** greedy grouping by distance on screen: each item joins the first group whose first item is within r pixels.
  *  ponytail: O(n²), fine for a few hundred events; a grid index if it ever gets slow. */
@@ -63,15 +66,18 @@ export function groupNear<T>(items: T[], at: (x: T) => { x: number; y: number },
 
 /** a club's home: its crest in a cogged ring in its colour, centred on the town, a little faded behind the events. The crest fills the
  *  disc: cut to the circle from its top (a shield's point at the bottom falls outside), on the club colour where the crest is narrower. */
+/** crests with a white edge of their own, cut a little deeper on the map: the share trimmed off each side */
+const TRIM: Record<string, number> = { stgallen: 0.09, "zurich-international": 0.06 };
 function clubIcon(c: Club): L.DivIcon {
   const clip = "crest-" + c.id;
+  const f = TRIM[c.id] ?? 0;
+  const size = 31 / (1 - 2 * f);
+  const at = `x="${(20 - size / 2).toFixed(2)}" y="${(4.5 - size * f).toFixed(2)}" width="${size.toFixed(2)}" height="${size.toFixed(2)}"`;
   const html =
     `<span style="${pinVars(c.color || BRAND.cranberry)}"><svg viewBox="0 0 40 40" aria-hidden="true">` +
     `<clipPath id="${clip}"><circle cx="20" cy="20" r="13.5"/></clipPath>` +
     '<circle class="cogs" cx="20" cy="20" r="17.5" pathLength="48"/><circle class="ring" cx="20" cy="20" r="14.5"/>' +
-    (c.logo
-      ? `<image href="${c.logo}" x="4.5" y="4.5" width="31" height="31" preserveAspectRatio="xMidYMin slice" clip-path="url(#${clip})"/>`
-      : "") +
+    (c.logo ? `<image href="${c.logo}" ${at} preserveAspectRatio="xMidYMin slice" clip-path="url(#${clip})"/>` : "") +
     "</svg></span>";
   return L.divIcon({ className: "mapclub", iconSize: [40, 40], popupAnchor: [0, -18], html });
 }
@@ -85,28 +91,30 @@ const POP: L.PopupOptions = {
   autoPanPaddingTopLeft: [10, 100],
   autoPanPaddingBottomRight: [10, 20],
 };
-type Open = { el: HTMLElement; popup: L.Popup; kind: "event" | "club"; ids: string[] };
+type Open = { el: HTMLElement; popup: L.Popup; kind: "event" | "club"; id: string };
 
 /** an empty popup for the marker; when it opens, the screen renders the content into it (setOpen). While it is open its pin stands
  *  out, lifted and in front, and the other pins fade (#map.picking), so it is clear which pin the popup belongs to. */
 function bindPop(
   m: L.Marker,
   kind: Open["kind"],
-  ids: string[],
+  id: string,
+  map: L.Map,
   setOpen: (f: (o: Open | null) => Open | null) => void,
 ): L.Marker {
   const el = document.createElement("div");
   const z = m.options.zIndexOffset ?? 0;
+  // on the map's own element: the marker's is already gone when a zoom redraws the pins and closes the popup that way
   const mark = (on: boolean) => {
     m.getElement()?.classList.toggle("on", on);
     m.setZIndexOffset(on ? 5000 : z);
-    m.getElement()?.closest(".leaflet-container")?.classList.toggle("picking", on);
+    map.getContainer().classList.toggle("picking", on);
   };
   return m
     .bindPopup(el, POP)
     .on("popupopen", () => {
       mark(true);
-      setOpen(() => ({ el, popup: m.getPopup()!, kind, ids }));
+      setOpen(() => ({ el, popup: m.getPopup()!, kind, id }));
     })
     .on("popupclose", () => {
       mark(false);
@@ -114,29 +122,35 @@ function bindPop(
     });
 }
 
-/** an event in a map popup: the list's card, trimmed for the map: the time and the place on lines of their own, no club chip or
- *  picture (the pin says the club), the title in full */
+/** an event in a map popup: its picture on top, then the list's card trimmed for the map: no club chip (the pin says the club), no
+ *  place (the pin is the place), the title in full. Of the statuses only what matters right now: a deadline in its last two days,
+ *  members only when it is not one of your clubs. */
 function MapCard({ e }: { e: Event }) {
-  const lead = club(useData(), e.clubs[0] ?? "");
+  const D = useData();
+  const lead = club(D, e.clubs[0] ?? "");
+  const mine = myClubs(D);
+  const notMine = !e.clubs.some((c) => mine.includes(c));
   return (
-    <article className="event mapcard" style={clubVars(lead.color)}>
-      <a className="open" href={href("event", e.id)} aria-label={e.title} />
-      {lead.logo ? <img className="wm" src={lead.logo} alt="" aria-hidden="true" /> : null}
-      <DatePane e={e} />
-      <div className="body">
-        <h4>{e.title}</h4>
-        <div className="meta">{whenShort(e)}</div>
-        {e.location ? <div className="meta">{e.location}</div> : null}
-        <div className="tags">
-          {e.cancelled ? <Status kind="bad" text={t("cancelled")} /> : null}
-          {e.members ? <Status kind="" ic="lock" text={t("members_only")} /> : null}
-          {isPast(e) ? null : <DeadlineTag e={e} />}
+    <div className="mapcardwrap">
+      {e.image ? <img className="mappic" src={e.image} alt="" referrerPolicy="no-referrer" /> : null}
+      <article className="event mapcard" style={clubVars(lead.color)}>
+        <a className="open" href={href("event", e.id)} aria-label={e.title} />
+        {lead.logo ? <img className="wm" src={lead.logo} alt="" aria-hidden="true" /> : null}
+        <DatePane e={e} />
+        <div className="body">
+          <h4>{e.title}</h4>
+          <div className="meta">{whenShort(e)}</div>
+          <div className="tags">
+            {e.cancelled ? <Status kind="bad" text={t("cancelled")} /> : null}
+            {e.members && notMine ? <Status kind="" ic="lock" text={t("members_only")} /> : null}
+            {deadlineState(e)?.soon ? <DeadlineTag e={e} /> : null}
+          </div>
         </div>
-      </div>
-      <div className="side">
-        <StarButton e={e} />
-      </div>
-    </article>
+        <div className="side">
+          <StarButton e={e} />
+        </div>
+      </article>
+    </div>
   );
 }
 
@@ -265,7 +279,9 @@ export default function MapScreen({ route }: ScreenProps) {
     if (!clubs) return;
     for (const c of D.data.clubs)
       if (c.coords && isRac(c))
-        bindPop(L.marker(c.coords, { title: c.name, icon: clubIcon(c) }), "club", [c.id], setOpen).addTo(group);
+        bindPop(L.marker(c.coords, { title: c.name, icon: clubIcon(c) }), "club", c.id, mapRef.current!, setOpen).addTo(
+          group,
+        );
   }, [clubs, D]);
 
   // events close together on screen become one stack; regrouped on every zoom (which also closes an open popup)
@@ -275,20 +291,26 @@ export default function MapScreen({ route }: ScreenProps) {
     if (!group || !map) return;
     group.clearLayers();
     const shown = D.data.events.filter((e) => e.coords && (past || !isPast(e)));
-    for (const es of groupNear(shown, (e) => map.project(e.coords!, zoom))) {
+    const groups = zoom >= SPLIT ? shown.map((e) => [e]) : groupNear(shown, (e) => map.project(e.coords!, zoom));
+    // how many events share each exact place, and which of them comes next: those are spread on a circle
+    const same = Map.groupBy(shown, (e) => String(e.coords));
+    for (const es of groups) {
       const e = es[0]!;
-      const lead = club(D, e.clubs[0] ?? "");
+      if (es.length > 1) {
+        L.marker(e.coords!, { title: nEvents(es.length), icon: groupIcon(D, es), zIndexOffset: 1000 })
+          .on("click", () => zoomApart(map, es))
+          .addTo(group);
+        continue;
+      }
+      const at = same.get(String(e.coords))!;
+      let pos = L.latLng(e.coords!);
+      if (at.length > 1) {
+        const a = (2 * Math.PI * at.indexOf(e)) / at.length;
+        pos = map.unproject(map.project(pos, zoom).add([SPREAD * Math.sin(a), -SPREAD * Math.cos(a)]), zoom);
+      }
       // events above the clubs: an event without its own place sits on its club's town
-      const m =
-        es.length === 1
-          ? L.marker(e.coords!, { title: e.title, icon: eventIcon(lead, e), zIndexOffset: 1000 })
-          : L.marker(e.coords!, { title: nEvents(es.length), icon: groupIcon(lead, es), zIndexOffset: 1000 });
-      bindPop(
-        m,
-        "event",
-        es.map((x) => x.id),
-        setOpen,
-      ).addTo(group);
+      const m = L.marker(pos, { title: e.title, icon: eventIcon(club(D, e.clubs[0] ?? ""), e), zIndexOffset: 1000 });
+      bindPop(m, "event", e.id, map, setOpen).addTo(group);
     }
     setCount(shown.length);
   }, [past, D, zoom]);
@@ -333,23 +355,26 @@ export default function MapScreen({ route }: ScreenProps) {
   );
 }
 
-/** what the open popup shows, rendered into it: a club, or one event or a stack of them as a scrolling list */
-function popContent(o: Open, D: ReturnType<typeof useData>) {
-  const c = o.kind === "club" && D.clubs[o.ids[0] ?? ""];
-  const es = o.kind === "event" ? D.data.events.filter((x) => o.ids.includes(x.id)) : [];
+/** what the open popup shows, rendered into it: a club or an event */
+function popContent(o: Open, D: AppData) {
+  const c = o.kind === "club" && D.clubs[o.id];
+  const e = o.kind === "event" && D.data.events.find((x) => x.id === o.id);
   return createPortal(
     <>
       {c && <ClubPop c={c} />}
-      {es.length > 0 && (
-        <div className="maplist">
-          {es.map((e) => (
-            <MapCard key={e.id} e={e} />
-          ))}
-        </div>
-      )}
+      {e && <MapCard e={e} />}
     </>,
     o.el,
   );
+}
+
+/** a stack tapped: zoom in until its events come apart (at the latest at SPLIT), as far as they still fit on the screen */
+function zoomApart(map: L.Map, es: Event[]): void {
+  const now = map.getZoom();
+  let z = now + 1;
+  while (z < SPLIT && groupNear(es, (e) => map.project(e.coords!, z)).length < es.length) z++;
+  const bounds = L.latLngBounds(es.map((e) => e.coords!));
+  map.flyTo(bounds.getCenter(), Math.max(now + 1, Math.min(z, map.getBoundsZoom(bounds, false, L.point(80, 80)))));
 }
 
 /** the classified archive: the past events as the usual event cards, in the bunker's skin (app.css .bunker: typewriter type, army green,
