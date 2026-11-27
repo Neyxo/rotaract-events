@@ -134,7 +134,7 @@ function MapCard({ e }: { e: Event }) {
   const notMine = !e.clubs.some((c) => mine.includes(c));
   return (
     <div className="mapcardwrap">
-      {e.image ? <img className="mappic" src={e.image} alt="" referrerPolicy="no-referrer" /> : null}
+      {e.image ? <img className="mappic" src={e.pic ?? e.image} alt="" referrerPolicy="no-referrer" /> : null}
       <article className="event mapcard" style={clubVars(lead.color)}>
         <a className="open" href={href("event", e.id)} aria-label={e.title} />
         {lead.logo ? <img className="wm" src={lead.logo} alt="" aria-hidden="true" /> : null}

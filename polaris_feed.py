@@ -50,6 +50,7 @@ GLOBAL_CANCEL_MIN, GLOBAL_CANCEL_RATIO = 5, 0.3
 IG_API = "https://graph.facebook.com/v27.0"  # Instagram API with Facebook Login (Business Discovery)
 IG_POSTS = 8
 IG_MAX_BYTES = 1_500_000  # a picture bigger than this is skipped
+PIC_MAX_BYTES = 12_000_000  # an event's full picture: Polaris keeps the upload as is, often a 2-9 MB PNG
 IG_FIELDS = "id,media_type,media_url,thumbnail_url,permalink,caption,timestamp,children{media_type,media_url,thumbnail_url}"
 PLATFORM_HOSTS = {"polaris.rotary.ch", "team.polaris.rotary.ch"}  # Polaris' own notices in the districts' lists (one "event" runs until 2099)
 
@@ -358,10 +359,10 @@ def get_picture(url):
     time.sleep(0.4)
     try:
         with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": USER_AGENT}), timeout=30) as r:
-            body = r.read(IG_MAX_BYTES + 1)
+            body = r.read(PIC_MAX_BYTES + 1)
     except OSError:
         return None
-    return body if body and len(body) <= IG_MAX_BYTES else None
+    return body if body and len(body) <= PIC_MAX_BYTES else None
 
 
 def mirror_pictures(events, out, now):

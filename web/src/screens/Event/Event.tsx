@@ -229,7 +229,7 @@ function Detail({ e }: { e: Ev }) {
   return (
     <>
       <article className="evdetail glass">
-        {e.image ? <Hero src={e.image} /> : null}
+        {e.image ? <Hero src={e.pic ?? e.image} /> : null}
         <Head e={e} />
         <div className="links">
           <GoPlace />
