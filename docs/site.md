@@ -54,7 +54,7 @@ All three are the same page, `share.template.html`, filled in by either side.
 
 ## Story pictures
 
-On a phone, Share offers a story picture (1080x1920, drawn on a canvas, `web/src/lib/story/`): ten designs to pick from, loaded only when the picker opens. A Rotary event gets the two Rotary designs. A picture on a canvas must come from the site itself, so `polaris_feed.py` copies the pictures of upcoming events to `pic/<id>.<ext>` (`pic` in `events.json`), the full-size copy (about 1230 px) where Polaris has one. The event page and the map popup show that copy too; the cards keep the club list's small thumbnail; without one, a design that shows a picture shows the swisstopo map of the place instead.
+On a phone, Share offers a story picture (1080x1920, drawn on a canvas, `web/src/lib/story/`): ten designs to pick from, loaded only when the picker opens. A Rotary event gets the two Rotary designs. A picture on a canvas must come from the site itself, so `polaris_feed.py` copies the pictures of upcoming events to `pic/<id>.<ext>` (`pic` in `events.json`), the full-size copy where Polaris has one, shrunk to WebP of at most 1600 px (Pillow, installed in CI; usually 100-300 KB, at most 1 MB, else the thumbnail). The event page and the map popup show that copy too; the cards keep the club list's small thumbnail; without one, a design that shows a picture shows the swisstopo map of the place instead.
 
 ## Navigation
 

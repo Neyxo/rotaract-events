@@ -527,6 +527,15 @@ with tempfile.TemporaryDirectory() as tmp:
     assert sorted(f.name for f in (Path(tmp) / "pic").iterdir()) == ["1.jpg", "2.png"], "last run's copies go; not a picture, past, cancelled, odd id: none"
     assert (Path(tmp) / "pic" / "1.jpg").read_bytes() == b"\xff\xd8\xff big" and (Path(tmp) / "pic" / "2.png").read_bytes() == b"\x89PNG\r\n small"
 polaris_feed.get_picture = keep_get
+try:  # CI installs Pillow: a big picture becomes a WebP of at most PIC_SIDE px; without Pillow shrink() leaves it alone
+    import io
+    from PIL import Image
+    png = io.BytesIO()
+    Image.new("RGB", (3200, 1000), "red").save(png, "PNG")
+    small = Image.open(io.BytesIO(polaris_feed.shrink(png.getvalue())))
+    assert (small.format, small.size) == ("WEBP", (1600, 500)), (small.format, small.size)
+except ImportError:
+    assert polaris_feed.shrink(b"\x89PNG\r\n x") == b"\x89PNG\r\n x"
 
 # --- the run-wide brake: more than max(5, 30%) of all upcoming events cancelled in one run
 up = lambda n, status="active": {f"e{k}": {"status": status, "vevent": event(f"e{k}", "20261201T190000"), "sequence": 0, "modified": "T"} for k in range(n)}

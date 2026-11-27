@@ -63,6 +63,9 @@ jobs:
         run: npx playwright install chromium && npm run e2e
         env:
           E2E_DIR: dist
+      # Pillow shrinks the event pictures copied onto the site (polaris_feed.shrink); the feed runs without it, but serves thumbnails
+      - name: Install Pillow
+        run: python3 -m pip install --user --break-system-packages pillow==11.3.0
       - name: Feed tests
         if: github.event_name != 'schedule'
         run: python3 test_polaris_feed.py

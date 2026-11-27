@@ -14,6 +14,7 @@ Usage: python3 polaris_feed.py [clubs.toml] [out_dir] [data_dir]
 import copy
 import datetime as dt
 import html
+import io
 import json
 import math
 import os
@@ -50,7 +51,9 @@ GLOBAL_CANCEL_MIN, GLOBAL_CANCEL_RATIO = 5, 0.3
 IG_API = "https://graph.facebook.com/v27.0"  # Instagram API with Facebook Login (Business Discovery)
 IG_POSTS = 8
 IG_MAX_BYTES = 1_500_000  # a picture bigger than this is skipped
-PIC_MAX_BYTES = 12_000_000  # an event's full picture: Polaris keeps the upload as is, often a 2-9 MB PNG
+PIC_MAX_BYTES = 12_000_000  # an event's full picture as downloaded: Polaris keeps the upload as is, often a 2-9 MB PNG
+PIC_SERVE_BYTES = 1_000_000  # the copy on the site: shrunk to WebP first, else the thumbnail
+PIC_SIDE = 1600  # px, the longer side of the copy on the site
 IG_FIELDS = "id,media_type,media_url,thumbnail_url,permalink,caption,timestamp,children{media_type,media_url,thumbnail_url}"
 PLATFORM_HOSTS = {"polaris.rotary.ch", "team.polaris.rotary.ch"}  # Polaris' own notices in the districts' lists (one "event" runs until 2099)
 
@@ -344,6 +347,21 @@ def ig_download(url, path):
 PIC_TYPES = ((b"\xff\xd8\xff", "jpg"), (b"\x89PNG\r\n", "png"), (b"RIFF", "webp"))
 
 
+def shrink(body):
+    """A picture as WebP, at most PIC_SIDE px on its longer side. Unchanged without Pillow (CI installs it) or if it can't be read."""
+    try:
+        from PIL import Image, ImageOps
+        with Image.open(io.BytesIO(body)) as im:
+            im = ImageOps.exif_transpose(im)
+            im.thumbnail((PIC_SIDE, PIC_SIDE))
+            im = im.convert("RGBA" if "A" in im.getbands() or "transparency" in im.info else "RGB")
+            out = io.BytesIO()
+            im.save(out, "WEBP", quality=80, method=6)
+            return out.getvalue()
+    except Exception:
+        return body
+
+
 def full_picture(url):
     """The larger copy of a Polaris picture: the list's thumbnail (.../media/cache/<filter>/[rc/<dir>/]<file>) is 435 px wide,
     the same file in the event page's cache about 940."""
@@ -367,15 +385,17 @@ def get_picture(url):
 
 def mirror_pictures(events, out, now):
     """Copies of the upcoming events' pictures on the site itself: pic/<id>.<ext>, named in the event as "pic". The clubs' sites
-    send no CORS headers, and a story picture (a canvas) with their picture on it can't be exported. The larger copy first, the
-    thumbnail if there is none. The type comes from the bytes: some addresses end in a bare dot. Never worth failing the run."""
+    send no CORS headers, and a story picture (a canvas) with their picture on it can't be exported. The larger copy first, shrunk
+    to WebP, the thumbnail if there is none or it stays over PIC_SERVE_BYTES. The type comes from the bytes: some addresses end in a bare dot. Never worth failing the run."""
     shutil.rmtree(out / "pic", ignore_errors=True)
     stamp = now.isoformat(timespec="minutes")
     for e in events:
         if not e["image"] or e["cancelled"] or e["end"] < stamp or not re.fullmatch(r"[\w-]+", e["id"]):
             continue
         try:
-            body = get_picture(full_picture(e["image"])) or get_picture(e["image"])
+            # the thumbnail is fetched only if the larger copy is missing or stays too big
+            got = (shrink(b) for b in map(get_picture, (full_picture(e["image"]), e["image"])) if b)
+            body = next((b for b in got if len(b) <= PIC_SERVE_BYTES), None)
             ext = next((x for magic, x in PIC_TYPES if body and body.startswith(magic)), None)
             if ext:
                 (out / "pic").mkdir(exist_ok=True)
