@@ -10,11 +10,11 @@ import type { ScreenProps } from "../../App";
 import { nEvents, t } from "../../i18n";
 import { BRAND, clubVars, DISTRICT_IDS, DISTRICTS, isDistrict, onColor } from "../../lib/color";
 import { club, isRac } from "../../lib/data";
-import { fmt, isPast } from "../../lib/dates";
+import { fmt, isPast, whenShort } from "../../lib/dates";
 import { SWISSTOPO_GREY } from "../../lib/geo";
 import { href } from "../../lib/route";
 import type { Club, Event } from "../../lib/types";
-import { EventCard, Icon, Popup, useData } from "../../components";
+import { DatePane, DeadlineTag, EventCard, Icon, Popup, StarButton, Status, useData } from "../../components";
 // the districts as whole cantons (plus Liechtenstein in 2000), merged and simplified from swisstopo's canton borders and OSM
 import districts from "./districts.json";
 
@@ -27,10 +27,38 @@ const pinVars = (color: string) => `--c:${color};--on-c:${onColor(color)}`;
 /** a calendar sheet: the month on a band in the club colour, the day under it. Markup, because Leaflet's divIcon takes markup. */
 const sheet = (d: Date) => `<b>${fmt.mon.format(d)}</b><i>${fmt.day.format(d)}</i>`;
 
+/** the pin's style: the club colour, and its crest as the faded backdrop of the sheet */
+const sheetVars = (c: Club) => pinVars(c.color || BRAND.cranberry) + (c.logo ? `;--crest:url(${c.logo})` : "");
+
 /** an event: a calendar sheet with a point at the place */
 function eventIcon(c: Club, e: Event): L.DivIcon {
-  const html = `<span style="${pinVars(c.color || BRAND.cranberry)}">${sheet(new Date(e.start))}</span>`;
-  return L.divIcon({ className: "mapevent", iconSize: [36, 46], iconAnchor: [18, 46], popupAnchor: [0, -44], html });
+  const html = `<span style="${sheetVars(c)}">${sheet(new Date(e.start))}</span>`;
+  return L.divIcon({ className: "mapevent", iconSize: [36, 46], iconAnchor: [18, 46], popupAnchor: [0, -46], html });
+}
+
+/** events close together: a stack of sheets, the next one's date on top and how many in a badge */
+function groupIcon(c: Club, es: Event[]): L.DivIcon {
+  const html = `<span style="${sheetVars(c)}">${sheet(new Date(es[0]!.start))}<em>${es.length}</em></span>`;
+  return L.divIcon({
+    className: "mapevent mapgroup",
+    iconSize: [36, 46],
+    iconAnchor: [18, 46],
+    popupAnchor: [0, -50],
+    html,
+  });
+}
+
+/** greedy grouping by distance on screen: each item joins the first group whose first item is within r pixels.
+ *  ponytail: O(n²), fine for a few hundred events; a grid index if it ever gets slow. */
+export function groupNear<T>(items: T[], at: (x: T) => { x: number; y: number }, r = 40): T[][] {
+  const groups: { p: { x: number; y: number }; items: T[] }[] = [];
+  for (const it of items) {
+    const p = at(it);
+    const g = groups.find((g) => Math.hypot(g.p.x - p.x, g.p.y - p.y) < r);
+    if (g) g.items.push(it);
+    else groups.push({ p, items: [it] });
+  }
+  return groups.map((g) => g.items);
 }
 
 /** a club's home: its crest in a cogged ring in its colour, centred on the town, a little faded behind the events. The crest fills the
@@ -57,20 +85,59 @@ const POP: L.PopupOptions = {
   autoPanPaddingTopLeft: [10, 100],
   autoPanPaddingBottomRight: [10, 20],
 };
-type Open = { el: HTMLElement; popup: L.Popup; kind: "event" | "club"; id: string };
+type Open = { el: HTMLElement; popup: L.Popup; kind: "event" | "club"; ids: string[] };
 
-/** an empty popup for the marker; when it opens, the screen renders the content into it (setOpen) */
+/** an empty popup for the marker; when it opens, the screen renders the content into it (setOpen). While it is open its pin stands
+ *  out, lifted and in front, and the other pins fade (#map.picking), so it is clear which pin the popup belongs to. */
 function bindPop(
   m: L.Marker,
   kind: Open["kind"],
-  id: string,
+  ids: string[],
   setOpen: (f: (o: Open | null) => Open | null) => void,
 ): L.Marker {
   const el = document.createElement("div");
+  const z = m.options.zIndexOffset ?? 0;
+  const mark = (on: boolean) => {
+    m.getElement()?.classList.toggle("on", on);
+    m.setZIndexOffset(on ? 5000 : z);
+    m.getElement()?.closest(".leaflet-container")?.classList.toggle("picking", on);
+  };
   return m
     .bindPopup(el, POP)
-    .on("popupopen", () => setOpen(() => ({ el, popup: m.getPopup()!, kind, id })))
-    .on("popupclose", () => setOpen((o) => (o?.el === el ? null : o)));
+    .on("popupopen", () => {
+      mark(true);
+      setOpen(() => ({ el, popup: m.getPopup()!, kind, ids }));
+    })
+    .on("popupclose", () => {
+      mark(false);
+      setOpen((o) => (o?.el === el ? null : o));
+    });
+}
+
+/** an event in a map popup: the list's card, trimmed for the map: the time and the place on lines of their own, no club chip or
+ *  picture (the pin says the club), the title in full */
+function MapCard({ e }: { e: Event }) {
+  const lead = club(useData(), e.clubs[0] ?? "");
+  return (
+    <article className="event mapcard" style={clubVars(lead.color)}>
+      <a className="open" href={href("event", e.id)} aria-label={e.title} />
+      {lead.logo ? <img className="wm" src={lead.logo} alt="" aria-hidden="true" /> : null}
+      <DatePane e={e} />
+      <div className="body">
+        <h4>{e.title}</h4>
+        <div className="meta">{whenShort(e)}</div>
+        {e.location ? <div className="meta">{e.location}</div> : null}
+        <div className="tags">
+          {e.cancelled ? <Status kind="bad" text={t("cancelled")} /> : null}
+          {e.members ? <Status kind="" ic="lock" text={t("members_only")} /> : null}
+          {isPast(e) ? null : <DeadlineTag e={e} />}
+        </div>
+      </div>
+      <div className="side">
+        <StarButton e={e} />
+      </div>
+    </article>
+  );
 }
 
 /** a club in a popup: the club page's header in small, its colour block with the crest faded large behind the name */
@@ -117,6 +184,7 @@ export default function MapScreen({ route }: ScreenProps) {
   const [bunker, setBunker] = useState(() => route.query.has("bunker"));
   const box = useRef<HTMLDivElement>(null);
   const layer = useRef<L.LayerGroup | null>(null);
+  const mapRef = useRef<L.Map | null>(null);
   const clubLayer = useRef<L.LayerGroup | null>(null);
   const [open, setOpen] = useState<Open | null>(null);
   // the popup measured itself while still empty: once its content is in, it sizes and pans again
@@ -124,6 +192,7 @@ export default function MapScreen({ route }: ScreenProps) {
     open?.popup.update();
   }, [open]);
   const startsAtBunker = useEffectEvent(() => bunker);
+  const [zoom, setZoom] = useState(8);
 
   useEffect(() => {
     // Switzerland & Liechtenstein, no zooming out to space
@@ -135,6 +204,7 @@ export default function MapScreen({ route }: ScreenProps) {
       ],
       maxBoundsViscosity: 1,
     }).setView([46.9, 8.2], 8);
+    mapRef.current = map;
     // the grey national map, so the markers carry the colour
     L.tileLayer(SWISSTOPO_GREY, { maxZoom: 18, attribution: "© swisstopo" }).addTo(map);
     L.geoJSON(districts as GeoJSON.FeatureCollection, {
@@ -175,6 +245,7 @@ export default function MapScreen({ route }: ScreenProps) {
     }).on("click", () => setBunker(true));
     const eggs = L.layerGroup([graben, door]);
     map.on("zoomend", () => {
+      setZoom(map.getZoom());
       if (map.getZoom() >= 10) eggs.addTo(map);
       else eggs.remove();
     });
@@ -183,6 +254,7 @@ export default function MapScreen({ route }: ScreenProps) {
       map.remove();
       layer.current = null;
       clubLayer.current = null;
+      mapRef.current = null;
     };
   }, []);
 
@@ -193,27 +265,33 @@ export default function MapScreen({ route }: ScreenProps) {
     if (!clubs) return;
     for (const c of D.data.clubs)
       if (c.coords && isRac(c))
-        bindPop(L.marker(c.coords, { title: c.name, icon: clubIcon(c) }), "club", c.id, setOpen).addTo(group);
+        bindPop(L.marker(c.coords, { title: c.name, icon: clubIcon(c) }), "club", [c.id], setOpen).addTo(group);
   }, [clubs, D]);
 
+  // events close together on screen become one stack; regrouped on every zoom (which also closes an open popup)
   useEffect(() => {
     const group = layer.current;
-    if (!group) return;
+    const map = mapRef.current;
+    if (!group || !map) return;
     group.clearLayers();
-    let n = 0;
-    for (const e of D.data.events) {
-      if (!e.coords || (!past && isPast(e))) continue;
-      n++;
+    const shown = D.data.events.filter((e) => e.coords && (past || !isPast(e)));
+    for (const es of groupNear(shown, (e) => map.project(e.coords!, zoom))) {
+      const e = es[0]!;
+      const lead = club(D, e.clubs[0] ?? "");
       // events above the clubs: an event without its own place sits on its club's town
-      const m = L.marker(e.coords, {
-        title: e.title,
-        icon: eventIcon(club(D, e.clubs[0] ?? ""), e),
-        zIndexOffset: 1000,
-      });
-      bindPop(m, "event", e.id, setOpen).addTo(group);
+      const m =
+        es.length === 1
+          ? L.marker(e.coords!, { title: e.title, icon: eventIcon(lead, e), zIndexOffset: 1000 })
+          : L.marker(e.coords!, { title: nEvents(es.length), icon: groupIcon(lead, es), zIndexOffset: 1000 });
+      bindPop(
+        m,
+        "event",
+        es.map((x) => x.id),
+        setOpen,
+      ).addTo(group);
     }
-    setCount(n);
-  }, [past, D]);
+    setCount(shown.length);
+  }, [past, D, zoom]);
 
   return (
     <main className="mapwrap">
@@ -230,36 +308,45 @@ export default function MapScreen({ route }: ScreenProps) {
           <span>{t("clubs")}</span>
         </label>
       </div>
-      <ul className="maplegend">
-        <li>
-          <i className="mapclub-mini" aria-hidden="true" />
-          {t("clubs")}
-        </li>
-        <li>
-          <i className="mapevent-mini" aria-hidden="true" />
-          {t("events")}
-        </li>
-        {DISTRICT_IDS.map((d) => (
-          <li key={d} style={{ "--c": DISTRICTS[d].color } as CSSProperties}>
-            <i className="mapdistrict-mini" aria-hidden="true" />
-            {t(DISTRICTS[d].key)}
+      <details className="maplegend" open={innerWidth >= 700}>
+        <summary>{t("map_legend")}</summary>
+        <ul>
+          <li>
+            <i className="mapclub-mini" aria-hidden="true" />
+            {t("clubs")}
           </li>
-        ))}
-      </ul>
+          <li>
+            <i className="mapevent-mini" aria-hidden="true" />
+            {t("events")}
+          </li>
+          {DISTRICT_IDS.map((d) => (
+            <li key={d} style={{ "--c": DISTRICTS[d].color } as CSSProperties}>
+              <i className="mapdistrict-mini" aria-hidden="true" />
+              {t(DISTRICTS[d].key)}
+            </li>
+          ))}
+        </ul>
+      </details>
       {open && popContent(open, D)}
       {bunker && <Bunker events={archive(D.data.events)} onClose={() => setBunker(false)} />}
     </main>
   );
 }
 
-/** what the open popup shows, rendered into it */
+/** what the open popup shows, rendered into it: a club, or one event or a stack of them as a scrolling list */
 function popContent(o: Open, D: ReturnType<typeof useData>) {
-  const e = o.kind === "event" && D.data.events.find((x) => x.id === o.id);
-  const c = o.kind === "club" && D.clubs[o.id];
+  const c = o.kind === "club" && D.clubs[o.ids[0] ?? ""];
+  const es = o.kind === "event" ? D.data.events.filter((x) => o.ids.includes(x.id)) : [];
   return createPortal(
     <>
-      {e && <EventCard e={e} />}
       {c && <ClubPop c={c} />}
+      {es.length > 0 && (
+        <div className="maplist">
+          {es.map((e) => (
+            <MapCard key={e.id} e={e} />
+          ))}
+        </div>
+      )}
     </>,
     o.el,
   );

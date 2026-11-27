@@ -55,6 +55,46 @@
   border-bottom: 0;
   border-top: 8px solid var(--c);
 }
+/* a stack: two sheets peeking out behind, the count in a badge */
+.mapgroup span {
+  box-shadow:
+    3px -3px 0 -1px #fff,
+    3px -3px 0 1px var(--c),
+    6px -6px 0 -1px #fff,
+    6px -6px 0 1px var(--c),
+    0 3px 8px rgba(0, 0, 0, 0.35);
+}
+.mapgroup em {
+  position: absolute;
+  right: -12px;
+  top: -14px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 10px;
+  background: #1f1c26;
+  color: #fff;
+  border: 2px solid #fff;
+  font-style: normal;
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 16px;
+  text-align: center;
+}
+/* while a popup is open: its pin lifted and ringed, the others faded back */
+#map.picking .leaflet-marker-icon:not(.on) {
+  opacity: 0.35;
+}
+.mapevent.on span {
+  transform: scale(1.2);
+  outline: 3px solid color-mix(in srgb, var(--c) 35%, transparent);
+  outline-offset: 2px;
+}
+.mapclub.on span {
+  opacity: 1;
+  transform: scale(1.2);
+}
 .mapevent:hover span {
   transform: scale(1.12);
 }
@@ -70,9 +110,16 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
+/* the day on the club's crest, faded under a white veil */
 .mapevent i {
   display: grid;
   place-items: center;
+  margin: 0 1px 1px;
+  border-radius: 0 0 6px 6px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.72)),
+    var(--crest, none) center top / cover no-repeat;
+  text-shadow: 0 0 3px #fff;
   font-style: normal;
   font-size: 0.95rem;
   font-weight: 800;
@@ -111,20 +158,28 @@
   stroke-width: 3;
 }
 /* what is what: clubs, events, the districts */
+/* a details element: closed it is a small button, open it lists clubs, events and the districts. Open at the start on wide screens. */
 .maplegend {
   position: absolute;
   left: 10px;
   bottom: 10px;
   z-index: 500;
-  margin: 0;
-  padding: 8px 10px;
-  list-style: none;
-  display: grid;
-  gap: 4px;
+  padding: 6px 10px;
   font-size: 0.75rem;
   background: var(--surface);
   box-shadow: var(--shadow);
   border-radius: var(--r-chip);
+}
+.maplegend summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.maplegend ul {
+  margin: 6px 0 2px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
 }
 .maplegend li {
   display: flex;
@@ -173,9 +228,24 @@
 #map .mappopup:has(.clubpop) .leaflet-popup-tip-container {
   display: none;
 }
+/* one event or a stack: the list's card, trimmed (Map.tsx MapCard); a stack scrolls */
+#map .maplist {
+  display: grid;
+  gap: 8px;
+  max-height: min(42vh, 340px);
+  overflow-y: auto;
+  border-radius: 14px;
+  background: var(--surface);
+}
 #map .mappopup .event {
   margin: 0;
   animation: none;
+}
+#map .mapcard .meta {
+  white-space: normal;
+}
+#map .mapcard .tags:empty {
+  display: none;
 }
 /* the club header in small: the colour block of the club page, its crest big and faded behind, the crest and name in front */
 #map .clubpop {

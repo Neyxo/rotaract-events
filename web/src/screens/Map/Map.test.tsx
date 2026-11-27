@@ -6,7 +6,7 @@ import { parseHash } from "../../lib/route";
 import { getData, isRac, loadData } from "../../lib/data";
 import { isPast } from "../../lib/dates";
 import { nEvents } from "../../i18n";
-import MapScreen, { archive } from "./Map";
+import MapScreen, { archive, groupNear } from "./Map";
 
 const route = parseHash("#/map");
 
@@ -22,6 +22,9 @@ afterEach(cleanup);
 
 const past = () => screen.getByRole<HTMLInputElement>("checkbox", { name: /^Past/ });
 const withCoords = () => getData().data.events.filter((e) => e.coords);
+/** events on the map: a single pin counts one, a stack its badge */
+const pinned = (el: Element) =>
+  [...el.querySelectorAll(".mapevent")].reduce((n, m) => n + Number(m.querySelector("em")?.textContent ?? 1), 0);
 
 describe("map", () => {
   it("draws the map, then the past switch with the count of upcoming events", async () => {
@@ -30,7 +33,7 @@ describe("map", () => {
     expect(past().checked).toBe(false);
     const upcoming = withCoords().filter((e) => !isPast(e)).length;
     await waitFor(() => expect(past().labels![0]!.textContent).toBe(" Past · " + nEvents(upcoming)));
-    expect(container.querySelectorAll(".mapevent").length).toBe(upcoming);
+    expect(pinned(container)).toBe(upcoming);
   });
 
   it("past shows every event with coordinates; markers carry the club colour and the popup links to the event", async () => {
@@ -40,15 +43,42 @@ describe("map", () => {
       fireEvent.click(past());
     });
     await waitFor(() => expect(screen.getByText(nEvents(all.length))).toBeTruthy());
-    expect(container.querySelectorAll(".mapevent").length).toBe(all.length);
-    const dot = container.querySelector<HTMLElement>(".mapevent")!;
+    expect(pinned(container)).toBe(all.length);
+    const dot = container.querySelector<HTMLElement>(".mapevent:not(.mapgroup)")!;
     const e = all.find((x) => x.title === dot.title)!;
-    expect(dot.querySelector("span")?.getAttribute("style")).toMatch(/^--c:#[0-9a-f]{6};--on-c:(#fff|#1f1c26)$/);
+    expect(dot.querySelector("span")?.getAttribute("style")).toMatch(
+      /^--c:#[0-9a-f]{6};--on-c:(#fff|#1f1c26)(;--crest:url\(.+\))?$/,
+    );
     act(() => {
       fireEvent.click(dot);
     });
     const pop = screen.getByRole("link", { name: new RegExp("^" + e.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) });
     expect(pop.getAttribute("href")).toBe("#/event/" + e.id);
+  });
+
+  it("a stack of close events opens them all as a list", async () => {
+    const { container } = render(<MapScreen route={route} />);
+    await waitFor(() => expect(container.querySelector(".mapgroup")).not.toBeNull());
+    const stack = container.querySelector<HTMLElement>(".mapgroup")!;
+    const n = Number(stack.querySelector("em")!.textContent);
+    act(() => {
+      fireEvent.click(stack);
+    });
+    expect(document.querySelectorAll(".maplist .mapcard").length).toBe(n);
+    expect(container.querySelector(".leaflet-container")!.classList.contains("picking")).toBe(true);
+  });
+
+  it("groupNear groups what is within the radius of a group's first item", () => {
+    const pts = [
+      { x: 0, y: 0 },
+      { x: 30, y: 0 },
+      { x: 100, y: 0 },
+      { x: 70, y: 0 },
+    ];
+    expect(groupNear(pts, (p) => p)).toEqual([
+      [pts[0], pts[1]],
+      [pts[2], pts[3]],
+    ]);
   });
 
   it("draws a pin per real club with coordinates, opening the club, and the district legend", async () => {

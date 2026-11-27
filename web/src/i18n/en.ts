@@ -60,6 +60,7 @@ const en = {
   hat_again: "Ask again",
   hat_none: "The hat is silent: it knows no club yet.",
   bunker: "Gotthard bunker",
+  map_legend: "Legend",
   bunker_title: "Classified archive",
   bunker_stamp: "Declassified",
   bunker_n: "Past events on file: {n}.",

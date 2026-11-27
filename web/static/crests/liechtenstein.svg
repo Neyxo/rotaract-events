@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" preserveAspectRatio="xMinYMid slice">
   <!-- Simplified flag of Liechtenstein: blue over red, gold crown (official colours; simplified shape) -->
   <rect width="600" height="200" fill="#002b7f"/>
   <rect y="200" width="600" height="200" fill="#ce1126"/>

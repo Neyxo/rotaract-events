@@ -56,6 +56,7 @@ const fr: Messages = {
   hat_again: "Redemander",
   hat_none: "Le chapeau se tait : il ne connaît encore aucun club.",
   bunker: "Bunker du Gothard",
+  map_legend: "Légende",
   bunker_title: "Archives classifiées",
   bunker_stamp: "Déclassifié",
   bunker_n: "Événements passés au dossier : {n}.",

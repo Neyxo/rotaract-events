@@ -56,6 +56,7 @@ const de: Messages = {
   hat_again: "Nochmals fragen",
   hat_none: "Der Hut schweigt: Er kennt noch keinen Club.",
   bunker: "Gotthard-Bunker",
+  map_legend: "Legende",
   bunker_title: "Geheimarchiv",
   bunker_stamp: "Freigegeben",
   bunker_n: "Vergangene Events in den Akten: {n}.",

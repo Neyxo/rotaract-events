@@ -56,6 +56,7 @@ const it: Messages = {
   hat_again: "Chiedi di nuovo",
   hat_none: "Il cappello tace: non conosce ancora nessun club.",
   bunker: "Bunker del Gottardo",
+  map_legend: "Legenda",
   bunker_title: "Archivio riservato",
   bunker_stamp: "Declassificato",
   bunker_n: "Eventi passati in archivio: {n}.",
