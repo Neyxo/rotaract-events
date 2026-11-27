@@ -38,3 +38,4 @@ A screen is `web/src/screens/<Name>/<Name>.tsx`, with `<Name>.css` listed in `ap
 - Settings: `setTheme()` (`lib/store`) and `setRotary()` (`lib/data`) apply at once; `setLang()` (`i18n`) reloads the page, because every text is read once, at start.
 - Map and AboutMore use Leaflet from npm. Map is lazy-loaded in `App.tsx`, so Leaflet is only fetched there; AboutMore imports it in an effect for the same reason.
 - Home: `takeWelcome()` (`lib/route`) is true once when the app was opened with `?welcome`.
+- The district areas on the map are `web/src/screens/Map/districts.json`: whole cantons per district (Liechtenstein in 2000), from swisstopo's canton borders (geo.admin.ch API) and Liechtenstein's outline from OpenStreetMap, merged and simplified with mapshaper (`-i snap snap-interval=0.002 -dissolve2 district -simplify 8% keep-shapes -clean gap-fill-area=20km2`, precision 0.001). Redo it only if a canton changes district.

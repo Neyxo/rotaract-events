@@ -3,7 +3,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { fixture } from "../../test/fixture";
 import { parseHash } from "../../lib/route";
-import { getData, loadData } from "../../lib/data";
+import { getData, isRac, loadData } from "../../lib/data";
 import { isPast } from "../../lib/dates";
 import { nEvents } from "../../i18n";
 import MapScreen, { archive } from "./Map";
@@ -49,6 +49,20 @@ describe("map", () => {
     });
     const pop = screen.getByRole("link", { name: new RegExp("^" + e.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) });
     expect(pop.getAttribute("href")).toBe("#/event/" + e.id);
+  });
+
+  it("draws a pin per real club with coordinates, opening the club, and the district legend", async () => {
+    const { container } = render(<MapScreen route={route} />);
+    const clubs = getData().data.clubs.filter((c) => c.coords && isRac(c));
+    expect(clubs.length).toBeGreaterThan(0);
+    await waitFor(() => expect(container.querySelectorAll(".mapclub").length).toBe(clubs.length));
+    const pin = container.querySelector<HTMLElement>(".mapclub")!;
+    const c = clubs.find((x) => x.name === pin.title)!;
+    act(() => {
+      fireEvent.click(pin);
+    });
+    expect(screen.getByRole("link", { name: new RegExp("^" + c.name) }).getAttribute("href")).toBe("#/club/" + c.id);
+    expect(container.querySelectorAll(".maplegend li").length).toBe(5);
   });
 
   it("past is kept in the history entry, so back/forward restores it", async () => {

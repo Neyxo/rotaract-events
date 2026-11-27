@@ -1,17 +1,20 @@
 // The map: every event with coordinates as a club-coloured dot on the swisstopo map, filling the screen between the bars.
+// Under them the three Rotary districts as faint coloured areas, and each club's home as a crest badge on a pin.
 // Leaflet owns div#map; React only renders the option label under it and tells Leaflet what to draw.
 import { useEffect, useEffectEvent, useRef, useState, type CSSProperties } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { ScreenProps } from "../../App";
 import { nEvents, t } from "../../i18n";
-import { BRAND, onColor } from "../../lib/color";
-import { club, type AppData } from "../../lib/data";
+import { BRAND, DISTRICT_IDS, DISTRICTS, isDistrict, onColor } from "../../lib/color";
+import { club, isRac, type AppData } from "../../lib/data";
 import { fmt, isPast } from "../../lib/dates";
 import { SWISSTOPO_GREY } from "../../lib/geo";
 import { href } from "../../lib/route";
-import type { Event } from "../../lib/types";
+import type { Club, Event } from "../../lib/types";
 import { EventCard, Popup, useData } from "../../components";
+// the districts as whole cantons (plus Liechtenstein in 2000), merged and simplified from swisstopo's canton borders and OSM
+import districts from "./districts.json";
 
 /** Easter egg: the bunker's archive holds the past events, newest first; the popup shows the latest FILES of them */
 export const archive = (events: Event[]): Event[] =>
@@ -26,15 +29,39 @@ function dotHtml(D: AppData, e: Event): string {
   return `<span style="--c:${color};--on-c:${onColor(color)}">${logo}</span>`;
 }
 
+/** a club's home: its crest on a badge in its colour, with a tail pointing at the town */
+function clubHtml(c: Club): string {
+  const color = c.color || BRAND.cranberry;
+  const logo = c.logo ? `<img src="${c.logo}" alt="">` : "";
+  return `<span style="--c:${color};--on-c:${onColor(color)}">${logo}</span>`;
+}
+
+/** every real club's home, as a pin that opens the club */
+function addClubs(group: L.LayerGroup, clubs: Club[]): void {
+  for (const c of clubs) {
+    if (!c.coords || !isRac(c)) continue;
+    const icon = L.divIcon({
+      className: "mapclub",
+      iconSize: [40, 48],
+      iconAnchor: [20, 48],
+      popupAnchor: [0, -44],
+      html: clubHtml(c),
+    });
+    L.marker(c.coords, { title: c.name, icon })
+      .bindPopup(popupLink(href("club", c.id), c.name, c.city ?? ""))
+      .addTo(group);
+  }
+}
+
 /** the popup: a DOM node, so the title needs no escaping */
-function popupLink(D: AppData, e: Event): HTMLElement {
+function popupLink(link: string, title: string, line: string): HTMLElement {
   const a = document.createElement("a");
   a.className = "mappop";
-  a.href = href("event", e.id);
+  a.href = link;
   const b = document.createElement("b");
-  b.textContent = e.title;
+  b.textContent = title;
   const s = document.createElement("span");
-  s.textContent = `${fmt.dm.format(new Date(e.start))} · ${club(D, e.clubs[0] ?? "").short}`;
+  s.textContent = line;
   a.append(b, s);
   return a;
 }
@@ -62,6 +89,14 @@ export default function MapScreen({ route }: ScreenProps) {
     }).setView([46.9, 8.2], 8);
     // the grey national map, so the markers carry the colour
     L.tileLayer(SWISSTOPO_GREY, { maxZoom: 18, attribution: "© swisstopo" }).addTo(map);
+    L.geoJSON(districts as GeoJSON.FeatureCollection, {
+      interactive: false,
+      style: (f) => {
+        const d = String(f?.properties?.district);
+        const color = isDistrict(d) ? DISTRICTS[d].color : BRAND.cranberry;
+        return { color, weight: 2, opacity: 0.7, fillColor: color, fillOpacity: 0.12 };
+      },
+    }).addTo(map);
     layer.current = L.layerGroup().addTo(map);
     // Easter egg: the Röstigraben, a faint dashed line once you zoom in. Roughly the language border from Biel/Bienne to Sierre/Siders.
     // Two lines: the one you see, and an invisible wide one under it so a finger can hit it.
@@ -105,12 +140,22 @@ export default function MapScreen({ route }: ScreenProps) {
     const group = layer.current;
     if (!group) return;
     group.clearLayers();
+    addClubs(group, D.data.clubs);
     let n = 0;
     for (const e of D.data.events) {
       if (!e.coords || (!past && isPast(e))) continue;
       n++;
       const icon = L.divIcon({ className: "mapdot", iconSize: [32, 32], popupAnchor: [0, -14], html: dotHtml(D, e) });
-      L.marker(e.coords, { title: e.title, icon }).bindPopup(popupLink(D, e)).addTo(group);
+      // events above the clubs: an event without its own place sits on its club's town
+      L.marker(e.coords, { title: e.title, icon, zIndexOffset: 1000 })
+        .bindPopup(
+          popupLink(
+            href("event", e.id),
+            e.title,
+            `${fmt.dm.format(new Date(e.start))} · ${club(D, e.clubs[0] ?? "").short}`,
+          ),
+        )
+        .addTo(group);
     }
     setCount(n);
   }, [past, D]);
@@ -131,6 +176,22 @@ export default function MapScreen({ route }: ScreenProps) {
         {" · "}
         <span>{count === null ? "" : nEvents(count)}</span>
       </label>
+      <ul className="maplegend">
+        <li>
+          <i className="mapclub-mini" aria-hidden="true" />
+          {t("clubs")}
+        </li>
+        <li>
+          <i className="mapdot-mini" aria-hidden="true" />
+          {t("events")}
+        </li>
+        {DISTRICT_IDS.map((d) => (
+          <li key={d} style={{ "--c": DISTRICTS[d].color } as CSSProperties}>
+            <i className="mapdistrict-mini" aria-hidden="true" />
+            {t(DISTRICTS[d].key)}
+          </li>
+        ))}
+      </ul>
       {bunker && <Bunker events={archive(D.data.events)} onClose={() => setBunker(false)} />}
     </main>
   );

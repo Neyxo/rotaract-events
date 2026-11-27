@@ -38,6 +38,87 @@
   height: 17px;
   object-fit: contain;
 }
+/* a club's home: a pin, square where the events are round: its colour as a frame, the crest on white, a tail pointing at the town */
+.mapclub span {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--c);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s;
+  transform-origin: 50% 120%;
+}
+.mapclub span::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 6px;
+  background: #fff;
+}
+.mapclub span::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  translate: -50% 0;
+  border: 8px solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--c);
+}
+.mapclub:hover span {
+  transform: scale(1.12);
+}
+.mapclub img {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+/* what is what: clubs, events, the districts */
+.maplegend {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 500;
+  margin: 0;
+  padding: 8px 10px;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  font-size: 0.75rem;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  border-radius: var(--r-chip);
+}
+.maplegend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.maplegend i {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+}
+.mapclub-mini {
+  border: 3px solid currentColor;
+  border-radius: 4px;
+  background: #fff;
+}
+.mapdot-mini {
+  border: 3px solid currentColor;
+  border-radius: 50%;
+  background: #fff;
+}
+.mapdistrict-mini {
+  border: 2px solid var(--c);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--c) 20%, transparent);
+}
 /* Easter egg: the bunker door in the Gotthard and its archive: the usual event cards in a bunker skin (hazard stripe, typewriter type, faded colours, a file number and a few black bars on each) */
 .mapbunker svg {
   width: 38px;
