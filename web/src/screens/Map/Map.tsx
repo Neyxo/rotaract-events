@@ -1,18 +1,20 @@
 // The map: every event with coordinates as a club-coloured dot on the swisstopo map, filling the screen between the bars.
 // Under them the three Rotary districts as faint coloured areas, and each club's home as its crest in a cogged ring (can be hidden).
-// Leaflet owns div#map; React only renders the option label under it and tells Leaflet what to draw.
-import { useEffect, useEffectEvent, useRef, useState, type CSSProperties } from "react";
+// Leaflet owns div#map; React renders the switches and the legend over it, tells Leaflet what to draw, and renders the open popup's
+// content into it through a portal: the event card of the lists, or a small version of the club page's header.
+import { useEffect, useEffectEvent, useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { createPortal } from "react-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { ScreenProps } from "../../App";
 import { nEvents, t } from "../../i18n";
-import { BRAND, DISTRICT_IDS, DISTRICTS, isDistrict, onColor } from "../../lib/color";
-import { club, isRac, type AppData } from "../../lib/data";
-import { fmt, isPast, whenShort } from "../../lib/dates";
+import { BRAND, clubVars, DISTRICT_IDS, DISTRICTS, isDistrict, onColor } from "../../lib/color";
+import { club, isRac } from "../../lib/data";
+import { fmt, isPast } from "../../lib/dates";
 import { SWISSTOPO_GREY } from "../../lib/geo";
 import { href } from "../../lib/route";
 import type { Club, Event } from "../../lib/types";
-import { EventCard, Popup, useData } from "../../components";
+import { EventCard, Icon, Popup, useData } from "../../components";
 // the districts as whole cantons (plus Liechtenstein in 2000), merged and simplified from swisstopo's canton borders and OSM
 import districts from "./districts.json";
 
@@ -22,7 +24,6 @@ export const archive = (events: Event[]): Event[] =>
 const FILES = 30;
 
 const pinVars = (color: string) => `--c:${color};--on-c:${onColor(color)}`;
-const crest = (c: Club) => (c.logo ? `<img src="${c.logo}" alt="">` : "");
 /** a calendar sheet: the month on a band in the club colour, the day under it. Markup, because Leaflet's divIcon takes markup. */
 const sheet = (d: Date) => `<b>${fmt.mon.format(d)}</b><i>${fmt.day.format(d)}</i>`;
 
@@ -32,70 +33,64 @@ function eventIcon(c: Club, e: Event): L.DivIcon {
   return L.divIcon({ className: "mapevent", iconSize: [36, 46], iconAnchor: [18, 46], popupAnchor: [0, -44], html });
 }
 
-/** a club's home: its crest in a cogged ring in its colour, centred on the town, a little faded behind the events */
+/** a club's home: its crest in a cogged ring in its colour, centred on the town, a little faded behind the events. The crest fills the
+ *  disc: cut to the circle from its top (a shield's point at the bottom falls outside), on the club colour where the crest is narrower. */
 function clubIcon(c: Club): L.DivIcon {
+  const clip = "crest-" + c.id;
   const html =
     `<span style="${pinVars(c.color || BRAND.cranberry)}"><svg viewBox="0 0 40 40" aria-hidden="true">` +
+    `<clipPath id="${clip}"><circle cx="20" cy="20" r="13.5"/></clipPath>` +
     '<circle class="cogs" cx="20" cy="20" r="17.5" pathLength="48"/><circle class="ring" cx="20" cy="20" r="14.5"/>' +
-    (c.logo ? `<image href="${c.logo}" x="11" y="11" width="18" height="18"/>` : "") +
+    (c.logo
+      ? `<image href="${c.logo}" x="4.5" y="4.5" width="31" height="31" preserveAspectRatio="xMidYMin slice" clip-path="url(#${clip})"/>`
+      : "") +
     "</svg></span>";
   return L.divIcon({ className: "mapclub", iconSize: [40, 40], popupAnchor: [0, -18], html });
 }
 
-const CHEVRON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
 // the padding keeps an opened popup clear of the switches on top and the legend at the bottom
 const POP: L.PopupOptions = {
-  minWidth: 230,
-  maxWidth: 300,
+  minWidth: 280,
+  maxWidth: 340,
   closeButton: false,
   className: "mappopup",
   autoPanPaddingTopLeft: [10, 100],
   autoPanPaddingBottomRight: [10, 20],
 };
+type Open = { el: HTMLElement; popup: L.Popup; kind: "event" | "club"; id: string };
 
-/** a popup: a link card, built as DOM so titles and names need no escaping */
-function popup(link: string, color: string, badge: string, title: string, lines: string[]): HTMLElement {
-  const a = document.createElement("a");
-  a.className = "mappop";
-  a.href = link;
-  a.setAttribute("style", pinVars(color));
-  const txt = document.createElement("span");
-  txt.className = "mp-txt";
-  const b = document.createElement("b");
-  b.textContent = title;
-  txt.append(b);
-  for (const l of lines) {
-    const s = document.createElement("small");
-    s.textContent = l;
-    txt.append(s);
-  }
-  a.innerHTML = badge;
-  a.append(txt);
-  a.insertAdjacentHTML("beforeend", CHEVRON);
-  return a;
+/** an empty popup for the marker; when it opens, the screen renders the content into it (setOpen) */
+function bindPop(
+  m: L.Marker,
+  kind: Open["kind"],
+  id: string,
+  setOpen: (f: (o: Open | null) => Open | null) => void,
+): L.Marker {
+  const el = document.createElement("div");
+  return m
+    .bindPopup(el, POP)
+    .on("popupopen", () => setOpen(() => ({ el, popup: m.getPopup()!, kind, id })))
+    .on("popupclose", () => setOpen((o) => (o?.el === el ? null : o)));
 }
 
-function eventPopup(D: AppData, e: Event): HTMLElement {
-  const c = club(D, e.clubs[0] ?? "");
-  const lines = [whenShort(e), [c.short, e.location].filter(Boolean).join(" · ")];
-  return popup(
-    href("event", e.id),
-    c.color || BRAND.cranberry,
-    `<span class="mp-sheet" aria-hidden="true">${sheet(new Date(e.start))}</span>`,
-    e.title,
-    lines,
-  );
-}
-
-function clubPopup(D: AppData, c: Club): HTMLElement {
+/** a club in a popup: the club page's header in small, its colour block with the crest faded large behind the name */
+function ClubPop({ c }: { c: Club }) {
+  const D = useData();
   const n = D.data.events.filter((e) => e.clubs.includes(c.id) && !isPast(e)).length;
-  const line = [c.city, isDistrict(c.district) ? "D" + c.district : ""].filter(Boolean).join(" · ");
-  return popup(
-    href("club", c.id),
-    c.color || BRAND.cranberry,
-    `<span class="mp-crest" aria-hidden="true">${crest(c)}</span>`,
-    c.name,
-    [line, nEvents(n)],
+  const sub = [isDistrict(c.district) ? t(DISTRICTS[c.district].key) : t("national"), c.city]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    <a className="clubpop" href={href("club", c.id)} style={clubVars(c.color)}>
+      {c.logo ? <img className="big" src={c.logo} alt="" /> : null}
+      {c.logo ? <img className="c" src={c.logo} alt="" /> : null}
+      <span className="txt">
+        <b>{c.name}</b>
+        <small>{sub}</small>
+        <small>{nEvents(n)}</small>
+      </span>
+      <Icon name="back" className="chev" />
+    </a>
   );
 }
 
@@ -123,6 +118,11 @@ export default function MapScreen({ route }: ScreenProps) {
   const box = useRef<HTMLDivElement>(null);
   const layer = useRef<L.LayerGroup | null>(null);
   const clubLayer = useRef<L.LayerGroup | null>(null);
+  const [open, setOpen] = useState<Open | null>(null);
+  // the popup measured itself while still empty: once its content is in, it sizes and pans again
+  useLayoutEffect(() => {
+    open?.popup.update();
+  }, [open]);
   const startsAtBunker = useEffectEvent(() => bunker);
 
   useEffect(() => {
@@ -193,9 +193,7 @@ export default function MapScreen({ route }: ScreenProps) {
     if (!clubs) return;
     for (const c of D.data.clubs)
       if (c.coords && isRac(c))
-        L.marker(c.coords, { title: c.name, icon: clubIcon(c) })
-          .bindPopup(clubPopup(D, c), POP)
-          .addTo(group);
+        bindPop(L.marker(c.coords, { title: c.name, icon: clubIcon(c) }), "club", c.id, setOpen).addTo(group);
   }, [clubs, D]);
 
   useEffect(() => {
@@ -207,9 +205,12 @@ export default function MapScreen({ route }: ScreenProps) {
       if (!e.coords || (!past && isPast(e))) continue;
       n++;
       // events above the clubs: an event without its own place sits on its club's town
-      L.marker(e.coords, { title: e.title, icon: eventIcon(club(D, e.clubs[0] ?? ""), e), zIndexOffset: 1000 })
-        .bindPopup(eventPopup(D, e), POP)
-        .addTo(group);
+      const m = L.marker(e.coords, {
+        title: e.title,
+        icon: eventIcon(club(D, e.clubs[0] ?? ""), e),
+        zIndexOffset: 1000,
+      });
+      bindPop(m, "event", e.id, setOpen).addTo(group);
     }
     setCount(n);
   }, [past, D]);
@@ -245,8 +246,22 @@ export default function MapScreen({ route }: ScreenProps) {
           </li>
         ))}
       </ul>
+      {open && popContent(open, D)}
       {bunker && <Bunker events={archive(D.data.events)} onClose={() => setBunker(false)} />}
     </main>
+  );
+}
+
+/** what the open popup shows, rendered into it */
+function popContent(o: Open, D: ReturnType<typeof useData>) {
+  const e = o.kind === "event" && D.data.events.find((x) => x.id === o.id);
+  const c = o.kind === "club" && D.clubs[o.id];
+  return createPortal(
+    <>
+      {e && <EventCard e={e} />}
+      {c && <ClubPop c={c} />}
+    </>,
+    o.el,
   );
 }
 
