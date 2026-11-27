@@ -30,7 +30,7 @@ describe("map", () => {
     expect(past().checked).toBe(false);
     const upcoming = withCoords().filter((e) => !isPast(e)).length;
     await waitFor(() => expect(past().labels![0]!.textContent).toBe(" Past · " + nEvents(upcoming)));
-    expect(container.querySelectorAll(".mapdot").length).toBe(upcoming);
+    expect(container.querySelectorAll(".mapevent").length).toBe(upcoming);
   });
 
   it("past shows every event with coordinates; markers carry the club colour and the popup links to the event", async () => {
@@ -40,8 +40,8 @@ describe("map", () => {
       fireEvent.click(past());
     });
     await waitFor(() => expect(screen.getByText(nEvents(all.length))).toBeTruthy());
-    expect(container.querySelectorAll(".mapdot").length).toBe(all.length);
-    const dot = container.querySelector<HTMLElement>(".mapdot")!;
+    expect(container.querySelectorAll(".mapevent").length).toBe(all.length);
+    const dot = container.querySelector<HTMLElement>(".mapevent")!;
     const e = all.find((x) => x.title === dot.title)!;
     expect(dot.querySelector("span")?.getAttribute("style")).toMatch(/^--c:#[0-9a-f]{6};--on-c:(#fff|#1f1c26)$/);
     act(() => {
@@ -63,6 +63,17 @@ describe("map", () => {
     });
     expect(screen.getByRole("link", { name: new RegExp("^" + c.name) }).getAttribute("href")).toBe("#/club/" + c.id);
     expect(container.querySelectorAll(".maplegend li").length).toBe(5);
+  });
+
+  it("the clubs switch hides the club pins and is kept in the history entry", async () => {
+    const { container } = render(<MapScreen route={route} />);
+    await waitFor(() => expect(container.querySelectorAll(".mapclub").length).toBeGreaterThan(0));
+    act(() => {
+      fireEvent.click(screen.getByRole("checkbox", { name: "Clubs" }));
+    });
+    await waitFor(() => expect(container.querySelectorAll(".mapclub").length).toBe(0));
+    expect((history.state as { clubs?: boolean }).clubs).toBe(false);
+    expect(container.querySelectorAll(".mapevent").length).toBeGreaterThan(0);
   });
 
   it("past is kept in the history entry, so back/forward restores it", async () => {

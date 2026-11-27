@@ -9,73 +9,109 @@
   inset: 0;
   background: #fff;
 } /* white like the map's own edge tiles, so the area outside Switzerland is one surface */
-.mapopt {
+.mapopts {
   position: absolute;
   top: 10px;
   right: 10px;
   z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.mapopt {
   background: var(--surface);
   box-shadow: var(--shadow);
   border-radius: var(--r-chip);
   padding: 6px 10px;
 }
-.mapdot span {
+/* an event: a small calendar sheet (month on a band in the club colour, the day under it) with a point at the place */
+.mapevent span,
+.mp-sheet {
+  position: relative;
+  display: grid;
+  grid-template-rows: 13px 1fr;
+  width: 36px;
+  height: 38px;
+  border-radius: 9px;
+  background: #fff;
+  color: #1f1c26;
+  border: 2px solid var(--c);
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+}
+.mapevent span {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s;
+  transform-origin: 50% 125%;
+}
+.mapevent span::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  translate: -50% 0;
+  border: 7px solid transparent;
+  border-bottom: 0;
+  border-top: 8px solid var(--c);
+}
+.mapevent:hover span {
+  transform: scale(1.12);
+}
+.mapevent b,
+.mp-sheet b {
   display: grid;
   place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #fff;
-  border: 3px solid var(--c);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
-  transition: transform 0.15s;
+  margin: -2px -2px 0;
+  border-radius: 8px 8px 0 0;
+  background: var(--c);
+  color: var(--on-c);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
-.mapdot:hover span {
-  transform: scale(1.15);
+.mapevent i,
+.mp-sheet i {
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  font-size: 0.95rem;
+  font-weight: 800;
 }
-.mapdot img {
-  width: 17px;
-  height: 17px;
-  object-fit: contain;
-}
-/* a club's home: a pin, square where the events are round: its colour as a frame, the crest on white, a tail pointing at the town */
+/* a club's home: the crest in a cogged ring, like Rotary's wheel, in the club colour. Faded a little: the events are in front. */
 .mapclub span {
   position: relative;
   display: grid;
   place-items: center;
   width: 40px;
   height: 40px;
-  border-radius: 10px;
-  background: var(--c);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
-  transition: transform 0.15s;
-  transform-origin: 50% 120%;
+  opacity: 0.8;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+  transition:
+    opacity 0.15s,
+    transform 0.15s;
 }
-.mapclub span::before {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border-radius: 6px;
-  background: #fff;
-}
-.mapclub span::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: -8px;
-  translate: -50% 0;
-  border: 8px solid transparent;
-  border-bottom: 0;
-  border-top-color: var(--c);
-}
-.mapclub:hover span {
+.mapclub:hover span,
+.mapclub:focus-visible span {
+  opacity: 1;
   transform: scale(1.12);
 }
-.mapclub img {
-  position: relative;
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
+.mapclub svg {
+  width: 40px;
+  height: 40px;
+}
+.mapclub .cogs {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 5;
+  stroke-dasharray: 1 1;
+}
+.mapclub .ring {
+  fill: #fff;
+  stroke: var(--c);
+  stroke-width: 3;
 }
 /* what is what: clubs, events, the districts */
 .maplegend {
@@ -105,19 +141,84 @@
   box-sizing: border-box;
 }
 .mapclub-mini {
-  border: 3px solid currentColor;
-  border-radius: 4px;
-  background: #fff;
-}
-.mapdot-mini {
-  border: 3px solid currentColor;
+  border: 3px dotted currentColor;
   border-radius: 50%;
-  background: #fff;
+}
+.mapevent-mini {
+  border: 2px solid currentColor;
+  border-top-width: 5px;
+  border-radius: 3px;
 }
 .mapdistrict-mini {
   border: 2px solid var(--c);
   border-radius: 3px;
   background: color-mix(in srgb, var(--c) 20%, transparent);
+}
+/* the popups: a clickable card (sheet or crest, title, two lines, chevron) in the app's surface, without Leaflet's close button */
+#map .mappopup .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow:
+    var(--shadow),
+    0 8px 24px -8px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+#map .mappopup .leaflet-popup-content {
+  margin: 0;
+  font: inherit;
+}
+#map .mappopup .leaflet-popup-tip {
+  background: var(--surface);
+}
+#map .mappop {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 10px 10px 12px;
+  color: var(--text);
+  text-decoration: none;
+  border-left: 4px solid var(--c);
+}
+#map .mappop:hover {
+  background: var(--surface-2);
+}
+.mp-txt b {
+  display: block;
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+.mp-txt small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+.mappop > svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mp-crest {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--c);
+  box-sizing: border-box;
+}
+.mp-crest img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
 }
 /* Easter egg: the bunker door in the Gotthard and its archive: the usual event cards in a bunker skin (hazard stripe, typewriter type, faded colours, a file number and a few black bars on each) */
 .mapbunker svg {
@@ -236,16 +337,4 @@ dialog.bunker {
   width: 84px;
   height: 14px;
   rotate: -3deg;
-}
-.mappop {
-  display: block;
-  text-decoration: none;
-  color: #1f1c26;
-}
-.mappop b {
-  display: block;
-  font-size: 0.95rem;
-}
-.mappop span {
-  color: #5f5a6a;
 }

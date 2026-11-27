@@ -1,5 +1,5 @@
 // The map: every event with coordinates as a club-coloured dot on the swisstopo map, filling the screen between the bars.
-// Under them the three Rotary districts as faint coloured areas, and each club's home as a crest badge on a pin.
+// Under them the three Rotary districts as faint coloured areas, and each club's home as its crest in a cogged ring (can be hidden).
 // Leaflet owns div#map; React only renders the option label under it and tells Leaflet what to draw.
 import { useEffect, useEffectEvent, useRef, useState, type CSSProperties } from "react";
 import L from "leaflet";
@@ -8,7 +8,7 @@ import type { ScreenProps } from "../../App";
 import { nEvents, t } from "../../i18n";
 import { BRAND, DISTRICT_IDS, DISTRICTS, isDistrict, onColor } from "../../lib/color";
 import { club, isRac, type AppData } from "../../lib/data";
-import { fmt, isPast } from "../../lib/dates";
+import { fmt, isPast, whenShort } from "../../lib/dates";
 import { SWISSTOPO_GREY } from "../../lib/geo";
 import { href } from "../../lib/route";
 import type { Club, Event } from "../../lib/types";
@@ -21,60 +21,108 @@ export const archive = (events: Event[]): Event[] =>
   events.filter(isPast).sort((a, b) => +new Date(b.start) - +new Date(a.start));
 const FILES = 30;
 
-/** the dot: an HTML string, because Leaflet's divIcon takes markup */
-function dotHtml(D: AppData, e: Event): string {
-  const c = club(D, e.clubs[0] ?? "");
-  const color = c.color || BRAND.cranberry;
-  const logo = c.logo ? `<img src="${c.logo}" alt="">` : "";
-  return `<span style="--c:${color};--on-c:${onColor(color)}">${logo}</span>`;
+const pinVars = (color: string) => `--c:${color};--on-c:${onColor(color)}`;
+const crest = (c: Club) => (c.logo ? `<img src="${c.logo}" alt="">` : "");
+/** a calendar sheet: the month on a band in the club colour, the day under it. Markup, because Leaflet's divIcon takes markup. */
+const sheet = (d: Date) => `<b>${fmt.mon.format(d)}</b><i>${fmt.day.format(d)}</i>`;
+
+/** an event: a calendar sheet with a point at the place */
+function eventIcon(c: Club, e: Event): L.DivIcon {
+  const html = `<span style="${pinVars(c.color || BRAND.cranberry)}">${sheet(new Date(e.start))}</span>`;
+  return L.divIcon({ className: "mapevent", iconSize: [36, 46], iconAnchor: [18, 46], popupAnchor: [0, -44], html });
 }
 
-/** a club's home: its crest on a badge in its colour, with a tail pointing at the town */
-function clubHtml(c: Club): string {
-  const color = c.color || BRAND.cranberry;
-  const logo = c.logo ? `<img src="${c.logo}" alt="">` : "";
-  return `<span style="--c:${color};--on-c:${onColor(color)}">${logo}</span>`;
+/** a club's home: its crest in a cogged ring in its colour, centred on the town, a little faded behind the events */
+function clubIcon(c: Club): L.DivIcon {
+  const html =
+    `<span style="${pinVars(c.color || BRAND.cranberry)}"><svg viewBox="0 0 40 40" aria-hidden="true">` +
+    '<circle class="cogs" cx="20" cy="20" r="17.5" pathLength="48"/><circle class="ring" cx="20" cy="20" r="14.5"/>' +
+    (c.logo ? `<image href="${c.logo}" x="11" y="11" width="18" height="18"/>` : "") +
+    "</svg></span>";
+  return L.divIcon({ className: "mapclub", iconSize: [40, 40], popupAnchor: [0, -18], html });
 }
 
-/** every real club's home, as a pin that opens the club */
-function addClubs(group: L.LayerGroup, clubs: Club[]): void {
-  for (const c of clubs) {
-    if (!c.coords || !isRac(c)) continue;
-    const icon = L.divIcon({
-      className: "mapclub",
-      iconSize: [40, 48],
-      iconAnchor: [20, 48],
-      popupAnchor: [0, -44],
-      html: clubHtml(c),
-    });
-    L.marker(c.coords, { title: c.name, icon })
-      .bindPopup(popupLink(href("club", c.id), c.name, c.city ?? ""))
-      .addTo(group);
-  }
-}
+const CHEVRON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+// the padding keeps an opened popup clear of the switches on top and the legend at the bottom
+const POP: L.PopupOptions = {
+  minWidth: 230,
+  maxWidth: 300,
+  closeButton: false,
+  className: "mappopup",
+  autoPanPaddingTopLeft: [10, 100],
+  autoPanPaddingBottomRight: [10, 20],
+};
 
-/** the popup: a DOM node, so the title needs no escaping */
-function popupLink(link: string, title: string, line: string): HTMLElement {
+/** a popup: a link card, built as DOM so titles and names need no escaping */
+function popup(link: string, color: string, badge: string, title: string, lines: string[]): HTMLElement {
   const a = document.createElement("a");
   a.className = "mappop";
   a.href = link;
+  a.setAttribute("style", pinVars(color));
+  const txt = document.createElement("span");
+  txt.className = "mp-txt";
   const b = document.createElement("b");
   b.textContent = title;
-  const s = document.createElement("span");
-  s.textContent = line;
-  a.append(b, s);
+  txt.append(b);
+  for (const l of lines) {
+    const s = document.createElement("small");
+    s.textContent = l;
+    txt.append(s);
+  }
+  a.innerHTML = badge;
+  a.append(txt);
+  a.insertAdjacentHTML("beforeend", CHEVRON);
   return a;
+}
+
+function eventPopup(D: AppData, e: Event): HTMLElement {
+  const c = club(D, e.clubs[0] ?? "");
+  const lines = [whenShort(e), [c.short, e.location].filter(Boolean).join(" · ")];
+  return popup(
+    href("event", e.id),
+    c.color || BRAND.cranberry,
+    `<span class="mp-sheet" aria-hidden="true">${sheet(new Date(e.start))}</span>`,
+    e.title,
+    lines,
+  );
+}
+
+function clubPopup(D: AppData, c: Club): HTMLElement {
+  const n = D.data.events.filter((e) => e.clubs.includes(c.id) && !isPast(e)).length;
+  const line = [c.city, isDistrict(c.district) ? "D" + c.district : ""].filter(Boolean).join(" · ");
+  return popup(
+    href("club", c.id),
+    c.color || BRAND.cranberry,
+    `<span class="mp-crest" aria-hidden="true">${crest(c)}</span>`,
+    c.name,
+    [line, nEvents(n)],
+  );
+}
+
+/** a checkbox on the map, kept in the history entry, so back/forward brings it back as a browser restores a form field */
+function useKept(key: string, initial: boolean): [boolean, (v: boolean) => void] {
+  const [v, setV] = useState(
+    () => ((history.state as Record<string, unknown> | null)?.[key] as boolean | undefined) ?? initial,
+  );
+  return [
+    v,
+    (x) => {
+      setV(x);
+      history.replaceState({ ...(history.state as object | null), [key]: x }, "");
+    },
+  ];
 }
 
 export default function MapScreen({ route }: ScreenProps) {
   const D = useData();
-  // kept in the history entry, so back/forward brings it back as a browser restores a form field
-  const [past, setPast] = useState(() => !!(history.state as { past?: boolean } | null)?.past);
+  const [past, setPast] = useKept("past", false);
+  const [clubs, setClubs] = useKept("clubs", true);
   const [count, setCount] = useState<number | null>(null);
   // #/map?bunker (the developer screen's link) starts at the bunker with its archive open
   const [bunker, setBunker] = useState(() => route.query.has("bunker"));
   const box = useRef<HTMLDivElement>(null);
   const layer = useRef<L.LayerGroup | null>(null);
+  const clubLayer = useRef<L.LayerGroup | null>(null);
   const startsAtBunker = useEffectEvent(() => bunker);
 
   useEffect(() => {
@@ -97,6 +145,7 @@ export default function MapScreen({ route }: ScreenProps) {
         return { color, weight: 2, opacity: 0.7, fillColor: color, fillOpacity: 0.12 };
       },
     }).addTo(map);
+    clubLayer.current = L.layerGroup().addTo(map);
     layer.current = L.layerGroup().addTo(map);
     // Easter egg: the Röstigraben, a faint dashed line once you zoom in. Roughly the language border from Biel/Bienne to Sierre/Siders.
     // Two lines: the one you see, and an invisible wide one under it so a finger can hit it.
@@ -133,28 +182,33 @@ export default function MapScreen({ route }: ScreenProps) {
     return () => {
       map.remove();
       layer.current = null;
+      clubLayer.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const group = clubLayer.current;
+    if (!group) return;
+    group.clearLayers();
+    if (!clubs) return;
+    for (const c of D.data.clubs)
+      if (c.coords && isRac(c))
+        L.marker(c.coords, { title: c.name, icon: clubIcon(c) })
+          .bindPopup(clubPopup(D, c), POP)
+          .addTo(group);
+  }, [clubs, D]);
 
   useEffect(() => {
     const group = layer.current;
     if (!group) return;
     group.clearLayers();
-    addClubs(group, D.data.clubs);
     let n = 0;
     for (const e of D.data.events) {
       if (!e.coords || (!past && isPast(e))) continue;
       n++;
-      const icon = L.divIcon({ className: "mapdot", iconSize: [32, 32], popupAnchor: [0, -14], html: dotHtml(D, e) });
       // events above the clubs: an event without its own place sits on its club's town
-      L.marker(e.coords, { title: e.title, icon, zIndexOffset: 1000 })
-        .bindPopup(
-          popupLink(
-            href("event", e.id),
-            e.title,
-            `${fmt.dm.format(new Date(e.start))} · ${club(D, e.clubs[0] ?? "").short}`,
-          ),
-        )
+      L.marker(e.coords, { title: e.title, icon: eventIcon(club(D, e.clubs[0] ?? ""), e), zIndexOffset: 1000 })
+        .bindPopup(eventPopup(D, e), POP)
         .addTo(group);
     }
     setCount(n);
@@ -163,26 +217,25 @@ export default function MapScreen({ route }: ScreenProps) {
   return (
     <main className="mapwrap">
       <div id="map" ref={box} />
-      <label className="icon-btn mapopt">
-        <input
-          type="checkbox"
-          checked={past}
-          onChange={(ev) => {
-            setPast(ev.target.checked);
-            history.replaceState({ ...(history.state as object | null), past: ev.target.checked }, "");
-          }}
-        />{" "}
-        <span>{t("v_past")}</span>
-        {" · "}
-        <span>{count === null ? "" : nEvents(count)}</span>
-      </label>
+      <div className="mapopts">
+        <label className="icon-btn mapopt">
+          <input type="checkbox" checked={past} onChange={(ev) => setPast(ev.target.checked)} />{" "}
+          <span>{t("v_past")}</span>
+          {" · "}
+          <span>{count === null ? "" : nEvents(count)}</span>
+        </label>
+        <label className="icon-btn mapopt">
+          <input type="checkbox" checked={clubs} onChange={(ev) => setClubs(ev.target.checked)} />{" "}
+          <span>{t("clubs")}</span>
+        </label>
+      </div>
       <ul className="maplegend">
         <li>
           <i className="mapclub-mini" aria-hidden="true" />
           {t("clubs")}
         </li>
         <li>
-          <i className="mapdot-mini" aria-hidden="true" />
+          <i className="mapevent-mini" aria-hidden="true" />
           {t("events")}
         </li>
         {DISTRICT_IDS.map((d) => (
