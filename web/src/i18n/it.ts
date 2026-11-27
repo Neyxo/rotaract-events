@@ -71,7 +71,7 @@ const it: Messages = {
   list: "Lista",
   month: "Mese",
   loading: "Caricamento eventi…",
-  d1980: "D1980 · Centro & Nord-Ovest",
+  d1980: "D1980 · Centro, Nord-Ovest & Ticino",
   d1990: "D1990 · Ovest",
   d2000: "D2000 · Est",
   one_event: "1 evento",

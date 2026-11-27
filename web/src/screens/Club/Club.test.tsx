@@ -64,7 +64,7 @@ describe("club screen", () => {
     expect(document.body.classList.contains("wash")).toBe(true);
     expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Rotaract Luzern");
     expect(document.querySelector(".cstick img")?.getAttribute("src")).toBe("crests/luzern.svg");
-    screen.getByText("D1980 · Central & North-West");
+    screen.getByText("D1980 · Central, North-West & Ticino");
     expect(screen.getByRole("link", { name: "Subscribe" }).getAttribute("href")).toBe("#/subscribe");
     expect(screen.getByRole("link", { name: "Club website" }).getAttribute("target")).toBe("_blank");
     expect(screen.getByRole("link", { name: "Instagram" }).getAttribute("target")).toBe("_blank");

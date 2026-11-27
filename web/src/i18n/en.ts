@@ -75,7 +75,7 @@ const en = {
   list: "List",
   month: "Month",
   loading: "Loading events…",
-  d1980: "D1980 · Central & North-West",
+  d1980: "D1980 · Central, North-West & Ticino",
   d1990: "D1990 · West",
   d2000: "D2000 · East",
   one_event: "1 event",

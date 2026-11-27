@@ -71,7 +71,7 @@ const de: Messages = {
   list: "Liste",
   month: "Monat",
   loading: "Events werden geladen…",
-  d1980: "D1980 · Zentral- & Nordwestschweiz",
+  d1980: "D1980 · Zentral-, Nordwestschweiz & Tessin",
   d1990: "D1990 · Westschweiz",
   d2000: "D2000 · Ostschweiz",
   one_event: "1 Event",

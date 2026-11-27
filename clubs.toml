@@ -11,7 +11,7 @@
 #   photos   = optional list of picture URLs for the strip on the club page (otherwise: pictures of past events)
 #   instagram, linkedin = optional profile links, shown as buttons on the club page. With the Instagram secrets set
 #              (docs/layers.md, "Instagram pictures"), the club's latest Instagram pictures also replace the picture strip.
-#   district = Rotary district: 1980 central/north-west, 1990 west, 2000 east; empty = national
+#   district = Rotary district: 1980 central/north-west and Ticino, 1990 west, 2000 east; empty = national
 #   about    = optional one sentence that introduces the club, shown in "About this club" on the club page
 #   how      = optional "how to join" text, in the club's own language, opened from a button on the club page. Plain text
 #              with a little structure: "## Heading", "1. Title: text" (numbered step cards), "- point" (check list),
@@ -325,7 +325,7 @@ photos = [
 [[clubs]]
 id = "ticino"
 logo = "crests/ticino.svg"
-district = "2000"
+district = "1980"
 short = "Ticino"
 color = "#0066b3"
 name = "Rotaract Ticino"
