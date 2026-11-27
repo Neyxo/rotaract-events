@@ -27,8 +27,10 @@ const pinVars = (color: string) => `--c:${color};--on-c:${onColor(color)}`;
 /** a calendar sheet: the month on a band in the club colour, the day under it. Markup, because Leaflet's divIcon takes markup. */
 const sheet = (d: Date) => `<b>${fmt.mon.format(d)}</b><i>${fmt.day.format(d)}</i>`;
 
-/** the pin's style: the club colour, and its crest as the faded backdrop of the sheet */
-const sheetVars = (c: Club) => pinVars(c.color || BRAND.cranberry) + (c.logo ? `;--crest:url(${c.logo})` : "");
+/** the pin's style: the club colour, and its crest as the faded backdrop of the sheet. The crest's URL made absolute: a relative url()
+ *  in a custom property resolves against the stylesheet that uses it, in the build assets/, where there are no crests. */
+const sheetVars = (c: Club) =>
+  pinVars(c.color || BRAND.cranberry) + (c.logo ? `;--crest:url(${new URL(c.logo, document.baseURI).href})` : "");
 
 /** an event: a calendar sheet with a point at the place */
 function eventIcon(c: Club, e: Event): L.DivIcon {
