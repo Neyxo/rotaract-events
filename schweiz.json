@@ -1,1 +1,65 @@
-{}
+{
+ "224046": {
+  "detail": {
+   "description": "",
+   "image": "https://rotaract.ch/de/media/cache/resolve/rotary_website_content_grid_images/rc/jNWNGVXu/6b074a5cb67ad.png?filters%5Bfocus_point_crop%5D%5Bfocus%5D%5B0%5D=0.00&filters%5Bfocus_point_crop%5D%5Bfocus%5D%5B1%5D=0.00&v=1.6.0",
+   "registration": ""
+  },
+  "first_seen": "20261127T154650Z",
+  "modified": "20261127T154650Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-224046@rotary.ch",
+   "SUMMARY:President Meeting / Interdistrict Conference 2027 (PM/IDC)",
+   "DESCRIPTION:",
+   "URL:https://rotaract.ch/de/agenda/show/224046",
+   "DTSTART;TZID=Europe/Zurich:20270417T100000",
+   "DTEND;TZID=Europe/Zurich:20270418T140000",
+   "LOCATION:Castelgrande\\, Bellinzona",
+   "CATEGORIES:Rotaract"
+  ]
+ },
+ "224134": {
+  "detail": {
+   "description": "Der RAC Baden ist an der Badenfahrt 2027.\n\nAlle weiteren Infos folgen!",
+   "image": "",
+   "registration": ""
+  },
+  "first_seen": "20261127T154650Z",
+  "modified": "20261127T154650Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-224134@rotary.ch",
+   "SUMMARY:D1980: Badenfahrt 2027 - Rotaract Baden",
+   "DESCRIPTION:Webseite: https://www.instagram.com/karma.badenfahrt?bqrl=YWZ1bnk2MjU2Y3Vw",
+   "URL:https://rotaract.ch/de/agenda/show/224134",
+   "DTSTART;TZID=Europe/Zurich:20270820T150000",
+   "DTEND;TZID=Europe/Zurich:20270829T220000",
+   "LOCATION:Limmatpromenade\\, 5400 Baden",
+   "CATEGORIES:Rotaract"
+  ]
+ },
+ "224160": {
+  "detail": {
+   "description": "Mehr Infos zu gegebener Zeit",
+   "image": "",
+   "registration": ""
+  },
+  "first_seen": "20261127T154650Z",
+  "modified": "20261127T154650Z",
+  "sequence": 0,
+  "status": "active",
+  "vevent": [
+   "UID:polaris-224160@rotary.ch",
+   "SUMMARY:D1980: Distriktevent",
+   "DESCRIPTION:",
+   "URL:https://rotaract.ch/de/agenda/show/224160",
+   "DTSTART;TZID=Europe/Zurich:20270522T140000",
+   "DTEND;TZID=Europe/Zurich:20270522T180000",
+   "LOCATION:Basel",
+   "CATEGORIES:Rotaract"
+  ]
+ }
+}
